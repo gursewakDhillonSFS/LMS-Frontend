@@ -360,8 +360,8 @@ export const Step4 = () => {
                         children: (
                           <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between gap-1">
-                              <div className="w-[95%] text-[16px] text-[#002333]">
-                                {item?.lesson_description}
+                              <div className="w-[95%] text-[16px] text-[#002333] break-words overflow-hidden">
+                                <QuillEditor readOnly value={item?.lesson_description || ''} />
                               </div>
                               <div
                                 className="cursor-pointer"
@@ -455,8 +455,8 @@ export const Step4 = () => {
                                       </button>
                                     </div>
                                   </div>
-                                  <div className="w-[95%] text-[16px] text-[#002333]">
-                                    {subItem?.sublesson_description}
+                                  <div className="w-[95%] text-[16px] text-[#002333] break-words overflow-hidden">
+                                    <QuillEditor readOnly value={subItem?.sublesson_description || ''} />
                                   </div>
                                   <div className="flex flex-col gap-1">
                                     <div className="flex gap-1 items-center">

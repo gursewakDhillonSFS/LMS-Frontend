@@ -11,6 +11,7 @@ import { RoutePaths } from "@/utils/enums";
 interface MyCourseCardProp {
   demoClass?: boolean;
   course_id: string;
+  batch_id?: string;
   user_id: string;
   course_name: string;
   course_image_url: string;
@@ -23,6 +24,8 @@ interface MyCourseCardProp {
 
 export const MyCoursesCard: FC<MyCourseCardProp> = ({
   demoClass = false,
+  course_id,
+  batch_id,
   course_name,
   course_image_url,
   name,
@@ -96,7 +99,7 @@ export const MyCoursesCard: FC<MyCourseCardProp> = ({
           onClick={
             demoClass
               ? () => {}
-              : () => route.push(`${RoutePaths?.MyCourses}/course-details`)
+              : () => route.push(`${RoutePaths?.MyCourses}/course-details?course_id=${course_id}${batch_id ? `&batch_id=${batch_id}` : ''}`)
           }
           className="w-[130px]"
         />

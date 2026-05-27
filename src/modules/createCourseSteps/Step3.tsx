@@ -48,7 +48,21 @@ export const Step3 = () => {
         <div className="flex flex-col gap-2">
           <p>Description</p>
           <Form.Item
-            rules={[{ required: true, message: "Description is required" }]}
+            rules={[
+              { required: true, message: "Description is required" },
+              {
+                validator: (_, value) => {
+                  if (value) {
+                    const text = value.replace(/<[^>]+>/g, '')?.replace(/&nbsp;/g, ' ').trim();
+                    const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+                    if (words > 300) {
+                      return Promise.reject("Description cannot exceed 300 words.");
+                    }
+                  }
+                  return Promise.resolve();
+                }
+              }
+            ]}
             className="!mb-0"
             name="description"
           >

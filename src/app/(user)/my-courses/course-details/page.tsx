@@ -21,15 +21,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setInternalTab } from "@/redux/tabslice/UserCourseInternalSlice";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
-import { userCourseList, getAnnouncementsByCourseApi } from "@/services/collections";
+import { userCourseList, getAnnouncementsByCourseApi, getCourseInfoApi } from "@/services/collections";
 import { useAnnouncementSocket, AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
 import AnnouncementInfoModal from "@/components/modal/AnnouncementInfoModal";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 
 interface CourseDetailItem {
   course_id: string;
   batch_id?: string;
+  course_name?: string;
 }
 
 const mockChatData: ChatConversation[] = [
@@ -43,9 +45,7 @@ const mockChatData: ChatConversation[] = [
       message: "Hey! Are we still on for the meeting?",
       message_time: { seconds: Math.floor(Date.now() / 1000) - 60 },
     },
-    unread_count: {
-      user123: 2,
-    },
+    unread_count: { user123: 2 },
   },
   {
     _id: "conv2",
@@ -57,13 +57,15 @@ const mockChatData: ChatConversation[] = [
       message: "image",
       message_time: { seconds: Math.floor(Date.now() / 1000) - 300 },
     },
-    unread_count: {
-      user123: 0,
-    },
+    unread_count: { user123: 0 },
   },
 ];
 
 const CourseDetails = () => {
+  const searchParams = useSearchParams();
+  const urlCourseId = searchParams.get("course_id") || "";
+  const urlBatchId = searchParams.get("batch_id") || "";
+
   const activeKey = useSelector(
     (state: RootState) => state.internaltab.activeInternalTab
   );
@@ -77,41 +79,61 @@ const CourseDetails = () => {
   const [loading, setLoading] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<AnnouncementPayload | null>(null);
+  const [courseName, setCourseName] = useState<string>("Course");
+  
+  const [activeCourseId, setActiveCourseId] = useState<string>(urlCourseId);
+  const [activeBatchId, setActiveBatchId] = useState<string>(urlBatchId);
 
   const dispatch = useDispatch();
 
-  const items = [
-    {
-      title: "My Courses",
-      href: RoutePaths?.MyCourses,
-    },
-    {
-      title: "Finance & Quantitative Modeling for Analysts",
-    },
+  const breadcrumbItems = [
+    { title: "My Courses", href: RoutePaths?.MyCourses },
+    { title: courseName },
   ];
+
 
   // Fetch Student's Enrolled Courses & Real-Time Announcements
   const initStudentData = async () => {
     setLoading(true);
     try {
-      const res = await userCourseList(new URLSearchParams());
-      if (res?.status && res?.data?.courses?.length > 0) {
-        const enrolledCourses = res.data.courses as CourseDetailItem[];
-        const cIds = enrolledCourses.map((c) => c.course_id);
-        const bIds = enrolledCourses.map((c) => c.batch_id).filter((b): b is string => !!b);
-        setCourseIds(cIds);
-        setBatchIds(bIds);
+      // If course_id is in URL, use it directly; otherwise fall back to enrolled courses
+      const targetCourseId = urlCourseId;
+      const targetBatchId = urlBatchId;
 
-        // Fetch announcements for the main/first enrolled course
-        const activeCourse = enrolledCourses[0];
+      if (targetCourseId) {
+        setCourseIds([targetCourseId]);
+        if (targetBatchId) setBatchIds([targetBatchId]);
+
+        // Fetch announcements for this specific course
         const params = new URLSearchParams();
-        if (activeCourse.batch_id) {
-          params.append("batchId", activeCourse.batch_id);
-        }
-
-        const annRes = await getAnnouncementsByCourseApi(activeCourse.course_id, params);
+        if (targetBatchId) params.append("batchId", targetBatchId);
+        const annRes = await getAnnouncementsByCourseApi(targetCourseId, params);
         if (annRes?.status && annRes?.data?.announcements) {
           setAnnouncements(annRes.data.announcements as AnnouncementPayload[]);
+        }
+      } else {
+        // Fallback: load from enrolled courses list
+        const res = await userCourseList(new URLSearchParams());
+        if (res?.status && res?.data?.courses?.length > 0) {
+          const enrolledCourses = res.data.courses as CourseDetailItem[];
+          const cIds = enrolledCourses.map((c) => c.course_id);
+          const bIds = enrolledCourses.map((c) => c.batch_id).filter((b): b is string => !!b);
+          setCourseIds(cIds);
+          setBatchIds(bIds);
+          setCourseName(enrolledCourses[0]?.course_name || "Course");
+
+          const activeCourse = enrolledCourses[0];
+          setActiveCourseId(activeCourse.course_id);
+          if (activeCourse.batch_id) {
+            setActiveBatchId(activeCourse.batch_id);
+          }
+          
+          const params = new URLSearchParams();
+          if (activeCourse.batch_id) params.append("batchId", activeCourse.batch_id);
+          const annRes = await getAnnouncementsByCourseApi(activeCourse.course_id, params);
+          if (annRes?.status && annRes?.data?.announcements) {
+            setAnnouncements(annRes.data.announcements as AnnouncementPayload[]);
+          }
         }
       }
     } catch (err) {
@@ -157,7 +179,7 @@ const CourseDetails = () => {
     <div className="flex flex-col gap-[24px]">
       <Breadcrumb
         separator={<span className="text-[#002333] font-[700]">{">"}</span>}
-        items={items}
+        items={breadcrumbItems}
         itemRender={(item) => <BreadcrumbItemRender item={item} />}
       />
 
@@ -176,15 +198,19 @@ const CourseDetails = () => {
             tabs={UserInternalTab}
           />
 
-          {activeTab === UserCourseInternalTab?.COURSES && <Course />}
+          {activeTab === UserCourseInternalTab?.COURSES && (
+            <Course courseId={activeCourseId} batchId={activeBatchId} />
+          )}
           {activeTab === UserCourseInternalTab?.ASSIGNMENTS && (
-            <CourseAssignments />
+            <CourseAssignments courseId={activeCourseId} batchId={activeBatchId} />
           )}
           {activeTab === UserCourseInternalTab?.EVALUATIONS && <Evaluation />}
           {activeTab === UserCourseInternalTab?.LIVE_CLASSES && (
             <CourseLiveClasses />
           )}
-          {activeTab === UserCourseInternalTab?.QUIZZES && <CourseQuizzes />}
+          {activeTab === UserCourseInternalTab?.QUIZZES && (
+            <CourseQuizzes courseId={activeCourseId} batchId={activeBatchId} />
+          )}
         </div>
 
         {/* Right Side Sidebar Panel (Announcements & Chat) */}

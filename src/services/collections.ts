@@ -224,6 +224,11 @@ export const getAllLesson = (param: URLSearchParams) => {
   return getApi(`${ALL_LESSON}?${param}`);
 };
 
+export const getLessonsWithSublessonsApi = (courseId: string) => {
+  const params = new URLSearchParams({ course_id: courseId });
+  return getApi(`${ALL_LESSON}?${params}`);
+};
+
 export const updateSublesson = (payload: FormData) => {
   return putApi(COURSE_SUBLESSON_UPDATE, payload);
 };
@@ -439,3 +444,39 @@ export const getStudentDetailsApi = (studentId: string) =>
 
 export const getStudentSubmissionsApi = (studentId: string) =>
   getApi(`${GET_STUDENT_DETAILS}/${studentId}/submissions`);
+
+// ─── Course Progress APIs ──────────────────────────────────────────────────────
+const COURSE_PROGRESS = "/auth/course/v1/progress";
+
+export const getCourseProgressApi = (courseId: string, batchId: string) =>
+  getApi(`${COURSE_PROGRESS}?course_id=${courseId}&batch_id=${batchId}`);
+
+export const markLessonCompleteApi = (payload: {
+  lesson_id: string;
+  course_id: string;
+  batch_id: string;
+}) => postApi(`${COURSE_PROGRESS}/complete-lesson`, payload);
+
+export const markSublessonCompleteApi = (payload: {
+  sublesson_id: string;
+  course_id: string;
+  batch_id: string;
+}) => postApi(`${COURSE_PROGRESS}/complete-sublesson`, payload);
+
+// ─── Student Submission APIs ───────────────────────────────────────────────────
+export const submitAssignmentApi = (
+  assignmentId: string,
+  payload: { submittedText: string },
+) => postApi(`/auth/assignment/v1/${assignmentId}/submit`, payload);
+
+export const submitQuizApi = (
+  quizId: string,
+  payload: {
+    answers: {
+      questionIndex: number;
+      questionType: "mcq" | "essay";
+      selectedOption?: string;
+      submittedText?: string;
+    }[];
+  },
+) => postApi(`/auth/quiz/v1/${quizId}/submit`, payload);

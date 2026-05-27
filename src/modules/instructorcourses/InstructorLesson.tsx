@@ -267,7 +267,7 @@ const InstructorLesson = () => {
             </button>
           )}
         </div>
-        <div className="font-[400] text-[16px] text-[#002333]">
+        <div className="font-[400] text-[16px] text-[#002333] break-words">
           <QuillEditor readOnly value={overview || ''} />
         </div>
       </div>
@@ -341,7 +341,7 @@ const InstructorLesson = () => {
                             children: (
                               <div className="flex flex-col gap-4 w-full">
                                   <div className="flex items-start justify-between gap-4">
-                                    <div className="text-[#002333] text-[16px] leading-[150%] flex-1">
+                                    <div className="text-[#002333] text-[16px] leading-[150%] flex-1 break-words">
                                       <QuillEditor readOnly value={item?.lesson_description || ''} />
                                     </div>
                                     {!isTeacher && (
@@ -442,7 +442,7 @@ const InstructorLesson = () => {
                                           </button>
                                         )}
                                       </div>
-                                      <div>
+                                      <div className="break-words">
                                         <QuillEditor readOnly value={sub.sublesson_description || ''} />
                                       </div>
                                       <div className="flex flex-col gap-2">

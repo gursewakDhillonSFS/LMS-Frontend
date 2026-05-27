@@ -76,13 +76,26 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
           />
         </div>
 
-        <div className="flex flex-col items-start gap-1">
+        <div className="flex flex-col gap-1 w-full">
           <label className="plus-jakarta-sans text-[16px]">Description</label>
-          <QuillEditor
-            placeholder="Enter text here..."
-            value={description}
-            onChange={(val) => setDescription(val)}
-          />
+          <div className="w-full">
+            <QuillEditor
+              placeholder="Enter text here..."
+              value={description}
+              onChange={(val) => setDescription(val)}
+            />
+          </div>
+          {(() => {
+            const text = description?.replace(/<[^>]+>/g, '')?.replace(/&nbsp;/g, ' ').trim();
+            const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+            return (
+              <div className="flex justify-end w-full mt-1">
+                <span className={`text-sm ${words > 300 ? 'text-red-500' : 'text-gray-500'}`}>
+                  {words} / 300 words
+                </span>
+              </div>
+            );
+          })()}
         </div>
 
         <div className="grid gap-2">
@@ -153,6 +166,11 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
             className="!bg-secondary text-white w-[20%]"
             onClick={addLessonModalStatus ? handleSave : handleSubLessonSave}
             text={isEditing ? "Update" : addLessonModalStatus ? "Save" : "Add"}
+            disable={(() => {
+              const text = description?.replace(/<[^>]+>/g, '')?.replace(/&nbsp;/g, ' ').trim();
+              const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+              return words > 300;
+            })()}
           />
         </div>
       </div>
