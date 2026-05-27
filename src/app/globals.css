@@ -1,0 +1,423 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+
+:root{
+  --primary : #00FF84;
+  --secondary : #3722D3;
+  --navcolor : #002333;
+}
+
+.fjalla-one-regular {
+  font-family: "Fjalla One", sans-serif;
+  font-style: normal;
+}
+
+.plus-jakarta-sans{
+  font-family: "Plus Jakarta Sans", sans-serif ;
+  font-style: normal;
+}
+
+.poppins-font {
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+}
+
+.custom-checkbox-checked .custom-checkbox-inner {
+    background-color: black;
+    border-color: none;
+}
+.custom-checkbox-checked .custom-checkbox-inner {
+    background-color: black !important;
+    border-color: black !important;
+}
+.custom-checkbox-checked .custom-checkbox-inner:hover {
+    border-color: var(--primary) !important;
+}
+
+:where(.css-dev-only-do-not-override-mc1tut).custom-checkbox-wrapper:not(.custom-checkbox-wrapper-disabled):hover .custom-checkbox-inner,
+:where(.css-dev-only-do-not-override-mc1tut).custom-checkbox:not(.custom-checkbox-disabled):hover .custom-checkbox-inner {
+  border-color: black !important;  /* Example: Neon green border */
+  /* background-color: #e6fff5 !important; Light green background */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: 0px !important; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  scrollbar-width: 0px !important; /* Firefox */
+  display: none;
+   /* Chrome, Safari, Opera */
+}
+
+
+.common-modal-root .common-modal-wrap::-webkit-scrollbar{
+  scrollbar-width: 0px !important;
+  display: none;
+}
+
+.custom-collapse-header{
+  color: white !important;
+  border-bottom: 1px solid #7A7B7A !important;
+}
+
+.custom-carousal .slick-initialized .slick-slide {
+  opacity: 20%;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.custom-carousal .slick-initialized .slick-active {
+  opacity: 100%;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.custom-carousal .slick-dots-bottom {
+  bottom: -30px !important;
+}
+
+.custom-carousal .slick-dots li button::after {
+  border-radius: 100%;
+  width: 15px !important;
+  height: 15px !important;
+}
+.custom-carousal .slick-dots li button {
+  border-radius: 100%;
+  width: 15px !important;
+  height: 15px !important;
+}
+.custom-carousal .slick-dots li::after {
+  border-radius: 100%;
+  width: 15px !important;
+  height: 15px !important;
+}
+.custom-carousal .slick-dots li{
+   background: #EAEAEA;
+  border-radius: 100% !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+.custom-carousal .slick-dots li.slick-active{
+   background: var(--primary);
+  border-radius: 100%;
+  width: 15px !important;
+  height: 15px !important;
+}
+.custom-carousal .slick-dots li.slick-active::after{
+   background: var(--primary);
+  border-radius: 100%;
+  width: 15px !important;
+  height: 15px !important;
+}
+.custom-carousal .slick-dots li.slick-active button{
+   background: var(--primary);
+  border-radius: 100%;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.ant-pagination .ant-pagination-item-active{
+  color: white !important;
+  background-color: var(--secondary) !important;
+  border: none !important;
+  border-radius: 4px;
+  border: none;
+}
+.ant-pagination .ant-pagination-item-active a{
+
+  color: white !important;
+}
+
+.ant-pagination .ant-pagination-item-active:hover a{
+  color: white !important;
+}
+
+.antSubFilter {
+  height: 40px !important;
+}
+
+.antSubFilter-selector {
+  border-radius: 10px !important;
+  border: 1px solid #7A7B7A !important;
+  box-shadow: none !important;
+  padding: 16px !important;
+}
+
+.antSubFilter-selection-placeholder {
+  font-family: Inter !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  color: #0e0e0e !important;
+}
+
+.custom-card-carousel .slick-list .slick-slide{
+  background-color: transparent !important;
+}
+
+.custom-card-carousel .slick-dots-bottom {
+  bottom: -30px !important;
+}
+
+.custom-card-carousel .slick-dots li button::after {
+  background: var(--primary);
+  width: 15px;
+}
+.custom-card-carousel .slick-dots li button {
+  background: var(--primary);
+  width: 15px;
+}
+.custom-card-carousel .slick-dots li::after {
+  background: var(--primary);
+  width: 15px;
+}
+.custom-card-carousel .slick-dots li.slick-active{
+  background-color: var(--primary) !important;
+  width: 20px;
+}
+.custom-card-carousel .slick-dots li.slick-active::after{
+  background-color: var(--primary) !important;
+  width: 20px;
+}
+.custom-card-carousel .slick-dots li.slick-active button{
+  background-color: var(--primary) !important;
+  width: 20px;
+}
+
+.common-modal .common-modal-content{
+  padding: 30px;
+  border-radius: 20px;
+}
+
+.custom-radio-button-wrapper:not(:first-child)::before{
+  content: none;
+}
+
+.ant-switch.ant-switch-checked {
+  background-color: var(--secondary) !important;
+}
+
+.custom-sidebar-menu-dark.custom-sidebar-menu-root.custom-sidebar-menu-inline{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-sidebar-menu-dark .custom-sidebar-menu-item-selected{
+  background-color: var(--primary);
+  color: #002333; 
+}
+.custom-sidebar-menu-dark .custom-sidebar-menu-item{
+  width: 100%;
+  padding-top:  8px !important;
+}
+.custom-sidebar-menu-dark.custom-sidebar-menu-inline .custom-sidebar-menu-item{
+  display: flex;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 25px !important;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .custom-sidebar-menu .custom-sidebar-menu-item {
+    border-radius: 0 !important;
+  }
+}
+
+/* Calendar */
+
+.custom-calendar-calendar .custom-calendar-cell-in-view .custom-calendar-cell-inner {
+  position: relative;
+  height: 35px !important;
+  width: 35px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Selected date style */
+.custom-calendar-calendar .custom-calendar-cell-in-view.custom-calendar-cell-selected:not(.custom-calendar-cell-disabled) .custom-calendar-cell-inner {
+  border-radius: 50% !important;
+  background-color: var(--primary) !important;
+  z-index: 1;
+}
+
+/* Today border style */
+.custom-calendar-calendar .custom-calendar-cell-in-view.custom-calendar-cell-today .custom-calendar-cell-inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid var(--primary) !important;
+  border-radius: 50%;
+  height: 35px;
+  width: 35px;
+  box-sizing: border-box;
+  z-index: 0;
+}
+
+.custom-calendar-calendar .custom-calendar-panel{
+   border-top: none !important; 
+}
+
+.custom-calendar-calendar .custom-calendar-cell:hover:not(.custom-calendar-cell-selected):not(.custom-calendar-cell-range-start):not(.custom-calendar-cell-range-end):not(.custom-calendar-cell-disabled) .custom-calendar-cell-inner {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.custom-calendar-calendar .custom-calendar-cell .custom-calendar-cell-inner{
+  border-radius: 50% !important;
+}
+
+/* Weekday header color change */
+.custom-calendar-content > thead > tr > th {
+  text-align: left !important;
+  padding: 0px 8px !important;
+  font-weight: 600 !important;
+}
+
+.custom-calendar-calendar .custom-calendar-cell {
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.custom-calendar-content > thead > tr > th {
+  font-weight: 600 !important;
+  text-align: center !important;
+}
+/* .custom-calendar-content > tbody > tr > td:nth-child(1) {
+  color: red !important; 
+}
+.custom-calendar-content > tbody > tr > td:nth-child(7) {
+  color: red !important; 
+} */
+
+
+.single-line-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.schedule-calendar-calendar.schedule-calendar-calendar-full .schedule-calendar-calendar-date{
+  outline: 1px solid #E8E8E8 !important;
+  margin: 0px !important;
+  text-align: left;
+  font-size: 21px;
+  font-weight: 500;
+}
+.schedule-calendar-calendar.schedule-calendar-calendar-full .schedule-calendar-panel .schedule-calendar-body th{
+  font-size: 16px;
+  font-weight: 500;
+  outline: 1px solid #E8E8E8 !important;
+  background-color: transparent !important;
+  text-align: left !important;
+  padding: 12px !important;  
+  }
+  
+  .schedule-calendar-calendar .schedule-calendar-panel .schedule-calendar-body{
+    padding: 0px !important;
+    border: 1px solid #E8E8E8 !important;
+    }
+    
+.schedule-calendar-calendar.schedule-calendar-calendar-full .schedule-calendar-calendar-date-content::-webkit-scrollbar{
+  width: 0px;
+  background: #E8E8E8 !important;
+  border-radius: 10px;
+}
+.schedule-calendar-calendar.schedule-calendar-calendar-full .schedule-calendar-cell-in-view.schedule-calendar-cell-selected .schedule-calendar-calendar-date, :where(.css-dev-only-do-not-override-mc1tut).schedule-calendar-calendar.schedule-calendar-calendar-full .schedule-calendar-cell-in-view.schedule-calendar-cell-selected .schedule-calendar-calendar-date-today{
+  background-color: var(--secondary);
+}
+
+.schedule-calendar-calendar.schedule-calendar-calendar-full .schedule-calendar-cell-selected .schedule-calendar-calendar-date .schedule-calendar-calendar-date-value{
+ color: white !important;
+}
+
+.custom-dropdown-header-menu-item{
+  padding: 0 !important;
+  margin: 8px 0 !important;
+}
+
+.confirmation-modal .confirmation-modal-content{
+  border-radius: 20px !important;
+  padding: 24px !important;
+}
+
+.confirmation-modal-root .confirmation-modal-wrap::-webkit-scrollbar {
+  scrollbar-width: 0px !important;
+  display: none;
+}
+
+.drawer-style .drawer-style-body{
+  padding: 0 !important;
+}
+
+.table-row-light {
+  background-color: #ffffff;
+}
+
+.table-row-dark {
+  background-color: #F3F6FC; 
+}
+
+.custom-table-thead .custom-table-cell{
+  background: white !important;
+}
+
+.custom-table-wrapper .custom-table-thead >tr>th{
+  border-bottom : 1px solid black !important;
+}
+
+.custom-table-wrapper .custom-table-thead >tr>th:not(:last-child):not(.custom-table-selection-column):not(.custom-table-row-expand-icon-cell):not([colspan])::before, :where(.css-dev-only-do-not-override-mc1tut).custom-table-wrapper .custom-table-thead >tr>td:not(:last-child):not(.custom-table-selection-column):not(.custom-table-row-expand-icon-cell):not([colspan])::before{
+  content: none !important;
+
+}
+.filterBadge .ant-scroll-number-only-unit {
+  font-size: 12px !important;
+  font-weight: 700;
+}
+
+.flag-dropdown {
+border-radius: 8px !important;
+width: 50px !important;
+padding: 6px !important;
+background-color: #ffffff !important;
+}
+
+.react-tel-input .flag-dropdown.open .selected-flag {
+  border-radius: 8px !important;
+}
+
+.form-control {
+  padding-left: 10px !important;
+}
+
+.react-tel-input .selected-flag:hover, .react-tel-input .selected-flag:focus {
+  border-radius: 8px !important;
+}
+
+.ant-rangepicker-outlined{
+  border : none !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  height: 40px !important;
+}
+
+.custom-divider-horizontal{
+  margin: 12px 0 !important;
+}
+
+button {
+  cursor: pointer;
+}
+
+.custom-collapse-quiz-header {
+  align-items: center !important;
+}
+
+.custom-card .ant-card-body {
+  padding: 0 !important;
+}

@@ -1,0 +1,160 @@
+import { NextRequest, NextResponse } from "next/server";
+import { Role, RoutePaths } from "./utils/enums";
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("token")?.value;
+  const role = request.cookies.get("role_name")?.value;
+  const userOnboarding = request.cookies.get("user_onboarding")?.value;
+  const instructorOnboarding = request.cookies.get(
+    "instructor_onboarding"
+  )?.value;
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/setup-password")) {
+    return NextResponse.next();
+  }
+
+  const publicRoutes = [
+    "/becomeInstructor",
+    "/browse",
+    "/homepage",
+    "/onboarding",
+    "/subscription",
+    "/setup-password",
+  ];
+
+  const userRoutes = [
+    "/dashboard",
+    "/my-certificate",
+    "/my-courses",
+    "/my-explore",
+    "/my-schedule",
+    "/my-settings",
+    "/chat",
+    "/checkout",
+  ];
+
+  const instructorRoutes = [
+    "/announcements",
+    "/assignments",
+    "/courses",
+    "/instructor-panel",
+    "/live-classes",
+    "/quizzes",
+    "/schedule",
+    "/settings",
+    "/students",
+    "/teachers",
+  ];
+
+  const teacherRoutes = [
+    "/teacher",
+  ];
+
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
+  }
+
+  const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
+  const isUser = userRoutes.some((route) => pathname.startsWith(route));
+  const isInstructor = instructorRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+  const isTeacher = teacherRoutes.some((route) => pathname.startsWith(route));
+
+  if (token && isPublic) {
+    let url = "/";
+    if (role === Role?.STUDENT) {
+      url =
+        userOnboarding === "undefined"
+          ? RoutePaths?.Dashboard
+          : RoutePaths?.Onboarding;
+    } else if (role === Role?.TEACHER) {
+      // Teachers always bypass onboarding and go straight to dashboard
+      url = RoutePaths?.TeacherDashboard;
+    } else {
+      url = !(instructorOnboarding === "completed")
+        ? `${RoutePaths?.BecomeInstructor}/onboarding`
+        : RoutePaths?.InstructorPanel;
+    }
+
+    if (pathname !== url) {
+      return NextResponse.redirect(new URL(url, request.url));
+    } else {
+      return NextResponse.next();
+    }
+  }
+
+  if (!token && isPublic) {
+    return NextResponse.next();
+  }
+
+  if (!token && (isUser || isInstructor || isTeacher)) {
+    return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
+  }
+
+  if (token && role) {
+    let onboardingRedirectUrl = null;
+
+    if (role === Role?.STUDENT) {
+      if (!(userOnboarding === "undefined")) {
+        onboardingRedirectUrl = RoutePaths?.Onboarding;
+      }
+    } else if (role === Role?.INSTRUCTOR) {
+      if (!(instructorOnboarding === "undefined")) {
+        onboardingRedirectUrl = `${RoutePaths?.BecomeInstructor}/onboarding`;
+      }
+    }
+    // Teachers require no onboarding checks
+
+    if (onboardingRedirectUrl && pathname !== onboardingRedirectUrl) {
+      return NextResponse.redirect(new URL(onboardingRedirectUrl, request.url));
+    }
+
+    if (role === Role?.STUDENT && isUser) return NextResponse.next();
+    if (role === Role?.INSTRUCTOR && isInstructor) return NextResponse.next();
+    if (role === Role?.TEACHER && isTeacher) return NextResponse.next();
+
+    // Default fallback based on role
+    let defaultUrl = RoutePaths?.Homepage;
+    if (role === Role?.STUDENT) {
+      defaultUrl = RoutePaths?.Dashboard;
+    } else if (role === Role?.TEACHER) {
+      defaultUrl = RoutePaths?.TeacherDashboard;
+    } else if (role === Role?.INSTRUCTOR) {
+      defaultUrl = RoutePaths?.InstructorPanel;
+    }
+
+    return NextResponse.redirect(new URL(defaultUrl, request.url));
+  }
+}
+export const config = {
+  matcher: [
+    "/",
+    "/becomeInstructor/:path*",
+    "/browse/:path*",
+    "/homepage",
+    "/onboarding",
+    "/setup-password",
+    "/dashboard/:path*",
+    "/my-certificate/:path*",
+    "/my-courses/:path*",
+    "/my-explore/:path*",
+    "/my-schedule/:path*",
+    "/my-settings/:path*",
+    "/chat",
+    "/checkout",
+    "/announcements/:path*",
+    "/assignments/:path*",
+    "/courses/:path*",
+    "/instructor-panel/:path*",
+    "/live-classes/:path*",
+    "/quizzes/:path*",
+    "/schedule/:path*",
+    "/settings/:path*",
+    "/students/:path*",
+    "/teachers/:path*",
+    "/teacher/:path*",
+  ],
+};
+
