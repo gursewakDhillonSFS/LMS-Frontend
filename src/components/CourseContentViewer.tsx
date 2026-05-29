@@ -3,6 +3,12 @@ import React, { useRef, useCallback, useState } from "react";
 import { Modal, Spin } from "antd";
 import { toast } from "react-toastify";
 import { markLessonCompleteApi, markSublessonCompleteApi } from "@/services/collections";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+import CommonButton from "./CommonButton";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface ContentItem {
   id: string;
@@ -28,9 +34,10 @@ const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
   onCompleted,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const pdfContainerRef = useRef<HTMLDivElement>(null);
   const [completedLocal, setCompletedLocal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [numPages, setNumPages] = useState<number>();
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   const markComplete = useCallback(async () => {
     if (!item || completedLocal) return;
@@ -63,14 +70,10 @@ const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
     markComplete();
   }, [markComplete]);
 
-  const handlePdfScroll = useCallback(() => {
-    const el = pdfContainerRef.current;
-    if (!el) return;
-    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
-    if (atBottom) {
-      markComplete();
-    }
-  }, [markComplete]);
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setPageNumber(1);
+  };
 
   // Reset local state when item changes
   const handleAfterOpen = useCallback(() => {
@@ -103,7 +106,7 @@ const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
       footer={null}
       width={isVideo ? "70%" : "80%"}
       centered
-      destroyOnClose
+      destroyOnHidden
       className="course-content-viewer-modal"
     >
       {!item.file_url ? (
@@ -128,25 +131,50 @@ const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
           </p>
         </div>
       ) : isPdf ? (
-        <div className="flex flex-col gap-2">
-          <div
-            ref={pdfContainerRef}
-            onScroll={handlePdfScroll}
-            className="w-full overflow-y-auto rounded-xl"
-            style={{ maxHeight: "75vh" }}
-          >
-            <iframe
-              src={`${item.file_url}#toolbar=0&navpanes=0&scrollbar=0`}
-              className="w-full rounded-xl"
-              style={{ height: "75vh", border: "none" }}
-              title={item.name}
-            />
+        <div className="flex flex-col gap-4 items-center">
+          <div className="w-full overflow-y-auto rounded-xl flex justify-center bg-gray-100 p-4" style={{ maxHeight: "65vh" }}>
+            <Document
+              file={item.file_url}
+              onLoadSuccess={onDocumentLoadSuccess}
+              loading={<Spin size="large" />}
+              error={<div className="text-red-500">Failed to load PDF. Please check the URL.</div>}
+            >
+              <Page pageNumber={pageNumber} width={800} />
+            </Document>
           </div>
-          <p className="text-center text-xs text-gray-400">
-            {completedLocal
-              ? "✓ Lesson completed!"
-              : "Scroll to the bottom of the PDF to mark this lesson as complete."}
-          </p>
+          
+          {numPages && (
+            <div className="flex items-center gap-4">
+              <CommonButton
+                text="Previous"
+                onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
+                disable={pageNumber <= 1}
+                className="bg-gray-200 text-gray-700"
+              />
+              <p className="text-sm font-medium">
+                Page {pageNumber} of {numPages}
+              </p>
+              <CommonButton
+                text="Next"
+                onClick={() => setPageNumber(prev => Math.min(prev + 1, numPages))}
+                disable={pageNumber >= numPages}
+                className="bg-gray-200 text-gray-700"
+              />
+            </div>
+          )}
+
+          {!completedLocal ? (
+            <CommonButton
+              text="Mark as Complete"
+              onClick={markComplete}
+              disable={loading}
+              className="mt-2 w-[200px]"
+            />
+          ) : (
+            <p className="text-center text-xs text-green-600 font-bold">
+              ✓ Lesson completed!
+            </p>
+          )}
         </div>
       ) : (
         <div className="flex items-center justify-center h-64 text-gray-400">

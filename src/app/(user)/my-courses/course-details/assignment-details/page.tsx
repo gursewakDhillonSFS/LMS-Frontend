@@ -1,31 +1,90 @@
 "use client";
-import AssignmentDetailsFormCollapse from "@/components/AssignmentDetailsFormCollapse";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
-import TabSwitcher from "@/components/TabSwitcher";
-import TextFormatComponent from "@/components/TextFormatComponent";
-import { AssignmentDetailTabs } from "@/utils/constant";
-import { AssignmentDetailTabEnum, RoutePaths } from "@/utils/enums";
+import { RoutePaths } from "@/utils/enums";
 import { Breadcrumb } from "antd";
-import React, { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { getAssignmentDetailsApi, submitAssignmentApi } from "@/services/collections";
 import QuillEditor from "@/components/QuillEditor";
+import CommonButton from "@/components/CommonButton";
+import { toast } from "react-toastify";
 
-const AssignmentDetails = () => {
-  const [activeTab, setActiveTab] = useState<string>(
-    AssignmentDetailTabEnum?.ASSIGNMENT_DETAILS
-  );
+const AssignmentDetailsContent = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const assignmentId = searchParams.get("assignmentId");
+  const courseId = searchParams.get("courseId");
+
+  const [assignment, setAssignment] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [submittedText, setSubmittedText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchAssignmentDetails = useCallback(async () => {
+    if (!assignmentId) return;
+    try {
+      setLoading(true);
+      const res = await getAssignmentDetailsApi(assignmentId);
+      if (res?.status && res?.data) {
+        setAssignment(res.data);
+      } else {
+        toast.error("Failed to load assignment details.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error loading assignment details.");
+    } finally {
+      setLoading(false);
+    }
+  }, [assignmentId]);
+
+  useEffect(() => {
+    fetchAssignmentDetails();
+  }, [fetchAssignmentDetails]);
+
+  const handleSubmit = async () => {
+    if (!assignmentId || !submittedText.trim()) return;
+    setSubmitting(true);
+    try {
+      await submitAssignmentApi(assignmentId, {
+        submittedText,
+      });
+      toast.success("Assignment submitted successfully!");
+      // Optionally, route back to course details assignments tab
+      if (courseId) {
+        router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=assignments`);
+      } else {
+        router.push(`${RoutePaths.MyCourses}`);
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to submit assignment");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const items = [
     {
       title: "My Courses",
       href: RoutePaths?.MyCourses,
     },
     {
-      title: "Finance & Quantitative Modeling for Analysts",
-      href: `${RoutePaths?.MyCourses}/course-details`,
+      title: "Course Details",
+      href: courseId ? `${RoutePaths?.MyCourses}/course-details?id=${courseId}` : `${RoutePaths?.MyCourses}`,
     },
     {
-      title: "Physics Assignment",
+      title: assignment?.assignmentName || "Assignment Details",
     },
   ];
+
+  if (loading) {
+    return <div className="p-8 text-center text-gray-500">Loading assignment...</div>;
+  }
+
+  if (!assignment) {
+    return <div className="p-8 text-center text-red-500">Assignment not found.</div>;
+  }
+
   return (
     <div className="flex flex-col gap-[24px]">
       <Breadcrumb
@@ -34,58 +93,86 @@ const AssignmentDetails = () => {
         itemRender={(item) => <BreadcrumbItemRender item={item} />}
       />
       <div className="flex items-center justify-between">
-        <TabSwitcher
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          tabs={AssignmentDetailTabs}
-        />
-        <p className="text-[20px] text-[#5EB85C] font-bold">
-          Due on: 5Day : 15Hrs : 50Min
-        </p>
+        <h1 className="text-[28px] font-bold text-primary">
+          {assignment.assignmentName}
+        </h1>
+        {assignment.dueDate && (
+          <p className="text-[16px] text-[#5EB85C] font-bold">
+            Due on: {new Date(assignment.dueDate).toLocaleDateString()}
+          </p>
+        )}
       </div>
 
-      {activeTab === AssignmentDetailTabEnum?.ASSIGNMENT_DETAILS && (
-        <div className="w-full flex flex-col gap-[12px]">
-          <div className="flex flex-col gap-[12px]">
-            <h1 className="font-[700] text-[20px] text-[#0E0E0E]">Overview</h1>
-            <div className="text-[16px] text-[#002333]">
-              <QuillEditor
-                readOnly
-                value={`<p>Pellentesque nibh porta facilisis nunc. Amet vulputate ornare varius ultricies tellus duis fringilla interdum. Dolor cursus suspendisse eget parturient blandit volutpat nulla duis elit. Ut varius malesuada velit lacus fringilla posuere aliquam. Sed eu nunc urna sagittis lacinia. Eget ac amet purus ultrices faucibus tellus commodo. Nec aliquam et sed elit tortor et commodo non facilisi. Et risus sit quisque vel porttitor eu augue nibh sagittis. Condimentum egestas leo viverra iaculis arcu amet</p>`}
-              />
+      <div className="w-full flex flex-col gap-[24px]">
+        {/* Assignment Overview */}
+        <div className="flex flex-col gap-[12px] bg-white p-6 rounded-[12px] shadow-sm">
+          <h2 className="font-[700] text-[20px] text-[#0E0E0E]">Overview</h2>
+          <div
+            className="text-[16px] text-[#002333]"
+            dangerouslySetInnerHTML={{ __html: assignment?.overview || "" }}
+          />
+        </div>
+
+        {/* Projects / Tasks */}
+        {assignment?.projects && assignment.projects.length > 0 && (
+          <div className="flex flex-col gap-[16px] bg-white p-6 rounded-[12px] shadow-sm">
+            <h2 className="font-[700] text-[20px] text-[#0E0E0E]">Projects / Tasks</h2>
+            <div className="flex flex-col gap-4">
+              {assignment.projects.map((proj: any, idx: number) => (
+                <div key={idx} className="flex flex-col gap-2 border-l-4 border-primary pl-4 py-2 bg-gray-50 rounded-r-lg">
+                  <span className="font-bold text-[16px] text-[#2D2D2D]">{proj.title}</span>
+                  <div
+                    className="text-sm text-gray-600"
+                    dangerouslySetInnerHTML={{ __html: proj.description || "" }}
+                  />
+                </div>
+              ))}
             </div>
           </div>
-          <div className="w-full flex flex-col gap-[12px]">
-            <h1 className="font-[700] text-[20px] text-[#0E0E0E]">Project</h1>
-            <AssignmentDetailsFormCollapse />
+        )}
+
+        {/* Submission Editor */}
+        <div className="flex flex-col gap-[12px] bg-white p-6 rounded-[12px] shadow-sm">
+          <h2 className="font-[700] text-[20px] text-[#0E0E0E]">Your Submission</h2>
+          <p className="text-sm font-[500] text-[#7B7B7B] mb-2">
+            Provide your answers for the projects above. You can include links to repositories, documents, or type your answers directly.
+          </p>
+          <div className="bg-gray-50 rounded-lg p-2">
+            <QuillEditor
+              value={submittedText}
+              onChange={setSubmittedText}
+            />
           </div>
 
-          <p className="plus-jakarta-sans text-sm font-[500] text-[#7B7B7B]">
-            <strong>Note: </strong>Please complete the assignment first. Your
-            score will be based on your performance.
-          </p>
-        </div>
-      )}
-      {activeTab === AssignmentDetailTabEnum?.SCORE && (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white rounded-[12px] flex items-center justify-center font-semibold w-full">
-            <TextFormatComponent text="A+" className="!text-[150px]" />
-          </div>
-          <div className="flex flex-col gap-[16px] bg-white rounded-[12px] py-4 px-6">
-            <h1 className="font-bold text-lg">Score Remark</h1>
-            <p className="text-base text-[#002333]">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Obcaecati eum perspiciatis accusamus nostrum et voluptate cumque,
-              delectus molestias necessitatibus aperiam, id placeat quam
-              possimus harum eaque in, quae magnam soluta aliquid pariatur error
-              dolores qui nobis? Magni ullam, hic quas similique sapiente magnam
-              porro aliquam iure corrupti sint nobis nam.
-            </p>
+          <div className="flex justify-end gap-3 mt-4">
+            <CommonButton
+              text="Cancel"
+              onClick={() => {
+                if (courseId) {
+                  router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=assignments`);
+                } else {
+                  router.push(`${RoutePaths.MyCourses}`);
+                }
+              }}
+              className="bg-gray-200 text-gray-700 border-none w-[120px]"
+            />
+            <CommonButton
+              text="Submit Assignment"
+              onClick={handleSubmit}
+              disable={!submittedText.trim() || submitting}
+              className="w-[200px] !bg-secondary text-white"
+            />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default AssignmentDetails;
+export default function AssignmentDetails() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <AssignmentDetailsContent />
+    </Suspense>
+  );
+}

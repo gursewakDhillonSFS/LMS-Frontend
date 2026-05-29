@@ -5,7 +5,10 @@ import QuillEditor from "@/components/QuillEditor";
 import {
   getCourseProgressApi,
   getLessonsWithSublessonsApi,
+  getCourseReviewApi,
 } from "@/services/collections";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 import {
   ClockWheelIcon,
   FileIcon,
@@ -103,6 +106,10 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
+
+  // Get current user id
+  const userId = useSelector((state: RootState) => state?.userdata?.user_id);
 
   // Lessons & progress state
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -148,10 +155,25 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
     }
   }, [courseId, batchId]);
 
+  const fetchReviews = useCallback(async () => {
+    if (!courseId) return;
+    try {
+      const res = await getCourseReviewApi({ courseId });
+      if (res?.status && res?.data) {
+        // Check if the current user has already submitted a review
+        const userReviewed = res.data.some((review: any) => review.user_id === userId);
+        setHasReviewed(userReviewed);
+      }
+    } catch {
+      // silently fail
+    }
+  }, [courseId, userId]);
+
   useEffect(() => {
     fetchLessons();
     fetchProgress();
-  }, [fetchLessons, fetchProgress]);
+    fetchReviews();
+  }, [fetchLessons, fetchProgress, fetchReviews]);
 
   // ─── Content viewer handlers ─────────────────────────────────────────────
   const openContent = useCallback(
@@ -186,8 +208,9 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         review: reviewText,
       });
       toast.success("Review submitted!");
-    } catch {
-      toast.error("Failed to submit review");
+      setHasReviewed(true);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to submit review");
     } finally {
       setReviewLoading(false);
       setIsReviewModalVisible(false);
@@ -204,12 +227,14 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
       <div className="flex flex-col gap-[12px]">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-[700] text-[20px] text-[#0E0E0E]">Overview</h1>
-          <CommonButton
-            text="Write a Review"
-            icon={<StarOutlined />}
-            onClick={() => setIsReviewModalVisible(true)}
-            className="!bg-secondary text-white w-[160px]"
-          />
+          {!hasReviewed && (
+            <CommonButton
+              text="Write a Review"
+              icon={<StarOutlined />}
+              onClick={() => setIsReviewModalVisible(true)}
+              className="!bg-secondary text-white w-[160px]"
+            />
+          )}
         </div>
         {displayOverview && (
           <div className="text-[16px] text-[#002333]">
@@ -254,8 +279,16 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         ) : (
           <div className="flex flex-col gap-[12px]">
             {lessons.map((lesson, index) => {
-              const isLocked = lesson.unlock_after_previous && index > 0;
-              const isLessonCompleted = completedLessons.has(lesson.lesson_id);
+              const checkIsLessonCompleted = (l: Lesson) => {
+                if (completedLessons.has(l.lesson_id)) return true;
+                if (l.sublessons && l.sublessons.length > 0) {
+                  return l.sublessons.every((sl) => completedSublessons.has(sl.sublesson_id));
+                }
+                return false;
+              };
+
+              const isLocked = lesson.unlock_after_previous && index > 0 && !checkIsLessonCompleted(lessons[index - 1]);
+              const isLessonCompleted = checkIsLessonCompleted(lesson);
               const isActive = Array.isArray(activeKey)
                 ? activeKey.includes(index.toString())
                 : activeKey === index.toString();
@@ -405,7 +438,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         open={isReviewModalVisible}
         onCancel={() => setIsReviewModalVisible(false)}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
         className="rounded-2xl"
         closeIcon={<div className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors">✕</div>}
       >

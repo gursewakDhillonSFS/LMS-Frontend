@@ -7,9 +7,11 @@ import {
   GlobeIcon,
   LogoutIcon,
   NotificationIcon,
+  EarPhoneIcon,
 } from "@/utils/icons";
 import { Avatar, Drawer, Dropdown, MenuProps } from "antd";
 import NotificationPanel from "./NotificationPanel";
+import AnnouncementPanel from "./AnnouncementPanel";
 import ChangePassword from "./modal/ChangePassword";
 import ConfirmationModal from "./modal/ConfirmationModal";
 import { useRouter } from "next/navigation";
@@ -54,6 +56,7 @@ const InstructorHeader = () => {
   const route = useRouter();
   const [changePassword, setChangePassword] = useState(false);
   const [notificationDrawer, setNotificationDrawer] = useState(false);
+  const [announcementDrawer, setAnnouncementDrawer] = useState(false);
 
   const [logoutLoading, setLogOutLoading] = useState(false);
 
@@ -102,6 +105,18 @@ const InstructorHeader = () => {
           <NotificationPanel onClose={() => setNotificationDrawer(false)} />
         </Drawer>
       )}
+      {announcementDrawer && (
+        <Drawer
+          width={490}
+          placement="right"
+          prefixCls="drawer-style"
+          closable={false}
+          onClose={() => setAnnouncementDrawer(false)}
+          open={announcementDrawer}
+        >
+          <AnnouncementPanel onClose={() => setAnnouncementDrawer(false)} isTeacher />
+        </Drawer>
+      )}
       <SearchInput
         search={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -109,6 +124,10 @@ const InstructorHeader = () => {
       />
 
       <div className="flex items-center gap-[12px] cursor-pointer">
+        <div onClick={() => setAnnouncementDrawer(true)}>
+          <EarPhoneIcon />
+        </div>
+        <div className="h-[23px] border-l-1 border-[#C8C8C8] "></div>
         <div onClick={() => setNotificationDrawer(true)}>
           <NotificationIcon />
         </div>

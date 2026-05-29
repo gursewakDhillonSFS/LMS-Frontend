@@ -6,9 +6,10 @@ import QuillEditor from "@/components/QuillEditor";
 import { getAssignmentsByBatchApi } from "@/services/collections";
 import { AssignmentTab } from "@/utils/constant";
 import { AssignmentIcon, StopWatchIcon } from "@/utils/icons";
-import { Spin, Modal, Input } from "antd";
+import { Spin } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { submitAssignmentApi } from "@/services/collections";
 
 export interface Assignment {
@@ -23,10 +24,11 @@ export interface Assignment {
 
 interface ApiAssignment {
   assignment_id: string;
-  title: string;
-  description: string;
+  assignmentName: string;
+  overview: string;
   dueDate: string;
   status: string;
+  projects?: { title: string; description: string }[];
   studentSubmission: { status: string; result: string | null } | null;
 }
 
@@ -42,12 +44,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
   const [assignmentTab, setAssignmentTab] = useState("current");
   const [assignments, setAssignments] = useState<ApiAssignment[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Submit modal state
-  const [submitModalOpen, setSubmitModalOpen] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState<ApiAssignment | null>(null);
-  const [submittedText, setSubmittedText] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   const fetchAssignments = useCallback(async () => {
     if (!batchId || !courseId) return;
@@ -73,29 +70,6 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
     fetchAssignments();
   }, [fetchAssignments]);
 
-  const openSubmitModal = (assignment: ApiAssignment) => {
-    setSelectedAssignment(assignment);
-    setSubmittedText("");
-    setSubmitModalOpen(true);
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedAssignment || !submittedText.trim()) return;
-    setSubmitting(true);
-    try {
-      await submitAssignmentApi(selectedAssignment.assignment_id, {
-        submittedText,
-      });
-      toast.success("Assignment submitted successfully!");
-      setSubmitModalOpen(false);
-      fetchAssignments();
-    } catch {
-      toast.error("Failed to submit assignment");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   const getSubmissionStatus = (a: ApiAssignment) => {
     return a.studentSubmission?.status || "Not Submitted";
   };
@@ -117,18 +91,20 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
         key={assignment.assignment_id}
         className="bg-white flex flex-col gap-3 rounded-xl shadow-sm p-4"
       >
-        <div className="flex w-full gap-2">
+        <div className="flex w-full gap-2 items-start">
           <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-[#002333] flex-shrink-0">
             <AssignmentIcon />
           </div>
-          <div className="flex flex-col w-full gap-3">
-            <div className="flex flex-col w-full gap-1">
-              <div className="w-full flex items-center justify-between">
-                <h3 className="font-bold text-lg">{assignment.title}</h3>
-                <BadgeComponent status={subStatus} />
+          <div className="flex flex-col flex-1 gap-3 min-w-0">
+            <div className="flex flex-col w-full gap-1 min-w-0 overflow-hidden">
+              <div className="w-full flex items-start justify-between gap-2">
+                <h3 className="font-bold text-lg break-words whitespace-normal text-wrap max-w-[70%]">{assignment.assignmentName}</h3>
+                <div className="flex-shrink-0">
+                  <BadgeComponent status={subStatus} />
+                </div>
               </div>
-              <div className="text-sm text-[#9A9A9A] line-clamp-2 leading-[120%]">
-                <QuillEditor readOnly value={assignment.description || ""} />
+              <div className="text-sm text-[#9A9A9A] line-clamp-2 leading-[120%] break-words whitespace-normal [&_*]:whitespace-normal [&_*]:break-words overflow-hidden">
+                <div dangerouslySetInnerHTML={{ __html: assignment.overview || "" }} />
               </div>
             </div>
             <div className="w-full flex justify-between items-center">
@@ -141,7 +117,9 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
                   text={isSubmitted ? "Submitted" : "Start Assignment"}
                   icon={!isSubmitted ? <StopWatchIcon /> : undefined}
                   onClick={() => {
-                    if (!isSubmitted) openSubmitModal(assignment);
+                    if (!isSubmitted) {
+                      router.push(`/my-courses/course-details/assignment-details?assignmentId=${assignment.assignment_id}&courseId=${courseId}`);
+                    }
                   }}
                   className={`!bg-secondary text-white ${!isSubmitted ? "flex-row-reverse" : "opacity-70"}`}
                   disable={isSubmitted}
@@ -182,50 +160,6 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
         </div>
       )}
 
-      {/* Submit Modal */}
-      <Modal
-        open={submitModalOpen}
-        title={`Submit: ${selectedAssignment?.title}`}
-        onCancel={() => setSubmitModalOpen(false)}
-        footer={[
-          <CommonButton
-            key="cancel"
-            text="Cancel"
-            onClick={() => setSubmitModalOpen(false)}
-            className="border mr-2"
-          />,
-          <CommonButton
-            key="submit"
-            text="Submit Assignment"
-            loading={submitting}
-            onClick={handleSubmit}
-            className="!bg-secondary text-white"
-            disable={!submittedText.trim()}
-          />,
-        ]}
-      >
-        <div className="flex flex-col gap-4 py-4">
-          {selectedAssignment?.description && (
-            <div className="bg-gray-50 rounded-lg p-3">
-              <p className="text-sm font-semibold text-[#0E0E0E] mb-1">Assignment:</p>
-              <div className="text-sm text-[#7B7B7B]">
-                <QuillEditor readOnly value={selectedAssignment.description} />
-              </div>
-            </div>
-          )}
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold">
-              Your Answer <span className="text-red-500">*</span>
-            </label>
-            <Input.TextArea
-              rows={5}
-              value={submittedText}
-              onChange={(e) => setSubmittedText(e.target.value)}
-              placeholder="Write your answer, GitHub link, or any relevant details..."
-            />
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 };

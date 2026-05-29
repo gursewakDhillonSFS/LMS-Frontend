@@ -15,11 +15,13 @@ import {
   removeFromCart,
   removeFromFavorite,
   userCourseList,
+  getAnnouncementsByCoursesApi,
 } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
 import { ClockWheelIcon, EarPhoneIcon } from "@/utils/icons";
 import { DataNotFound, Live } from "@/utils/images";
 import { courseData, EnrolledCourseProp } from "@/utils/interface";
+import { AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
 import {
   LeftOutlined,
   LoadingOutlined,
@@ -34,48 +36,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { toast } from "react-toastify";
 
-const notificationData = [
-  {
-    time: "13 May, 2025",
-    notifications: [
-      {
-        title: "Organization name",
-        subtitle: "Finance & Quantitative Modeling for Analysts",
-        message: "Hello Students Today Live class has been canceled",
-        timestamp: "17:50",
-      },
-      {
-        title: "Organization name",
-        subtitle: "Finance & Quantitative Modeling for Analysts",
-        message: "Hello Students Today Live class has been canceled",
-        timestamp: "17:50",
-      },
-      {
-        title: "Organization name",
-        subtitle: "Finance & Quantitative Modeling for Analysts",
-        message: "Hello Students Today Live class has been canceled",
-        timestamp: "17:50",
-      },
-    ],
-  },
-  {
-    time: "10 May, 2025",
-    notifications: [
-      {
-        title: "Organization name",
-        subtitle: "Finance & Quantitative Modeling for Analysts",
-        message: "Hello Students Today Live class has been canceled",
-        timestamp: "17:50",
-      },
-      {
-        title: "Organization name",
-        subtitle: "Finance & Quantitative Modeling for Analysts",
-        message: "Hello Students Today Live class has been canceled",
-        timestamp: "17:50",
-      },
-    ],
-  },
-];
+
 
 interface EventProp {
   date: Dayjs;
@@ -179,7 +140,7 @@ const UserDashboard = () => {
   );
   const [loading, setLoading] = useState(false);
   const [courseLoading, setCourseLoading] = useState(false);
-  console.log(courseLoading);
+  const [announcements, setAnnouncements] = useState<AnnouncementPayload[]>([]);
 
   const organization_id = useSelector(
     (state: RootState) => state.userdata?.organization_id
@@ -221,10 +182,19 @@ const UserDashboard = () => {
     try {
       const response = await userCourseList(param);
       if (response.status) {
-        console.log(response);
         if (response?.data?.courses?.length > 0) {
           setEnrolledCourse(response?.data?.courses);
           setAllCourses(false);
+          
+          const coursesPayload = response?.data?.courses.map((c: any) => ({
+            courseId: c.course_id,
+            batchId: c.batch_id
+          }));
+          
+          const annRes = await getAnnouncementsByCoursesApi({ courses: coursesPayload });
+          if (annRes?.status && annRes?.data?.announcements) {
+             setAnnouncements(annRes.data.announcements);
+          }
         }
       } else {
         setCourseLoading(false);
@@ -510,42 +480,38 @@ const UserDashboard = () => {
               </h1>
 
               <div className="flex flex-col gap-[12px] my-[12px]">
-                {notificationData.map((group) => (
-                  <div key={group.time} className="flex flex-col gap-[12px]">
-                    <p className="text-white text-[16px] font-[500] leading-[150%]">
-                      {group.time}
-                    </p>
-                    {group.notifications.map((note, index) => (
-                      <div
-                        key={index}
-                        className="flex gap-[10px] p-[6px] rounded-[6px]"
-                        style={{ background: "rgba(255, 255, 255, 0.05)" }}
-                      >
-                        <div className="bg-primary min-w-[44px] h-[44px] rounded-full flex items-center justify-center">
-                          <EarPhoneIcon />
-                        </div>
-                        <div className="flex flex-col gap-[6px]">
-                          <div className="flex justify-between">
-                            <div className="flex flex-col">
-                              <p className="font-[600] text-[16px] leading-[150%] text-white">
-                                {note.title}
-                              </p>
-                              <p className="text-[12px] leading-[140%] text-[#255BFF]">
-                                {note.subtitle}
-                              </p>
-                            </div>
-                            <p className="text-[14px] text-[#A9A9A9] leading-[150%]">
-                              {note.timestamp}
+                {announcements.length > 0 ? announcements.map((note, index) => (
+                  <div key={note._id || index} className="flex flex-col gap-[12px]">
+                    <div
+                      className="flex gap-[10px] p-[6px] rounded-[6px]"
+                      style={{ background: "rgba(255, 255, 255, 0.05)" }}
+                    >
+                      <div className="bg-primary min-w-[44px] h-[44px] rounded-full flex items-center justify-center">
+                        <EarPhoneIcon />
+                      </div>
+                      <div className="flex flex-col gap-[6px] w-full">
+                        <div className="flex justify-between w-full">
+                          <div className="flex flex-col">
+                            <p className="font-[600] text-[16px] leading-[150%] text-white">
+                              {note.courseName}
+                            </p>
+                            <p className="text-[12px] leading-[140%] text-[#255BFF]">
+                              {note.title}
                             </p>
                           </div>
-                          <div className="text-[14px] font-poppins leading-[150%] text-white">
-                            {note.message}
-                          </div>
+                          <p className="text-[14px] text-[#A9A9A9] leading-[150%]">
+                            {dayjs(note.publishedAt).format('DD MMM')}
+                          </p>
+                        </div>
+                        <div className="text-[14px] font-poppins leading-[150%] text-white">
+                          <span dangerouslySetInnerHTML={{ __html: note.message.slice(0, 50) + (note.message.length > 50 ? '...' : '') }}></span>
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                ))}
+                )) : (
+                  <p className="text-white text-sm">No announcements available.</p>
+                )}
               </div>
             </div>
           </div>

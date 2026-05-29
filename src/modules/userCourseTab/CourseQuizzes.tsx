@@ -4,9 +4,12 @@ import QuillEditor from "@/components/QuillEditor";
 import { getQuizzesByBatchApi, submitQuizApi } from "@/services/collections";
 import { TagColors } from "@/utils/constant";
 import { QuizCardIcon, QuizeStopWatch } from "@/utils/icons";
+import CustomTabSwitcher from "@/components/CustomTabSwitcher";
+import { AssignmentTab } from "@/utils/constant";
 import { Alert, Modal, Radio, Spin, Input } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface QuizQuestion {
   questionType: "mcq" | "essay";
@@ -38,21 +41,20 @@ interface CourseQuizzesProps {
 }
 
 const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
+  const [quizTab, setQuizTab] = useState("current");
   const [quizzes, setQuizzes] = useState<ApiQuiz[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Attempt modal
-  const [attemptOpen, setAttemptOpen] = useState(false);
-  const [selectedQuiz, setSelectedQuiz] = useState<ApiQuiz | null>(null);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [essayAnswers, setEssayAnswers] = useState<Record<number, string>>({});
-  const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   const fetchQuizzes = useCallback(async () => {
     if (!batchId || !courseId) return;
     setLoading(true);
     try {
-      const params = new URLSearchParams({ batchId, courseId });
+      const params = new URLSearchParams({
+        batchId,
+        courseId,
+        tab: quizTab === "current" ? "ongoing" : "past",
+      });
       const res = await getQuizzesByBatchApi(params);
       if (res?.status) {
         setQuizzes(res.data?.quizzes || []);
@@ -62,42 +64,11 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
     } finally {
       setLoading(false);
     }
-  }, [batchId, courseId]);
+  }, [batchId, courseId, quizTab]);
 
   useEffect(() => {
     fetchQuizzes();
   }, [fetchQuizzes]);
-
-  const openAttempt = (quiz: ApiQuiz) => {
-    setSelectedQuiz(quiz);
-    setAnswers({});
-    setEssayAnswers({});
-    setAttemptOpen(true);
-  };
-
-  const handleSubmitQuiz = async () => {
-    if (!selectedQuiz) return;
-    setSubmitting(true);
-    try {
-      const payload = {
-        answers: selectedQuiz.questions.map((q, idx) => ({
-          questionIndex: idx,
-          questionType: q.questionType,
-          ...(q.questionType === "mcq"
-            ? { selectedOption: answers[idx] || "" }
-            : { submittedText: essayAnswers[idx] || "" }),
-        })),
-      };
-      await submitQuizApi(selectedQuiz.quiz_id, payload);
-      toast.success("Quiz submitted successfully!");
-      setAttemptOpen(false);
-      fetchQuizzes();
-    } catch {
-      toast.error("Failed to submit quiz");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -107,16 +78,20 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
     );
   }
 
-  if (quizzes.length === 0) {
-    return (
-      <div className="text-center py-8 text-[#7B7B7B]">
-        No quizzes available for this course.
-      </div>
-    );
-  }
-
   return (
-    <div className="grid grid-cols-2 items-start gap-2">
+    <div className="flex flex-col gap-6">
+      <CustomTabSwitcher
+        tabs={AssignmentTab}
+        activeKey={quizTab}
+        onChange={setQuizTab}
+      />
+
+      {quizzes.length === 0 ? (
+        <div className="text-center py-8 text-[#7B7B7B]">
+          No quizzes available for this course.
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 items-start gap-2">
       {quizzes.map((quiz) => {
         const isSubmitted = !!quiz.studentSubmission;
         const tags = [quiz.quizType, quiz.enableTimer ? "Time Based" : null].filter(
@@ -131,9 +106,9 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
             <div className="bg-secondary w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0">
               <QuizCardIcon />
             </div>
-            <div className="flex-1 flex flex-col gap-[12px] w-full">
-              <div className="flex flex-col">
-                <h3 className="font-semibold text-[18px] leading-[120%]">
+            <div className="flex-1 flex flex-col gap-[12px] min-w-0">
+              <div className="flex flex-col min-w-0 overflow-hidden">
+                <h3 className="font-semibold text-[18px] leading-[120%] break-words whitespace-normal text-wrap max-w-full">
                   {quiz.quizName}
                 </h3>
                 {isSubmitted && (
@@ -182,7 +157,9 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
                 <CommonButton
                   text={isSubmitted ? "Submitted" : "Start Quiz"}
                   onClick={() => {
-                    if (!isSubmitted) openAttempt(quiz);
+                    if (!isSubmitted) {
+                      router.push(`/my-courses/course-details/course-quiz?quizId=${quiz.quiz_id}&courseId=${courseId}`);
+                    }
                   }}
                   icon={!isSubmitted ? <QuizeStopWatch /> : undefined}
                   className={`!w-[40%] !bg-secondary !text-white ${isSubmitted ? "opacity-70" : "flex-row-reverse"}`}
@@ -193,77 +170,9 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
           </div>
         );
       })}
+      </div>
+      )}
 
-      {/* Quiz Attempt Modal */}
-      <Modal
-        open={attemptOpen}
-        onCancel={() => setAttemptOpen(false)}
-        title={selectedQuiz?.quizName || "Quiz"}
-        width={720}
-        footer={[
-          <CommonButton
-            key="cancel"
-            text="Cancel"
-            onClick={() => setAttemptOpen(false)}
-            className="border mr-2"
-          />,
-          <CommonButton
-            key="submit"
-            text="Submit Quiz"
-            loading={submitting}
-            onClick={handleSubmitQuiz}
-            className="!bg-secondary text-white"
-          />,
-        ]}
-      >
-        {selectedQuiz && (
-          <div className="flex flex-col gap-6 py-4 max-h-[65vh] overflow-y-auto">
-            {selectedQuiz.enableTimer && selectedQuiz.timer && (
-              <Alert
-                type="info"
-                message={`Timed Quiz: ${selectedQuiz.timer} minutes`}
-                showIcon
-              />
-            )}
-            {selectedQuiz.questions.map((q, idx) => (
-              <div key={idx} className="flex flex-col gap-3 bg-gray-50 rounded-xl p-4">
-                <div className="flex justify-between items-start">
-                  <p className="font-semibold text-[#0E0E0E]">
-                    Q{idx + 1}. {q.question}
-                  </p>
-                  <span className="text-xs text-gray-400 bg-white border rounded-full px-2 py-0.5">
-                    {q.marks} marks
-                  </span>
-                </div>
-                {q.questionType === "mcq" ? (
-                  <Radio.Group
-                    value={answers[idx]}
-                    onChange={(e) =>
-                      setAnswers((prev) => ({ ...prev, [idx]: e.target.value }))
-                    }
-                    className="flex flex-col gap-2"
-                  >
-                    {q.options.map((opt, oi) => (
-                      <Radio key={oi} value={opt} className="text-[#002333]">
-                        {opt}
-                      </Radio>
-                    ))}
-                  </Radio.Group>
-                ) : (
-                  <Input.TextArea
-                    rows={3}
-                    placeholder="Write your answer..."
-                    value={essayAnswers[idx] || ""}
-                    onChange={(e) =>
-                      setEssayAnswers((prev) => ({ ...prev, [idx]: e.target.value }))
-                    }
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </Modal>
     </div>
   );
 };

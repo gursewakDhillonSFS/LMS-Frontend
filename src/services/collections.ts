@@ -395,6 +395,7 @@ export const gradeQuizSubmissionApi = (payload: {
 // ─── Announcement APIs ────────────────────────────────────────────────────────
 const CREATE_ANNOUNCEMENT = "/auth/announcement/v1/create";
 const GET_ANNOUNCEMENTS_BY_COURSE = "/auth/announcement/v1/by-course";
+const GET_ANNOUNCEMENTS_BY_COURSES = "/auth/announcement/v1/by-courses";
 const GET_ANNOUNCEMENTS_BY_INSTRUCTOR = "/auth/announcement/v1/by-instructor";
 const UPDATE_ANNOUNCEMENT = "/auth/announcement/v1/update";
 const DELETE_ANNOUNCEMENT = "/auth/announcement/v1/delete";
@@ -404,6 +405,9 @@ export const createAnnouncementApi = (payload: object) =>
 
 export const getAnnouncementsByCourseApi = (courseId: string, params?: URLSearchParams) =>
   getApi(`${GET_ANNOUNCEMENTS_BY_COURSE}/${courseId}${params ? '?' + params : ''}`);
+
+export const getAnnouncementsByCoursesApi = (payload: { courses: { courseId: string; batchId?: string }[] }) =>
+  postApi(GET_ANNOUNCEMENTS_BY_COURSES, payload);
 
 export const getAnnouncementsByInstructorApi = (params?: URLSearchParams) =>
   getApi(`${GET_ANNOUNCEMENTS_BY_INSTRUCTOR}${params ? '?' + params : ''}`);
