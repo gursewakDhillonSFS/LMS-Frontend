@@ -22,24 +22,26 @@ import { toast } from "react-toastify";
 import { postApi } from "@/services/methods";
 
 // ─── Type definitions ────────────────────────────────────────────────────────
+interface StudyMaterial {
+  file_url: string;
+  file_name: string;
+  file_type: string;
+}
+
 interface Sublesson {
   sublesson_id: string;
   sublesson_name: string;
   sublesson_description?: string;
-  file_url: string | null;
-  file_name: string | null;
-  file_type: string | null;
+  studyMaterials?: StudyMaterial[];
 }
 
 interface Lesson {
   lesson_id: string;
   lesson_name: string;
   lesson_description?: string;
-  file_url: string | null;
-  file_name: string | null;
-  file_type: string | null;
   unlock_after_previous?: boolean;
   sublessons: Sublesson[];
+  studyMaterials?: StudyMaterial[];
 }
 
 interface ViewerItem {
@@ -117,6 +119,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
   const [loadingLessons, setLoadingLessons] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
   const [completedSublessons, setCompletedSublessons] = useState<Set<string>>(new Set());
+  const [completedMaterials, setCompletedMaterials] = useState<Set<string>>(new Set());
   const [progressPercent, setProgressPercent] = useState(0);
 
   // Content viewer state
@@ -148,6 +151,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
       if (res?.status) {
         setCompletedLessons(new Set(res.data?.completed_lessons || []));
         setCompletedSublessons(new Set(res.data?.completed_sublessons || []));
+        setCompletedMaterials(new Set(res.data?.completed_materials || []));
         setProgressPercent(res.data?.progress_percent || 0);
       }
     } catch {
@@ -185,12 +189,8 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
   );
 
   const handleCompleted = useCallback(
-    (id: string, isSublesson: boolean) => {
-      if (isSublesson) {
-        setCompletedSublessons((prev) => new Set([...prev, id]));
-      } else {
-        setCompletedLessons((prev) => new Set([...prev, id]));
-      }
+    (file_url: string) => {
+      setCompletedMaterials((prev) => new Set([...prev, file_url]));
       // Re-fetch progress to get updated %
       fetchProgress();
     },
@@ -280,11 +280,29 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
           <div className="flex flex-col gap-[12px]">
             {lessons.map((lesson, index) => {
               const checkIsLessonCompleted = (l: Lesson) => {
-                if (completedLessons.has(l.lesson_id)) return true;
-                if (l.sublessons && l.sublessons.length > 0) {
-                  return l.sublessons.every((sl) => completedSublessons.has(sl.sublesson_id));
+                const hasMaterials = l.studyMaterials && l.studyMaterials.length > 0;
+                const hasSublessons = l.sublessons && l.sublessons.length > 0;
+
+                if (!hasMaterials && !hasSublessons) {
+                  return completedLessons.has(l.lesson_id);
                 }
-                return false;
+
+                if (hasMaterials) {
+                  const allMaterialsCompleted = l.studyMaterials.every(m => completedMaterials.has(m.file_url));
+                  if (!allMaterialsCompleted) return false;
+                }
+
+                if (hasSublessons) {
+                  const allSubCompleted = l.sublessons.every((sl) => {
+                    if (!sl.studyMaterials || sl.studyMaterials.length === 0) {
+                      return completedSublessons.has(sl.sublesson_id);
+                    }
+                    return sl.studyMaterials.every(m => completedMaterials.has(m.file_url));
+                  });
+                  if (!allSubCompleted) return false;
+                }
+
+                return true;
               };
 
               const isLocked = lesson.unlock_after_previous && index > 0 && !checkIsLessonCompleted(lessons[index - 1]);
@@ -337,24 +355,30 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                             )}
 
                             {/* Lesson file */}
-                            {lesson.file_url && (
+                            {lesson.studyMaterials && lesson.studyMaterials.length > 0 && (
                               <div className="flex flex-col gap-3">
-                                <MaterialRow
-                                  name={lesson.file_name || lesson.lesson_name}
-                                  fileType={lesson.file_type}
-                                  isCompleted={isLessonCompleted}
-                                  onOpen={() =>
-                                    openContent({
-                                      id: lesson.lesson_id,
-                                      name: lesson.lesson_name,
-                                      file_url: lesson.file_url,
-                                      file_type: lesson.file_type,
-                                      isSublesson: false,
-                                      courseId,
-                                      batchId,
-                                    })
-                                  }
-                                />
+                                {lesson.studyMaterials.map((material, idx) => {
+                                  const isMaterialCompleted = completedMaterials.has(material.file_url);
+                                  return (
+                                    <MaterialRow
+                                      key={idx}
+                                      name={material.file_name || lesson.lesson_name}
+                                      fileType={material.file_type}
+                                      isCompleted={isMaterialCompleted}
+                                      onOpen={() =>
+                                        openContent({
+                                          id: lesson.lesson_id,
+                                          name: lesson.lesson_name,
+                                          file_url: material.file_url,
+                                          file_type: material.file_type,
+                                          isSublesson: false,
+                                          courseId,
+                                          batchId,
+                                        })
+                                      }
+                                    />
+                                  );
+                                })}
                               </div>
                             )}
 
@@ -384,23 +408,31 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                           />
                                         </div>
                                       )}
-                                      {sub.file_url && (
-                                        <MaterialRow
-                                          name={sub.file_name || sub.sublesson_name}
-                                          fileType={sub.file_type}
-                                          isCompleted={isSubCompleted}
-                                          onOpen={() =>
-                                            openContent({
-                                              id: sub.sublesson_id,
-                                              name: sub.sublesson_name,
-                                              file_url: sub.file_url,
-                                              file_type: sub.file_type,
-                                              isSublesson: true,
-                                              courseId,
-                                              batchId,
-                                            })
-                                          }
-                                        />
+                                      {sub.studyMaterials && sub.studyMaterials.length > 0 && (
+                                        <div className="flex flex-col gap-2 mt-2">
+                                          {sub.studyMaterials.map((material, idx) => {
+                                            const isMaterialCompleted = completedMaterials.has(material.file_url);
+                                            return (
+                                              <MaterialRow
+                                                key={idx}
+                                                name={material.file_name || sub.sublesson_name}
+                                                fileType={material.file_type}
+                                                isCompleted={isMaterialCompleted}
+                                                onOpen={() =>
+                                                  openContent({
+                                                    id: sub.sublesson_id,
+                                                    name: sub.sublesson_name,
+                                                    file_url: material.file_url,
+                                                    file_type: material.file_type,
+                                                    isSublesson: true,
+                                                    courseId,
+                                                    batchId,
+                                                  })
+                                                }
+                                              />
+                                            );
+                                          })}
+                                        </div>
                                       )}
                                     </div>
                                   );

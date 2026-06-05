@@ -464,11 +464,11 @@ export const markLessonCompleteApi = (payload: {
   batch_id: string;
 }) => postApi(`${COURSE_PROGRESS}/complete-lesson`, payload);
 
-export const markSublessonCompleteApi = (payload: {
-  sublesson_id: string;
+export const markMaterialCompleteApi = (payload: {
+  material_url: string;
   course_id: string;
   batch_id: string;
-}) => postApi(`${COURSE_PROGRESS}/complete-sublesson`, payload);
+}) => postApi(`${COURSE_PROGRESS}/complete-material`, payload);
 
 // ─── Student Submission APIs ───────────────────────────────────────────────────
 export const submitAssignmentApi = (

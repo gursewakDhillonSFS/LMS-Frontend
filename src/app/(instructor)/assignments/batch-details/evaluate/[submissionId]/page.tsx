@@ -145,12 +145,37 @@ const EvaluateSubmission = () => {
               </p>
             </div>
 
-            <div className="flex flex-col gap-2 flex-1">
-              <h2 className="font-semibold text-[16px]">Student's Work</h2>
-              <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex-1 min-h-[200px] whitespace-pre-wrap text-[#002333]">
-                {submission?.submittedText || <span className="text-gray-400 italic">No text submitted.</span>}
+            {assignment?.projects && assignment.projects.length > 0 ? (
+              <div className="flex flex-col gap-4 flex-1 mt-2">
+                <h2 className="font-semibold text-[16px]">Student's Work (Projects)</h2>
+                {assignment.projects.map((proj: any, idx: number) => {
+                  let answer = "<span class='text-gray-400 italic'>No answer provided.</span>";
+                  try {
+                    const parsed = JSON.parse(submission?.submittedText || "{}");
+                    if (parsed[idx]) answer = parsed[idx];
+                  } catch {
+                    if (idx === 0 && submission?.submittedText) answer = submission.submittedText;
+                  }
+                  
+                  return (
+                    <div key={idx} className="flex flex-col gap-2 border border-blue-100 rounded-lg overflow-hidden shadow-sm">
+                      <div className="bg-blue-50/80 px-4 py-3 border-b border-blue-100 font-semibold text-[#002333]">
+                        {proj.projectName || proj.title}
+                      </div>
+                      <div className="p-4 bg-white text-[#002333] [&>p]:mb-0" dangerouslySetInnerHTML={{ __html: answer }} />
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-2 flex-1 mt-2">
+                <h2 className="font-semibold text-[16px]">Student's Work</h2>
+                <div 
+                  className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex-1 min-h-[200px] whitespace-pre-wrap text-[#002333]"
+                  dangerouslySetInnerHTML={{ __html: submission?.submittedText || "<span class='text-gray-400 italic'>No text submitted.</span>" }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Right Column: Grading Form */}

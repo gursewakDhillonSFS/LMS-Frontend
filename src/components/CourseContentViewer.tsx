@@ -2,7 +2,7 @@
 import React, { useRef, useCallback, useState } from "react";
 import { Modal, Spin } from "antd";
 import { toast } from "react-toastify";
-import { markLessonCompleteApi, markSublessonCompleteApi } from "@/services/collections";
+import { markMaterialCompleteApi } from "@/services/collections";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -24,7 +24,7 @@ interface CourseContentViewerProps {
   open: boolean;
   onClose: () => void;
   item: ContentItem | null;
-  onCompleted?: (id: string, isSublesson: boolean) => void;
+  onCompleted?: (file_url: string) => void;
 }
 
 const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
@@ -40,25 +40,17 @@ const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const markComplete = useCallback(async () => {
-    if (!item || completedLocal) return;
+    if (!item || !item.file_url || completedLocal) return;
     setCompletedLocal(true);
     setLoading(true);
     try {
-      if (item.isSublesson) {
-        await markSublessonCompleteApi({
-          sublesson_id: item.id,
-          course_id: item.courseId,
-          batch_id: item.batchId,
-        });
-      } else {
-        await markLessonCompleteApi({
-          lesson_id: item.id,
-          course_id: item.courseId,
-          batch_id: item.batchId,
-        });
-      }
+      await markMaterialCompleteApi({
+        material_url: item.file_url,
+        course_id: item.courseId,
+        batch_id: item.batchId,
+      });
       toast.success(`"${item.name}" marked as completed!`);
-      onCompleted?.(item.id, !!item.isSublesson);
+      onCompleted?.(item.file_url);
     } catch {
       // silently fail — don't annoy the user
     } finally {
@@ -164,12 +156,14 @@ const CourseContentViewer: React.FC<CourseContentViewerProps> = ({
           )}
 
           {!completedLocal ? (
-            <CommonButton
-              text="Mark as Complete"
-              onClick={markComplete}
-              disable={loading}
-              className="mt-2 w-[200px]"
-            />
+            pageNumber === numPages && (
+              <CommonButton
+                text="Mark as Complete"
+                onClick={markComplete}
+                disable={loading}
+                className="mt-2 w-[200px]"
+              />
+            )
           ) : (
             <p className="text-center text-xs text-green-600 font-bold">
               ✓ Lesson completed!

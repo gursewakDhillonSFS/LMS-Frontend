@@ -18,6 +18,8 @@ const BadgeComponent = ({ status, shape = "round", className }: BadgeProps) => {
       case "completed":
       case "publish":
       case "submitted":
+      case "pending":
+      case "graded":
         return "bg-[#FAFFDE] text-[#5EB85C]";
       case "on going":
       case "ongoing":

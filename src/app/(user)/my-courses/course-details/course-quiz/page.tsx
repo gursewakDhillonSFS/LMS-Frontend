@@ -25,6 +25,7 @@ const CourseQuizContent = () => {
   const answersRef = useRef(answers);
   const essayAnswersRef = useRef(essayAnswers);
   const submittingRef = useRef(submitting);
+  const quizRef = useRef(quiz);
 
   useEffect(() => {
     answersRef.current = answers;
@@ -38,12 +39,17 @@ const CourseQuizContent = () => {
     submittingRef.current = submitting;
   }, [submitting]);
 
-  const handleSubmitQuiz = useCallback(async (autoSubmit = false) => {
-    if (!quizId || !quiz || submittingRef.current) return;
+  useEffect(() => {
+    quizRef.current = quiz;
+  }, [quiz]);
+
+  const handleSubmitQuiz = useCallback(async (autoSubmit = false, overrideQuiz?: any) => {
+    const currentQuiz = overrideQuiz || quizRef.current;
+    if (!quizId || !currentQuiz || submittingRef.current) return;
     setSubmitting(true);
     try {
       const payload = {
-        answers: quiz.questions.map((q: any, idx: number) => ({
+        answers: currentQuiz.questions.map((q: any, idx: number) => ({
           questionIndex: idx,
           questionType: q.questionType,
           ...(q.questionType === "mcq"
@@ -73,7 +79,7 @@ const CourseQuizContent = () => {
       toast.error(err?.response?.data?.message || "Failed to submit quiz");
       setSubmitting(false);
     }
-  }, [quizId, quiz, courseId, router]);
+  }, [quizId, courseId, router]);
 
   const fetchQuizDetails = useCallback(async () => {
     if (!quizId) return;
@@ -97,7 +103,14 @@ const CourseQuizContent = () => {
           if (savedEndTime) {
             endTime = parseInt(savedEndTime, 10);
           } else {
-            endTime = Date.now() + fetchedQuiz.timer * 60 * 1000;
+            let timerMinutes = 0;
+            if (typeof fetchedQuiz.timer === "string" && fetchedQuiz.timer.includes(":")) {
+              const parts = fetchedQuiz.timer.split(":");
+              timerMinutes = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+            } else {
+              timerMinutes = parseInt(fetchedQuiz.timer, 10) || 0;
+            }
+            endTime = Date.now() + timerMinutes * 60 * 1000;
             localStorage.setItem(`quiz_${quizId}_endTime`, endTime.toString());
           }
           
@@ -106,7 +119,7 @@ const CourseQuizContent = () => {
             setTimeLeft(remaining);
           } else {
             setTimeLeft(0);
-            handleSubmitQuiz(true);
+            handleSubmitQuiz(true, fetchedQuiz);
           }
         }
       } else {

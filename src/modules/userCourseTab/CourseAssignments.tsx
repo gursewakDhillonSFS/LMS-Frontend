@@ -84,7 +84,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
 
   const renderAssignmentCard = (assignment: ApiAssignment) => {
     const subStatus = getSubmissionStatus(assignment);
-    const isSubmitted = subStatus === "Submitted" || subStatus === "Graded";
+    const isSubmitted = subStatus === "Submitted" || subStatus === "Graded" || subStatus === "Pending";
 
     return (
       <div
@@ -114,7 +114,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
               </p>
               {assignmentTab === "current" ? (
                 <CommonButton
-                  text={isSubmitted ? "Submitted" : "Start Assignment"}
+                  text={isSubmitted ? (subStatus === "Submitted" || subStatus === "Pending" ? "Submitted, pending for grading" : subStatus) : "Start Assignment"}
                   icon={!isSubmitted ? <StopWatchIcon /> : undefined}
                   onClick={() => {
                     if (!isSubmitted) {
