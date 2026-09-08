@@ -3,11 +3,11 @@ import CommonButton from "@/components/CommonButton";
 import CommonInput from "@/components/CommonInput";
 import OnboardingSubscription from "@/modules/onboard/OnboardingSubscription";
 import { RootState } from "@/redux/store";
-import { courseCheckout, getCoursePurchaseData } from "@/services/collections";
+import { cartList, createCheckoutSessionApi } from "@/services/collections";
 import { getImageUrl, isValidUrl } from "@/utils/comman";
 import { RoutePaths } from "@/utils/enums";
 import { Fallback } from "@/utils/images";
-import { courseData } from "@/utils/interface";
+import { Batch, courseData } from "@/utils/interface";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
@@ -26,62 +26,85 @@ const CheckOut = () => {
   const [referral, setReferral] = useState("");
   const [imgError, setImgError] = useState(false);
   const [teacherImgError, setTeacherImgError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  console.log(loading);
   const [courseLoading, setCourseLoading] = useState(false);
   const [data, setData] = useState<DataProp>();
   const [coursesData, setCoursesData] = useState<courseData[]>([]);
+  const [selectedBatches, setSelectedBatches] = useState<
+    Record<string, string>
+  >({});
   const selectedCourseData = useSelector(
     (state: RootState) => state.courseData.course
   );
   const router = useRouter();
   const charges = [
-    { label: "Course Price", amount: coursesData?.[0]?.base_price },
+    { label: "Course Price", amount: coursesData?.[0]?.total },
     { label: "Tax", amount: data?.tax_total },
     { label: "Discount", amount: data?.discount_total },
     { label: "Total", amount: data?.grand_total },
   ];
 
   const courseImageUrl = getImageUrl(coursesData?.[0]?.course_url);
-
   const teacherImageUrl = getImageUrl(coursesData?.[0]?.instructor_image_url);
 
   const getCourseData = useCallback(async () => {
-    setLoading(false);
-    const params = new URLSearchParams();
-
-    if (selectedCourseData?.course_id) {
-      params.append("course_ids", selectedCourseData.course_id);
-    }
-
     try {
-      const response = await courseCheckout(params);
+      const response = await cartList();
       if (response.status) {
-        console.log(response);
+        let items: courseData[] = response?.data?.course_items || [];
+        if (selectedCourseData?.course_id) {
+          items = items.filter(
+            (item) => item.course_id === selectedCourseData.course_id
+          );
+        }
         setData(response.data);
-        setCoursesData(response?.data?.course_items);
-      } else {
-        setLoading(false);
+        setCoursesData(items);
+        const initial: Record<string, string> = {};
+        items.forEach((item) => {
+          if (item.batches && item.batches.length > 0) {
+            initial[item.course_id] = item.batches[0]._id;
+          }
+        });
+        setSelectedBatches(initial);
       }
     } catch (error) {
       console.log(error);
       toast.warning("Something went wrong");
-      setLoading(false);
     }
   }, [selectedCourseData?.course_id]);
 
   const handleCheckout = async () => {
-    setCourseLoading(false);
+    const courseId = coursesData?.[0]?.course_id;
+    if (!courseId) {
+      toast.warning("No course selected");
+      return;
+    }
+    const batchId = selectedBatches[courseId];
+    if (!batchId && coursesData?.[0]?.batches?.length) {
+      toast.warning("Please select a batch");
+      return;
+    }
+    setCourseLoading(true);
     try {
-      const payload = {
-        course_ids: [coursesData?.[0]?.course_id],
-        payment_id: coursesData?.[0]?.course_id,
+      const payload: {
+        course_ids: string[];
+        batch_ids?: string[];
+      } = {
+        course_ids: [courseId],
       };
-      const response = await getCoursePurchaseData(payload);
+      if (batchId) {
+        payload.batch_ids = [batchId];
+      }
+      const response = await createCheckoutSessionApi(payload);
       if (response.status) {
-        toast.success(response.message);
-        console.log(response);
-        router.push(RoutePaths?.Dashboard);
+        if (response.data?.enrolled) {
+          toast.success(response.message || "Enrolled successfully");
+          router.push(RoutePaths?.Dashboard);
+        } else if (response.data?.url) {
+          window.location.href = response.data.url;
+        } else {
+          toast.warning("Unable to start checkout");
+          setCourseLoading(false);
+        }
       } else {
         toast.warning(response.message);
         setCourseLoading(false);
@@ -96,6 +119,7 @@ const CheckOut = () => {
   useEffect(() => {
     getCourseData();
   }, [getCourseData]);
+
   return (
     <div className={`w-full flex gap-[16px] px-[40px]`}>
       <div className="w-2/3 flex flex-col gap-5">
@@ -142,12 +166,35 @@ const CheckOut = () => {
                     by {coursesData?.[0]?.head_teacher}
                   </p>
                 </div>
+                {coursesData?.[0]?.batches &&
+                  coursesData[0].batches.length > 0 && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs text-slate-500 font-semibold">
+                        Batch:
+                      </span>
+                      <select
+                        value={
+                          selectedBatches[coursesData[0].course_id] || ""
+                        }
+                        onChange={(e) =>
+                          setSelectedBatches((prev) => ({
+                            ...prev,
+                            [coursesData[0].course_id]: e.target.value,
+                          }))
+                        }
+                        className="text-xs p-1 rounded-md border border-slate-200 bg-white text-slate-700 font-medium focus:outline-none max-w-[180px]"
+                      >
+                        {coursesData[0].batches.map((b: Batch) => (
+                          <option key={b._id} value={b._id}>
+                            {b.batchName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
               </div>
               <div className="flex items-center justify-between w-full">
                 <div className={`font-[700]`}>${coursesData?.[0]?.total}</div>
-                {/* <div className="w-8 h-8 border border-[#FB4A49] rounded-md flex items-center justify-center">
-                  <DeleteIcon />
-                </div> */}
               </div>
             </div>
           </div>

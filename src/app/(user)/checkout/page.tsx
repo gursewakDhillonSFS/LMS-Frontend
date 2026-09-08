@@ -2,11 +2,7 @@
 import CommonButton from "@/components/CommonButton";
 import CommonInput from "@/components/CommonInput";
 import OnboardingSubscription from "@/modules/onboard/OnboardingSubscription";
-import {
-  cartList,
-  getCoursePurchaseData,
-  removeFromCart,
-} from "@/services/collections";
+import { cartList, createCheckoutSessionApi, removeFromCart } from "@/services/collections";
 import { getImageUrl, isValidUrl } from "@/utils/comman";
 import { RoutePaths } from "@/utils/enums";
 import { CartDeleteIcon } from "@/utils/icons";
@@ -86,17 +82,24 @@ const CheckOut = () => {
     setCourseLoading(true);
 
     const payload = {
-      course_ids: coursesData?.map((item) => item?.course_id),
-      batch_ids: coursesData?.map((item) => selectedBatches[item?.course_id] || ""),
-      payment_id: coursesData?.[0]?.course_id,
+      course_ids: coursesData?.map((item) => item?.course_id).filter(Boolean) as string[],
+      batch_ids: coursesData?.map(
+        (item) => selectedBatches[item?.course_id] || ""
+      ),
     };
     try {
-      const response = await getCoursePurchaseData(payload);
+      const response = await createCheckoutSessionApi(payload);
       if (response.status) {
-        toast.success(response.message);
-        console.log(response);
-        dispatch(setCartCount(0));
-        router.push(RoutePaths?.Dashboard);
+        if (response.data?.enrolled) {
+          toast.success(response.message || "Enrolled successfully");
+          dispatch(setCartCount(0));
+          router.push(RoutePaths?.Dashboard);
+        } else if (response.data?.url) {
+          window.location.href = response.data.url;
+        } else {
+          toast.warning("Unable to start checkout");
+          setCourseLoading(false);
+        }
       } else {
         toast.warning(response.message);
         setCourseLoading(false);

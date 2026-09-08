@@ -127,7 +127,6 @@ const CREATE_COURSE_STEP3 = "/auth/course/v1/create/course-step-3";
 const CREATE_COURSE_FINALSTEP = "/auth/course/v1/create/course-final-step";
 const CREATE_LESSON = "/auth/course/v1/lesson/create";
 const CREATE_SUBLESSON = "/auth/course/v1/Sublesson/create";
-const COURSE_CHECKOUT = "/auth/course/v1/checkout";
 const COURSE_PURCHASE = "/auth/course/v1/course/purchase";
 const USER_COURSE_LIST = "/auth/course/v1/get-enrolled-courses";
 const COURSE_SUBLESSON_UPDATE = "/auth/course/v1/Sublesson/update";
@@ -270,13 +269,17 @@ export const createSubLesson = (payload: FormData) => {
   return postApi(CREATE_SUBLESSON, payload);
 };
 
-export const courseCheckout = (param: URLSearchParams) => {
-  return getApi(`${COURSE_CHECKOUT}?${param}`);
-};
-
 export const getCoursePurchaseData = (paylaod: object) => {
   return postApi(COURSE_PURCHASE, paylaod);
 };
+
+export const createCheckoutSessionApi = (payload: {
+  course_ids: string[];
+  batch_ids?: string[];
+}) => postApi("/auth/course/v1/checkout/create-session", payload);
+
+export const confirmCheckoutSessionApi = (sessionId: string) =>
+  getApi(`/auth/course/v1/checkout/confirm?session_id=${sessionId}`);
 
 export const userCourseList = (param: URLSearchParams) => {
   return getApi(`${USER_COURSE_LIST}?${param}`);
@@ -313,6 +316,10 @@ const USER_CHAT_ROOM = "/communication/v1/user-chat-rooms";
 export const chatRoom = () => {
   return getApi(USER_CHAT_ROOM);
 };
+
+export const getChatMessagesApi = (groupId: string) =>
+  getApi(`/communication/v1/messages/${groupId}`);
+
 
 // ─── Assignment APIs ─────────────────────────────────────────────────────────
 const CREATE_ASSIGNMENT = "/auth/assignment/v1/create";
@@ -469,6 +476,11 @@ export const markMaterialCompleteApi = (payload: {
   course_id: string;
   batch_id: string;
 }) => postApi(`${COURSE_PROGRESS}/complete-material`, payload);
+
+export const getDashboardStatsApi = () =>
+  getApi("/auth/course/v1/dashboard/stats");
+
+export const getMyCertificatesApi = () => getApi("/certificate/v1/my");
 
 // ─── Student Submission APIs ───────────────────────────────────────────────────
 export const submitAssignmentApi = (

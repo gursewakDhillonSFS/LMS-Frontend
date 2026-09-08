@@ -21,11 +21,6 @@ const authOptions = [
     icon: <GoogleIcon />,
   },
   {
-    key: "facebook",
-    label: "Continue with Facebook",
-    icon: <FacebookIcon />,
-  },
-  {
     key: "apple",
     label: "Continue with Apple",
     icon: <AppleIcon />,
@@ -222,8 +217,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
                 size="large"
                 onClick={() => {
                   if (key === "google") googleLogin();
-                  if (key === "facebook") handleFacebookLogin();
-                  // if (key === "apple") handleAppleLogin();
+                  // Facebook OAuth disabled until backend support is implemented
                 }}
                 className="!bg-[#FAFAFA] relative !border !border-[#EEEEEE] hover:shadow !h-[48px] !rounded-2 !flex !items-center !justify-center "
               >

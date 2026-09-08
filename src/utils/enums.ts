@@ -70,6 +70,7 @@ export enum Role {
   STUDENT = "student",
   INSTRUCTOR = "instructor",
   TEACHER = "teacher",
+  ADMIN = "admin",
 }
 
 export enum RoutePaths {
@@ -89,6 +90,9 @@ export enum RoutePaths {
   MySettings = "/my-settings",
   SavedCourses = "/saved-courses",
   Checkout = "/checkout",
+
+  // Admin
+  AdminPanel = "/admin",
 
   // Instructor Routes
   Announcements = "/announcements",

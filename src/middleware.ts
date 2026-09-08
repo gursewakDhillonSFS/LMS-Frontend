@@ -32,6 +32,7 @@ export function middleware(request: NextRequest) {
     "/my-settings",
     "/chat",
     "/checkout",
+    "/saved-courses",
   ];
 
   const instructorRoutes = [
@@ -45,11 +46,11 @@ export function middleware(request: NextRequest) {
     "/settings",
     "/students",
     "/teachers",
+    "/instructor-chat",
   ];
 
-  const teacherRoutes = [
-    "/teacher",
-  ];
+  const teacherRoutes = ["/teacher"];
+  const adminRoutes = ["/admin"];
 
   if (pathname === "/") {
     return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
@@ -61,6 +62,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith(route)
   );
   const isTeacher = teacherRoutes.some((route) => pathname.startsWith(route));
+  const isAdmin = adminRoutes.some((route) => pathname.startsWith(route));
 
   if (token && isPublic) {
     let url = "/";
@@ -70,12 +72,15 @@ export function middleware(request: NextRequest) {
           ? RoutePaths?.Dashboard
           : RoutePaths?.Onboarding;
     } else if (role === Role?.TEACHER) {
-      // Teachers always bypass onboarding and go straight to dashboard
       url = RoutePaths?.TeacherDashboard;
+    } else if (role === Role?.ADMIN) {
+      url = RoutePaths?.AdminPanel;
     } else {
-      url = !(instructorOnboarding === "completed")
-        ? `${RoutePaths?.BecomeInstructor}/onboarding`
-        : RoutePaths?.InstructorPanel;
+      // Completed instructor onboarding cookie is "undefined" (set by UserDataSlice)
+      url =
+        instructorOnboarding === "undefined"
+          ? RoutePaths?.InstructorPanel
+          : `${RoutePaths?.BecomeInstructor}/onboarding`;
     }
 
     if (pathname !== url) {
@@ -89,7 +94,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!token && (isUser || isInstructor || isTeacher)) {
+  if (!token && (isUser || isInstructor || isTeacher || isAdmin)) {
     return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
   }
 
@@ -105,7 +110,6 @@ export function middleware(request: NextRequest) {
         onboardingRedirectUrl = `${RoutePaths?.BecomeInstructor}/onboarding`;
       }
     }
-    // Teachers require no onboarding checks
 
     if (onboardingRedirectUrl && pathname !== onboardingRedirectUrl) {
       return NextResponse.redirect(new URL(onboardingRedirectUrl, request.url));
@@ -114,8 +118,8 @@ export function middleware(request: NextRequest) {
     if (role === Role?.STUDENT && isUser) return NextResponse.next();
     if (role === Role?.INSTRUCTOR && isInstructor) return NextResponse.next();
     if (role === Role?.TEACHER && isTeacher) return NextResponse.next();
+    if (role === Role?.ADMIN && isAdmin) return NextResponse.next();
 
-    // Default fallback based on role
     let defaultUrl = RoutePaths?.Homepage;
     if (role === Role?.STUDENT) {
       defaultUrl = RoutePaths?.Dashboard;
@@ -123,6 +127,8 @@ export function middleware(request: NextRequest) {
       defaultUrl = RoutePaths?.TeacherDashboard;
     } else if (role === Role?.INSTRUCTOR) {
       defaultUrl = RoutePaths?.InstructorPanel;
+    } else if (role === Role?.ADMIN) {
+      defaultUrl = RoutePaths?.AdminPanel;
     }
 
     return NextResponse.redirect(new URL(defaultUrl, request.url));
@@ -133,8 +139,9 @@ export const config = {
     "/",
     "/becomeInstructor/:path*",
     "/browse/:path*",
-    "/homepage",
+    "/homepage/:path*",
     "/onboarding",
+    "/subscription/:path*",
     "/setup-password",
     "/dashboard/:path*",
     "/my-certificate/:path*",
@@ -142,12 +149,14 @@ export const config = {
     "/my-explore/:path*",
     "/my-schedule/:path*",
     "/my-settings/:path*",
+    "/saved-courses/:path*",
     "/chat",
-    "/checkout",
+    "/checkout/:path*",
     "/announcements/:path*",
     "/assignments/:path*",
     "/courses/:path*",
     "/instructor-panel/:path*",
+    "/instructor-chat/:path*",
     "/live-classes/:path*",
     "/quizzes/:path*",
     "/schedule/:path*",
@@ -155,6 +164,6 @@ export const config = {
     "/students/:path*",
     "/teachers/:path*",
     "/teacher/:path*",
+    "/admin/:path*",
   ],
 };
-

@@ -2,6 +2,7 @@
 import CommonButton from "@/components/CommonButton";
 import InfoCard, { InfoCardProps } from "@/components/InfoCard";
 import InstructorStatistics from "@/modules/instructorPanel/InstructorStatistics";
+import { getDashboardStatsApi } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
 import {
   AssignmentIcon,
@@ -10,10 +11,37 @@ import {
   StudentIcon,
 } from "@/utils/icons";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const InstructorPanel = () => {
   const route = useRouter();
+  const [stats, setStats] = useState({
+    courseCount: 0,
+    studentCount: 0,
+    upcomingLiveClasses: 0,
+    pendingAssignmentsToGrade: 0,
+  });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    (async () => {
+      try {
+        const res = await getDashboardStatsApi();
+        if (res?.status && res.data) {
+          setStats({
+            courseCount: res.data.courseCount ?? 0,
+            studentCount: res.data.studentCount ?? 0,
+            upcomingLiveClasses: res.data.upcomingLiveClasses ?? 0,
+            pendingAssignmentsToGrade:
+              res.data.pendingAssignmentsToGrade ?? 0,
+          });
+        }
+      } catch {
+        // keep zeros on failure
+      }
+    })();
+  }, []);
+
   const infoCardsData: InfoCardProps[] = [
     {
       image: (
@@ -22,7 +50,7 @@ const InstructorPanel = () => {
         </div>
       ),
       text: "Your Courses",
-      count: "10",
+      count: String(stats.courseCount),
       bg: "#D9D4FF",
     },
     {
@@ -32,7 +60,7 @@ const InstructorPanel = () => {
         </div>
       ),
       text: "Students",
-      count: "200",
+      count: String(stats.studentCount),
       bg: "#EAFFDE",
     },
     {
@@ -42,7 +70,7 @@ const InstructorPanel = () => {
         </div>
       ),
       text: "Upcoming Live Classes",
-      count: "02",
+      count: String(stats.upcomingLiveClasses),
       bg: "#FFDEE6",
     },
     {
@@ -52,13 +80,11 @@ const InstructorPanel = () => {
         </div>
       ),
       text: "Pending Assignments to Grade",
-      count: "10",
+      count: String(stats.pendingAssignmentsToGrade),
       bg: "#FFF3DB",
     },
   ];
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+
   return (
     <div className="flex flex-col gap-[12px]">
       <div className="flex items-center justify-between">
@@ -67,8 +93,12 @@ const InstructorPanel = () => {
           <CommonButton
             text={"Post Announcement"}
             className="border !bg-transparent"
+            onClick={() => route.push(RoutePaths.Announcements)}
           />
-          <CommonButton text={"Schedule Live Class"} />
+          <CommonButton
+            text={"Schedule Live Class"}
+            onClick={() => route.push(RoutePaths.LiveClasses)}
+          />
           <CommonButton
             text={"+ Create Course"}
             onClick={() => route.push(`${RoutePaths.Courses}/create-course`)}
@@ -81,7 +111,6 @@ const InstructorPanel = () => {
           <InfoCard key={index} {...card} />
         ))}
       </div>
-      {/* <DashboardCourseListing/> */}
       <InstructorStatistics />
     </div>
   );

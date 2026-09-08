@@ -280,24 +280,31 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
           <div className="flex flex-col gap-[12px]">
             {lessons.map((lesson, index) => {
               const checkIsLessonCompleted = (l: Lesson) => {
-                const hasMaterials = l.studyMaterials && l.studyMaterials.length > 0;
-                const hasSublessons = l.sublessons && l.sublessons.length > 0;
+                const materials = l.studyMaterials ?? [];
+                const sublessons = l.sublessons ?? [];
+                const hasMaterials = materials.length > 0;
+                const hasSublessons = sublessons.length > 0;
 
                 if (!hasMaterials && !hasSublessons) {
                   return completedLessons.has(l.lesson_id);
                 }
 
                 if (hasMaterials) {
-                  const allMaterialsCompleted = l.studyMaterials.every(m => completedMaterials.has(m.file_url));
+                  const allMaterialsCompleted = materials.every((m) =>
+                    completedMaterials.has(m.file_url)
+                  );
                   if (!allMaterialsCompleted) return false;
                 }
 
                 if (hasSublessons) {
-                  const allSubCompleted = l.sublessons.every((sl) => {
-                    if (!sl.studyMaterials || sl.studyMaterials.length === 0) {
+                  const allSubCompleted = sublessons.every((sl) => {
+                    const slMaterials = sl.studyMaterials ?? [];
+                    if (slMaterials.length === 0) {
                       return completedSublessons.has(sl.sublesson_id);
                     }
-                    return sl.studyMaterials.every(m => completedMaterials.has(m.file_url));
+                    return slMaterials.every((m) =>
+                      completedMaterials.has(m.file_url)
+                    );
                   });
                   if (!allSubCompleted) return false;
                 }

@@ -69,7 +69,7 @@ const ChatList: React.FC<ChatListProps> = ({
           >
             <div className="relative">
               <Image
-                src={`${conv?.avatar}`}
+                src={conv?.avatar || "/fallback.png"}
                 alt="Profile"
                 width={40}
                 unoptimized
