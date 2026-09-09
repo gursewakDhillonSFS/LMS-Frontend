@@ -144,9 +144,20 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
       const res = await createInstrucotor(value);
       if (res.status) {
         fetchAllTeacher();
-        const link = res.setupLink || res.data?.setupLink;
-        if (link) {
-          setGeneratedLink(link);
+        const rawLink = res.setupLink || res.data?.setupLink;
+        if (rawLink) {
+          let finalLink = rawLink;
+          if (typeof window !== "undefined") {
+            try {
+              const parsed = new URL(rawLink);
+              finalLink = `${window.location.origin}${parsed.pathname}${parsed.search}`;
+            } catch {
+              if (rawLink.startsWith("/")) {
+                finalLink = `${window.location.origin}${rawLink}`;
+              }
+            }
+          }
+          setGeneratedLink(finalLink);
           toast.success("Teacher invited! Setup link generated.");
         } else {
           toast.success(res.message);
