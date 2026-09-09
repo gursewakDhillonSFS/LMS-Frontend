@@ -3,7 +3,7 @@ import { renderFormItem } from "@/utils/commonFunctions";
 import { CloseIcon } from "@/utils/icons";
 import { CreateCourseStep1Prop } from "@/utils/interface";
 import { Form, Modal, Row } from "antd";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import CommonButton from "../CommonButton";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -30,14 +30,28 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
 
   const { data, loading: CategoryLoading } = useCategories();
 
-  // const formattedCategories = useMemo(() => {
-  //   return (
-  //     data?.map((cat: Category) => ({
-  //       label: cat.category_name,
-  //       value: cat.category_id,
-  //     })) || []
-  //   );
-  // }, [data]);
+  const categoryOptions = useMemo(() => {
+    if (data && data.length > 0) {
+      return data.map((item: any) => {
+        const categoryName =
+          item?.category_name || item?.label || item?.name || String(item);
+        return {
+          label: categoryName,
+          value: categoryName,
+        };
+      });
+    }
+    return [
+      { label: "AI & Innovation", value: "AI & Innovation" },
+      { label: "Web Development", value: "Web Development" },
+      { label: "UI/UX Design", value: "UI/UX Design" },
+      { label: "Data Science", value: "Data Science" },
+      { label: "Digital Marketing", value: "Digital Marketing" },
+      { label: "Mobile Development", value: "Mobile Development" },
+      { label: "Graphic Design", value: "Graphic Design" },
+      { label: "Education", value: "Education" },
+    ];
+  }, [data]);
 
   const inviteTeacherFields: CreateCourseStep1Prop[] = [
     {
@@ -112,11 +126,7 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
       type: "select",
       mode: "multiple",
       placeholder: "--Select Option--",
-      options:
-        data?.map((item: any) => ({
-          label: item?.name,
-          value: item?.name,
-        })) || [],
+      options: categoryOptions,
       loading: CategoryLoading,
       colSpan: 24,
     },
