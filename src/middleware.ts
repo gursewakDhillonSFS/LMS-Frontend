@@ -67,20 +67,21 @@ export function middleware(request: NextRequest) {
   if (token && isPublic) {
     let url = "/";
     if (role === Role?.STUDENT) {
-      url =
-        userOnboarding === "undefined"
-          ? RoutePaths?.Dashboard
-          : RoutePaths?.Onboarding;
+      const isStillOnboarding =
+        userOnboarding === "1" || userOnboarding === "2" || userOnboarding === "3";
+      url = isStillOnboarding
+        ? RoutePaths?.Onboarding
+        : RoutePaths?.Dashboard;
     } else if (role === Role?.TEACHER) {
       url = RoutePaths?.TeacherDashboard;
     } else if (role === Role?.ADMIN) {
       url = RoutePaths?.AdminPanel;
     } else {
-      // Completed instructor onboarding cookie is "undefined" (set by UserDataSlice)
-      url =
-        instructorOnboarding === "undefined"
-          ? RoutePaths?.InstructorPanel
-          : `${RoutePaths?.BecomeInstructor}/onboarding`;
+      const isStillOnboarding =
+        instructorOnboarding === "1" || instructorOnboarding === "2";
+      url = isStillOnboarding
+        ? `${RoutePaths?.BecomeInstructor}/onboarding`
+        : RoutePaths?.InstructorPanel;
     }
 
     if (pathname !== url) {

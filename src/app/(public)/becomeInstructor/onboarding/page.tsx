@@ -18,6 +18,7 @@ import {
   getOrganisation,
 } from "@/services/collections";
 import { setCategories } from "@/redux/slices/CategoriesSlice";
+import { updateUser } from "@/redux/slices/UserDataSlice";
 import { RootState } from "@/redux/store";
 import { RoutePaths } from "@/utils/enums";
 import { CreateCourseStep1Prop } from "@/utils/interface";
@@ -235,6 +236,10 @@ const ProfileSetup = () => {
 
         if (response?.status) {
           toast.success("Organization created successfully!");
+          const newOrgId = response.data?._id || response.data?.organization_id;
+          if (newOrgId) {
+            dispatch(updateUser({ organization_id: String(newOrgId) }));
+          }
           setStep("2");
           Cookies.set("instructor_onboarding", "2");
         } else {
@@ -266,26 +271,15 @@ const ProfileSetup = () => {
     if (value?.dob) {
       value.dob = new Date(value.dob).toISOString().split("T")[0];
     }
-    // let phoneNumber = "";
-    // let countryCode = "";
-    // if (value?.phone) {
-    //   const parsedPhoneNumber = parsePhoneNumberFromString("+" + value.phone);
-    //   if (parsedPhoneNumber && parsedPhoneNumber.isValid()) {
-    //     phoneNumber = parsedPhoneNumber.nationalNumber;
-    //     countryCode = parsedPhoneNumber.countryCallingCode;
-    //   } else {
-    //     console.log("Invalid phone number format", value.phone);
-    //     return;
-    //   }
-    // }
-    // value.phone = phoneNumber;
-    // value.countryCode = countryCode;
 
     try {
-      // const updatedValue = { ...value, dob: value?.dob?.split("T")?.[0] };
       const res = await createInstrucotor(value);
       if (res.status) {
         toast.success(res.message);
+        const newTeacherId = res.teacher?._id || res.teacher?.instructor_id;
+        if (newTeacherId) {
+          dispatch(updateUser({ instructor_id: String(newTeacherId) }));
+        }
         Cookies.set("instructor_onboarding", "undefined");
         router.push(RoutePaths?.InstructorPanel);
       } else {
@@ -314,10 +308,20 @@ const ProfileSetup = () => {
   const handleLogout = () => {
     setLoading(true);
     try {
+      Cookies.remove("token");
+      Cookies.remove("role_name");
+      Cookies.remove("user_onboarding");
+      Cookies.remove("instructor_onboarding");
+      Cookies.remove("profileStatus");
       dispatch(resetAllSlices());
-      router.push("/");
+      if (typeof window !== "undefined") {
+        window.location.href = "/homepage";
+      }
     } catch (error) {
       console.log(error);
+      if (typeof window !== "undefined") {
+        window.location.href = "/homepage";
+      }
     } finally {
       setLoading(false);
     }

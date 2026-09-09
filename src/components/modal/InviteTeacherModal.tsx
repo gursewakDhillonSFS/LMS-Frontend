@@ -24,6 +24,8 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const user_id = useSelector((state: RootState) => state?.userdata?.user_id);
 
   const { data, loading: CategoryLoading } = useCategories();
@@ -110,7 +112,11 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
       type: "select",
       mode: "multiple",
       placeholder: "--Select Option--",
-      options: data,
+      options:
+        data?.map((item: any) => ({
+          label: item?.name,
+          value: item?.name,
+        })) || [],
       loading: CategoryLoading,
       colSpan: 24,
     },
@@ -123,29 +129,20 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
     if (value?.dob) {
       value.dob = new Date(value.dob).toISOString().split("T")[0];
     }
-    // let phoneNumber = "";
-    // let countryCode = "";
-    // if (value?.phone) {
-    //   const parsedPhoneNumber = parsePhoneNumberFromString("+" + value.phone);
-    //   if (parsedPhoneNumber && parsedPhoneNumber.isValid()) {
-    //     phoneNumber = parsedPhoneNumber.nationalNumber;
-    //     countryCode = parsedPhoneNumber.countryCallingCode;
-    //   } else {
-    //     console.log("Invalid phone number format", value.phone);
-    //     return;
-    //   }
-    // }
-    // value.phone = phoneNumber;
-    // value.countryCode = countryCode;
 
     try {
-      // const updatedValue = { ...value, dob: value?.dob?.split("T")?.[0] };
       const res = await createInstrucotor(value);
       if (res.status) {
-        toast.success(res.message);
-        form.resetFields();
         fetchAllTeacher();
-        onCancel();
+        const link = res.setupLink || res.data?.setupLink;
+        if (link) {
+          setGeneratedLink(link);
+          toast.success("Teacher invited! Setup link generated.");
+        } else {
+          toast.success(res.message);
+          form.resetFields();
+          onCancel();
+        }
       } else {
         toast.warning(res.message);
       }
@@ -158,6 +155,8 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
 
   const handleClose = () => {
     form.resetFields();
+    setGeneratedLink(null);
+    setCopied(false);
     onCancel();
   };
 
@@ -174,35 +173,85 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
     >
       <button
         onClick={handleClose}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-primary rounded-full  flex items-center justify-center -top-[10px] -right-[10px] text-sm"
+        className="cursor-pointer absolute w-[27px] h-[27px] bg-primary rounded-full flex items-center justify-center -top-[10px] -right-[10px] text-sm"
       >
         <CloseIcon color="black" />
       </button>
-      <div className="w-full px-4 flex flex-col items-center justify-center gap-[16px]">
-        <h1 className="text-[24px] font-bold">Invite Teacher</h1>
-        <Form
-          form={form}
-          onFinish={handleSubmit}
-          className="!w-full !flex !flex-col !items-center"
-        >
-          <Row gutter={[16, 0]} className="w-full">
-            {inviteTeacherFields.map((field) => {
-              return (
-                <React.Fragment key={field?.key}>
-                  {renderFormItem(field)}
-                </React.Fragment>
-              );
-            })}
-          </Row>
-          <div className="flex items-center justify-end w-full">
-            <CommonButton
-              loading={loading}
-              text={"Invite"}
-              className={`!bg-secondary text-white !w-[20%]`}
-            />
+
+      {generatedLink ? (
+        <div className="w-full px-6 py-4 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl font-bold">
+            ✓
           </div>
-        </Form>
-      </div>
+          <h1 className="text-2xl font-bold text-gray-900">Teacher Profile Created!</h1>
+          <p className="text-sm text-gray-600 max-w-md">
+            The teacher has been added to your organisation. You can share or click the direct setup link below to create their password and test the teacher login flow immediately:
+          </p>
+          <div className="w-full flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-lg p-2.5">
+            <input
+              type="text"
+              readOnly
+              value={generatedLink}
+              className="w-full bg-transparent text-xs text-gray-700 outline-none truncate font-mono"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(generatedLink);
+                setCopied(true);
+                toast.success("Setup link copied to clipboard!");
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-md hover:opacity-90 whitespace-nowrap cursor-pointer"
+            >
+              {copied ? "Copied!" : "Copy Link"}
+            </button>
+          </div>
+          <div className="flex items-center gap-3 mt-2">
+            <a
+              href={generatedLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 border border-primary text-primary font-medium text-sm rounded-lg hover:bg-blue-50 transition flex items-center gap-1.5"
+            >
+              Open Setup Page ↗
+            </a>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="px-5 py-2 bg-primary text-white font-medium text-sm rounded-lg hover:opacity-90 transition cursor-pointer"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full px-4 flex flex-col items-center justify-center gap-[16px]">
+          <h1 className="text-[24px] font-bold">Invite Teacher</h1>
+          <Form
+            form={form}
+            onFinish={handleSubmit}
+            className="!w-full !flex !flex-col !items-center"
+          >
+            <Row gutter={[16, 0]} className="w-full">
+              {inviteTeacherFields.map((field) => {
+                return (
+                  <React.Fragment key={field?.key}>
+                    {renderFormItem(field)}
+                  </React.Fragment>
+                );
+              })}
+            </Row>
+            <div className="flex items-center justify-end w-full">
+              <CommonButton
+                loading={loading}
+                text={"Invite"}
+                className={`!bg-secondary text-white !w-[20%]`}
+              />
+            </div>
+          </Form>
+        </div>
+      )}
     </Modal>
   );
 };

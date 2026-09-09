@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAllSlices } from "@/redux/resetSlice";
 import { RootState } from "@/redux/store";
+import Cookies from "js-cookie";
 
 const InstructorHeader = () => {
   const full_name = useSelector(
@@ -65,10 +66,20 @@ const InstructorHeader = () => {
   const handleLogout = () => {
     setLogOutLoading(true);
     try {
+      Cookies.remove("token");
+      Cookies.remove("role_name");
+      Cookies.remove("user_onboarding");
+      Cookies.remove("instructor_onboarding");
+      Cookies.remove("profileStatus");
       dispatch(resetAllSlices());
-      route.push("/");
+      if (typeof window !== "undefined") {
+        window.location.href = "/homepage";
+      }
     } catch (error) {
       console.log(error);
+      if (typeof window !== "undefined") {
+        window.location.href = "/homepage";
+      }
     }
   };
   return (
