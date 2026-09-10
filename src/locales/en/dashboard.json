@@ -13,7 +13,34 @@
     "liveClasses": "Live Classes",
     "students": "Students",
     "teachers": "Teachers",
-    "courses": "Courses"
+    "courses": "Courses",
+    "courseInfo": "Course Info",
+    "lesson": "Lesson",
+    "batch": "Batch",
+    "translations": "Translations",
+    "active": "Active",
+    "completed": "Completed",
+    "requestedDemo": "Requested Demo",
+    "draft": "Draft",
+    "ongoing": "Ongoing",
+    "past": "Past",
+    "upcomingClasses": "My Upcoming Classes",
+    "pastClasses": "Past Classes",
+    "studentInfo": "Student Info",
+    "evaluations": "Evaluations",
+    "score": "Score",
+    "performance": "Performance",
+    "overallResult": "Overall Result",
+    "certificate": "Certificate",
+    "members": "Members",
+    "questions": "Questions",
+    "myCertificates": "My Certificates",
+    "badges": "Badges",
+    "currentAssignment": "Current Assignment",
+    "pastAssignment": "Past Assignment",
+    "assignmentDetails": "Assignments Details",
+    "classAnnouncement": "Class Announcement",
+    "quizzesDetails": "Quizzes Details"
   },
   "student": {
     "welcome": "Welcome back",
@@ -29,5 +56,16 @@
     "activeCourses": "Active Courses",
     "totalRevenue": "Total Revenue",
     "recentSubmissions": "Recent Submissions"
+  },
+  "admin": {
+    "title": "Admin Administration Panel",
+    "overview": "System Overview",
+    "totalUsers": "Total Users",
+    "totalCourses": "Total Courses",
+    "totalBatches": "Total Batches",
+    "totalEnrollments": "Total Enrollments",
+    "recentUsers": "Recent Users",
+    "recentCourses": "Recent Courses",
+    "unauthorized": "Overview data unavailable. Ensure your account has administrative privileges."
   }
 }

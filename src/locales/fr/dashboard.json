@@ -13,7 +13,34 @@
     "liveClasses": "Cours en direct",
     "students": "Étudiants",
     "teachers": "Enseignants",
-    "courses": "Cours"
+    "courses": "Cours",
+    "courseInfo": "Info Cours",
+    "lesson": "Leçon",
+    "batch": "Session",
+    "translations": "Traductions",
+    "active": "Actif",
+    "completed": "Terminé",
+    "requestedDemo": "Démos demandées",
+    "draft": "Brouillon",
+    "ongoing": "En cours",
+    "past": "Passé",
+    "upcomingClasses": "Mes cours à venir",
+    "pastClasses": "Cours passés",
+    "studentInfo": "Info Étudiant",
+    "evaluations": "Évaluations",
+    "score": "Score",
+    "performance": "Performance",
+    "overallResult": "Résultat global",
+    "certificate": "Certificat",
+    "members": "Membres",
+    "questions": "Questions",
+    "myCertificates": "Mes certificats",
+    "badges": "Badges",
+    "currentAssignment": "Devoir actuel",
+    "pastAssignment": "Devoirs passés",
+    "assignmentDetails": "Détails du devoir",
+    "classAnnouncement": "Annonce de classe",
+    "quizzesDetails": "Détails du quiz"
   },
   "student": {
     "welcome": "Bon retour",
@@ -29,5 +56,16 @@
     "activeCourses": "Cours actifs",
     "totalRevenue": "Revenus totaux",
     "recentSubmissions": "Soumissions récentes"
+  },
+  "admin": {
+    "title": "Panneau d'Administration",
+    "overview": "Aperçu du système",
+    "totalUsers": "Total Utilisateurs",
+    "totalCourses": "Total Cours",
+    "totalBatches": "Total Sessions",
+    "totalEnrollments": "Total Inscriptions",
+    "recentUsers": "Utilisateurs récents",
+    "recentCourses": "Cours récents",
+    "unauthorized": "Données indisponibles. Assurez-vous d'avoir les privilèges administrateur."
   }
 }

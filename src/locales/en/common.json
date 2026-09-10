@@ -19,7 +19,22 @@
     "settings": "Settings",
     "membership": "Membership",
     "logout": "Logout",
-    "more": "More"
+    "more": "More",
+    "teachers": "Teachers",
+    "students": "Students",
+    "liveClasses": "Live Classes",
+    "schedule": "Schedule",
+    "mySchedule": "My Schedule",
+    "assignments": "Assignments",
+    "quizzes": "Quizzes",
+    "announcements": "Announcements",
+    "savedCourses": "Saved Courses",
+    "explore": "Explore",
+    "certificate": "Certificate",
+    "notifications": "Notifications",
+    "allNotifications": "All Notifications",
+    "new": "New",
+    "today": "Today"
   },
   "actions": {
     "explore": "Explore Courses",
@@ -36,12 +51,23 @@
     "finish": "Finish",
     "submit": "Submit",
     "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
     "viewProfile": "View Profile",
     "watchVideo": "Watch Video",
     "readMore": "Read more",
     "readLess": "Read less",
     "clear": "Clear",
     "apply": "Apply"
+  },
+  "modals": {
+    "logoutTitle": "Logout",
+    "logoutConfirm": "Are you sure you want to logout this account?"
+  },
+  "panels": {
+    "announcementsTitle": "Announcements",
+    "notificationsTitle": "Notifications",
+    "allBatches": "All Batches"
   },
   "languages": {
     "title": "Language",

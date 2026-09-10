@@ -23,12 +23,14 @@ import Sider from "antd/es/layout/Sider";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 interface TeacherLayoutProps {
   children: ReactNode;
 }
 
 const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const pathname = usePathname();
@@ -104,55 +106,55 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
               {
                 key: "dashboard",
                 icon: <DashboardIcon />,
-                label: "Dashboard",
+                label: t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" }),
                 onClick: () => router.push("/teacher/dashboard"),
               },
               {
                 key: "courses",
                 icon: <CourseIcon />,
-                label: "Courses",
+                label: t("dashboard.tabs.courses", { defaultValue: "Courses" }),
                 onClick: () => router.push("/teacher/courses"),
               },
               {
                 key: "students",
                 icon: <StudentIcon />,
-                label: "Students",
+                label: t("dashboard.tabs.students", { defaultValue: "Students" }),
                 onClick: () => router.push("/teacher/students"),
               },
               {
                 key: "live-classes",
                 icon: <LiveIcon />,
-                label: "Live Classes",
+                label: t("dashboard.tabs.liveClasses", { defaultValue: "Live Classes" }),
                 onClick: () => router.push("/teacher/live-classes"),
               },
               {
                 key: "schedule",
                 icon: <ScheduleIcon />,
-                label: "My Schedule",
+                label: t("dashboard.tabs.mySchedule", { defaultValue: "My Schedule" }),
                 onClick: () => router.push("/teacher/schedule"),
               },
               {
                 key: "assignments",
                 icon: <AssignmentIcon />,
-                label: "Assignments",
+                label: t("dashboard.tabs.assignments", { defaultValue: "Assignments" }),
                 onClick: () => router.push("/teacher/assignments"),
               },
               {
                 key: "quizzes",
                 icon: <QuizIcon />,
-                label: "Quizzes",
+                label: t("dashboard.tabs.quizzes", { defaultValue: "Quizzes" }),
                 onClick: () => router.push("/teacher/quizzes"),
               },
               {
                 key: "announcements",
                 icon: <NotificationOutlined style={{ fontSize: "20px" }} />,
-                label: "Announcements",
+                label: t("dashboard.tabs.announcements", { defaultValue: "Announcements" }),
                 onClick: () => router.push("/teacher/announcements"),
               },
               {
                 key: "settings",
                 icon: <SettingIcon />,
-                label: "Settings",
+                label: t("dashboard.tabs.settings", { defaultValue: "Settings" }),
                 onClick: () => router.push("/teacher/settings"),
               },
             ]}

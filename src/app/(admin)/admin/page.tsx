@@ -1,8 +1,10 @@
 "use client";
 import { getApi } from "@/services/methods";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "@/context/I18nContext";
 
 const AdminPanel = () => {
+  const { t } = useTranslation();
   const [overview, setOverview] = useState<Record<string, number> | null>(null);
   const [users, setUsers] = useState<unknown[]>([]);
   const [courses, setCourses] = useState<unknown[]>([]);
@@ -24,14 +26,22 @@ const AdminPanel = () => {
     })();
   }, []);
 
+  const getMetricLabel = (key: string) => {
+    if (key === "total_users" || key === "users") return t("dashboard.admin.totalUsers", { defaultValue: "Total Users" });
+    if (key === "total_courses" || key === "courses") return t("dashboard.admin.totalCourses", { defaultValue: "Total Courses" });
+    if (key === "total_batches" || key === "batches") return t("dashboard.admin.totalBatches", { defaultValue: "Total Batches" });
+    if (key === "total_enrollments" || key === "enrollments") return t("dashboard.admin.totalEnrollments", { defaultValue: "Total Enrollments" });
+    return key.replace(/_/g, " ");
+  };
+
   return (
     <div className="flex flex-col gap-6 p-6 max-w-7xl mx-auto w-full pb-12">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
-          Admin Administration Panel
+          {t("dashboard.admin.title", { defaultValue: "Admin Administration Panel" })}
         </h1>
         <span className="text-xs bg-slate-100 text-[var(--text-secondary)] px-3 py-1 rounded-full font-medium border border-[var(--border)]">
-          System Overview
+          {t("dashboard.admin.overview", { defaultValue: "System Overview" })}
         </span>
       </div>
 
@@ -40,7 +50,7 @@ const AdminPanel = () => {
           {Object.entries(overview).map(([k, v]) => (
             <div key={k} className="bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs">
               <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
-                {k.replace(/_/g, " ")}
+                {getMetricLabel(k)}
               </p>
               <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mt-2">
                 {v as number}
@@ -50,7 +60,9 @@ const AdminPanel = () => {
         </div>
       ) : (
         <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-[10px] text-sm">
-          Overview data unavailable. Ensure your account has administrative privileges.
+          {t("dashboard.admin.unauthorized", {
+            defaultValue: "Overview data unavailable. Ensure your account has administrative privileges.",
+          })}
         </div>
       )}
 
@@ -58,7 +70,7 @@ const AdminPanel = () => {
         <div className="bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
             <h2 className="text-base font-bold text-[var(--text-primary)] tracking-tight">
-              Recent Users
+              {t("dashboard.admin.recentUsers", { defaultValue: "Recent Users" })}
             </h2>
             <span className="text-xs text-[var(--text-muted)]">Showing up to 20</span>
           </div>
@@ -87,7 +99,7 @@ const AdminPanel = () => {
         <div className="bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
             <h2 className="text-base font-bold text-[var(--text-primary)] tracking-tight">
-              Platform Courses
+              {t("dashboard.admin.recentCourses", { defaultValue: "Platform Courses" })}
             </h2>
             <span className="text-xs text-[var(--text-muted)]">Showing up to 20</span>
           </div>

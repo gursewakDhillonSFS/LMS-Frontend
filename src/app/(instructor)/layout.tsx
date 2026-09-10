@@ -25,12 +25,14 @@ import Sider from "antd/es/layout/Sider";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 interface PublicLayoutProps {
   children: ReactNode;
 }
 
 const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const pathname = usePathname();
@@ -106,61 +108,61 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               {
                 key: "instructor-panel",
                 icon: <DashboardIcon />,
-                label: "Dashboard",
+                label: t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" }),
                 onClick: () => router.push("/instructor-panel"),
               },
               {
                 key: "courses",
                 icon: <CourseIcon />,
-                label: "Courses",
+                label: t("dashboard.tabs.courses", { defaultValue: "Courses" }),
                 onClick: () => router.push("/courses"),
               },
               {
                 key: "teachers",
                 icon: <TeacherIcon />,
-                label: "Teachers",
+                label: t("dashboard.tabs.teachers", { defaultValue: "Teachers" }),
                 onClick: () => router.push("/teachers"),
               },
               {
                 key: "students",
                 icon: <StudentIcon />,
-                label: "Students",
+                label: t("dashboard.tabs.students", { defaultValue: "Students" }),
                 onClick: () => router.push("/students"),
               },
               {
                 key: "live-classes",
                 icon: <LiveIcon />,
-                label: "Live Classes",
+                label: t("dashboard.tabs.liveClasses", { defaultValue: "Live Classes" }),
                 onClick: () => router.push("/live-classes"),
               },
               {
                 key: "schedule",
                 icon: <ScheduleIcon />,
-                label: "My Schedule",
+                label: t("dashboard.tabs.mySchedule", { defaultValue: "My Schedule" }),
                 onClick: () => router.push("/schedule"),
               },
               {
                 key: "assignments",
                 icon: <AssignmentIcon />,
-                label: "Assignments",
+                label: t("dashboard.tabs.assignments", { defaultValue: "Assignments" }),
                 onClick: () => router.push("/assignments"),
               },
               {
                 key: "quizzes",
                 icon: <QuizIcon />,
-                label: "Quizzes",
+                label: t("dashboard.tabs.quizzes", { defaultValue: "Quizzes" }),
                 onClick: () => router.push("/quizzes"),
               },
               {
                 key: "announcements",
                 icon: <EarPhoneIcon />,
-                label: "Announcement",
+                label: t("dashboard.tabs.announcements", { defaultValue: "Announcement" }),
                 onClick: () => router.push("/announcements"),
               },
               {
                 key: "settings",
                 icon: <SettingIcon />,
-                label: "Settings",
+                label: t("dashboard.tabs.settings", { defaultValue: "Settings" }),
                 onClick: () => router.push("/settings"),
               },
             ]}

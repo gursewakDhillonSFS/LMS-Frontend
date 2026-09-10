@@ -19,7 +19,22 @@
     "settings": "Paramètres",
     "membership": "Abonnement",
     "logout": "Déconnexion",
-    "more": "Plus"
+    "more": "Plus",
+    "teachers": "Enseignants",
+    "students": "Étudiants",
+    "liveClasses": "Cours en direct",
+    "schedule": "Planning",
+    "mySchedule": "Mon planning",
+    "assignments": "Devoirs",
+    "quizzes": "Quiz",
+    "announcements": "Annonces",
+    "savedCourses": "Cours enregistrés",
+    "explore": "Explorer",
+    "certificate": "Certificat",
+    "notifications": "Notifications",
+    "allNotifications": "Toutes les notifications",
+    "new": "Nouveau",
+    "today": "Aujourd'hui"
   },
   "actions": {
     "explore": "Explorer",
@@ -36,12 +51,23 @@
     "finish": "Terminer",
     "submit": "Valider",
     "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
     "viewProfile": "Voir le profil",
     "watchVideo": "Voir la vidéo",
     "readMore": "Lire la suite",
     "readLess": "Réduire",
     "clear": "Effacer",
     "apply": "Appliquer"
+  },
+  "modals": {
+    "logoutTitle": "Déconnexion",
+    "logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter de ce compte ?"
+  },
+  "panels": {
+    "announcementsTitle": "Annonces",
+    "notificationsTitle": "Notifications",
+    "allBatches": "Toutes les sessions"
   },
   "languages": {
     "title": "Langue",

@@ -13,7 +13,34 @@
     "liveClasses": "ਲਾਈਵ ਕਲਾਸਾਂ",
     "students": "ਵਿਦਿਆਰਥੀ",
     "teachers": "ਅਧਿਆਪਕ",
-    "courses": "ਕੋਰਸ"
+    "courses": "ਕੋਰਸ",
+    "courseInfo": "ਕੋਰਸ ਜਾਣਕਾਰੀ",
+    "lesson": "ਪਾਠ",
+    "batch": "ਬੈਚ",
+    "translations": "ਅਨੁਵਾਦ",
+    "active": "ਸਰਗਰਮ",
+    "completed": "ਮੁਕੰਮਲ",
+    "requestedDemo": "ਡੈਮੋ ਬੇਨਤੀਆਂ",
+    "draft": "ਡਰਾਫਟ",
+    "ongoing": "ਜਾਰੀ",
+    "past": "ਪਿਛਲੇ",
+    "upcomingClasses": "ਮੇਰੀਆਂ ਆਉਣ ਵਾਲੀਆਂ ਕਲਾਸਾਂ",
+    "pastClasses": "ਪਿਛਲੀਆਂ ਕਲਾਸਾਂ",
+    "studentInfo": "ਵਿਦਿਆਰਥੀ ਜਾਣਕਾਰੀ",
+    "evaluations": "ਮੁਲਾਂਕਣ",
+    "score": "ਸਕੋਰ",
+    "performance": "ਕਾਰਗੁਜ਼ਾਰੀ",
+    "overallResult": "ਕੁੱਲ ਨਤੀਜਾ",
+    "certificate": "ਸਰਟੀਫਿਕੇਟ",
+    "members": "ਮੈਂਬਰ",
+    "questions": "ਸਵਾਲ",
+    "myCertificates": "ਮੇਰੇ ਸਰਟੀਫਿਕੇਟ",
+    "badges": "ਬੈਜ",
+    "currentAssignment": "ਮੌਜੂਦਾ ਅਸਾਈਨਮੈਂਟ",
+    "pastAssignment": "ਪਿਛਲੀ ਅਸਾਈਨਮੈਂਟ",
+    "assignmentDetails": "ਅਸਾਈਨਮੈਂਟ ਵੇਰਵਾ",
+    "classAnnouncement": "ਕਲਾਸ ਘੋਸ਼ਣਾ",
+    "quizzesDetails": "ਕੁਇਜ਼ ਵੇਰਵਾ"
   },
   "student": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ",
@@ -29,5 +56,16 @@
     "activeCourses": "ਸਰਗਰਮ ਕੋਰਸ",
     "totalRevenue": "ਕੁੱਲ ਕਮਾਈ",
     "recentSubmissions": "ਹਾਲੀਆ ਸਬਮਿਸ਼ਨ"
+  },
+  "admin": {
+    "title": "ਐਡਮਿਨ ਪ੍ਰਸ਼ਾਸਕੀ ਪੈਨਲ",
+    "overview": "ਸਿਸਟਮ ਸਮੀਖਿਆ",
+    "totalUsers": "ਕੁੱਲ ਵਰਤੋਂਕਾਰ",
+    "totalCourses": "ਕੁੱਲ ਕੋਰਸ",
+    "totalBatches": "ਕੁੱਲ ਬੈਚ",
+    "totalEnrollments": "ਕੁੱਲ ਦਾਖਲੇ",
+    "recentUsers": "ਹਾਲੀਆ ਵਰਤੋਂਕਾਰ",
+    "recentCourses": "ਹਾਲੀਆ ਕੋਰਸ",
+    "unauthorized": "ਸਮੀਖਿਆ ਡਾਟਾ ਉਪਲਬਧ ਨਹੀਂ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਪੁਸ਼ਟੀ ਕਰੋ ਕਿ ਤੁਹਾਡੇ ਕੋਲ ਐਡਮਿਨ ਅਧਿਕਾਰ ਹਨ।"
   }
 }

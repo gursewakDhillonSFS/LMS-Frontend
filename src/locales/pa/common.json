@@ -19,7 +19,22 @@
     "settings": "ਸੈਟਿੰਗਾਂ",
     "membership": "ਮੈਂਬਰਸ਼ਿਪ",
     "logout": "ਲਾਗ ਆਊਟ",
-    "more": "ਹੋਰ"
+    "more": "ਹੋਰ",
+    "teachers": "ਅਧਿਆਪਕ",
+    "students": "ਵਿਦਿਆਰਥੀ",
+    "liveClasses": "ਲਾਈਵ ਕਲਾਸਾਂ",
+    "schedule": "ਸਮਾਂ-ਸਾਰਣੀ",
+    "mySchedule": "ਮੇਰਾ ਸਮਾਂ-ਸਾਰਣੀ",
+    "assignments": "ਅਸਾਈਨਮੈਂਟਸ",
+    "quizzes": "ਕੁਇਜ਼",
+    "announcements": "ਘੋਸ਼ਣਾਵਾਂ",
+    "savedCourses": "ਸੰਭਾਲੇ ਕੋਰਸ",
+    "explore": "ਖੋਜੋ",
+    "certificate": "ਸਰਟੀਫਿਕੇਟ",
+    "notifications": "ਸੂਚਨਾਵਾਂ",
+    "allNotifications": "ਸਾਰੀਆਂ ਸੂਚਨਾਵਾਂ",
+    "new": "ਨਵੀਆਂ",
+    "today": "ਅੱਜ"
   },
   "actions": {
     "explore": "ਕੋਰਸ ਵੇਖੋ",
@@ -36,12 +51,23 @@
     "finish": "ਸੰਪੰਨ ਕਰੋ",
     "submit": "ਜਮ੍ਹਾ ਕਰੋ",
     "confirm": "ਪੁਸ਼ਟੀ ਕਰੋ",
+    "yes": "ਹਾਂ",
+    "no": "ਨਹੀਂ",
     "viewProfile": "ਪ੍ਰੋਫਾਈਲ ਵੇਖੋ",
     "watchVideo": "ਵੀਡੀਓ ਵੇਖੋ",
     "readMore": "ਹੋਰ ਪੜ੍ਹੋ",
     "readLess": "ਘੱਟ ਵੇਖੋ",
     "clear": "ਸਾਫ਼ ਕਰੋ",
     "apply": "ਲਾਗੂ ਕਰੋ"
+  },
+  "modals": {
+    "logoutTitle": "ਲਾਗ ਆਊਟ",
+    "logoutConfirm": "ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ 'ਤੇ ਇਸ ਖਾਤੇ ਤੋਂ ਲਾਗ ਆਊਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+  },
+  "panels": {
+    "announcementsTitle": "ਘੋਸ਼ਣਾਵਾਂ",
+    "notificationsTitle": "ਸੂਚਨਾਵਾਂ",
+    "allBatches": "ਸਾਰੇ ਬੈਚ"
   },
   "languages": {
     "title": "ਭਾਸ਼ਾ",

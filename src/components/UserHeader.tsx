@@ -100,8 +100,10 @@ const UserHeader = () => {
           open={logoutModal}
           onCancel={() => setLogOutModal(false)}
           onSubmit={handleLogout}
-          title="Logout"
-          description="Are you sure you want to logout this account?"
+          title={t("common.modals.logoutTitle", { defaultValue: "Logout" })}
+          description={t("common.modals.logoutConfirm", {
+            defaultValue: "Are you sure you want to logout this account?",
+          })}
           iconBG="#FB4A49"
           icon={<LogoutIcon />}
           loading={logoutLoading}
@@ -143,7 +145,9 @@ const UserHeader = () => {
         search={search}
         onChange={(e) => setSearch(e.target.value)}
         className="!max-w-[180px] xl:!max-w-[400px]"
-        placeholder="Search..."
+        placeholder={t("common.nav.searchPlaceholder", {
+          defaultValue: "Search...",
+        })}
       />
 
       <div className="flex items-center gap-[8px] lg:gap-[12px]">

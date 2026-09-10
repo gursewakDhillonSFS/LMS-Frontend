@@ -6,6 +6,7 @@ import { CategoryEnum } from "@/utils/enums";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 const HomeIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -85,6 +86,7 @@ export const getCategoryIcon = (name?: string) => {
 };
 
 const CategoriesSideBar = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const activeCategory = useSelector(
     (state: RootState) => state?.categories?.activeCategory
@@ -111,7 +113,7 @@ const CategoriesSideBar = () => {
           className="flex items-center gap-3 px-3.5 py-2.5 text-[13px] font-medium rounded-[10px] transition-all duration-150 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white"
         >
           <HomeIcon />
-          <span>Home</span>
+          <span>{t("common.nav.home", { defaultValue: "Home" })}</span>
         </Link>
 
         {/* All Courses / All Classes */}
@@ -125,7 +127,7 @@ const CategoriesSideBar = () => {
           }`}
         >
           <GridIcon />
-          <span>All Courses</span>
+          <span>{t("common.nav.allCourses", { defaultValue: "All Courses" })}</span>
         </button>
 
         {/* Category Items */}

@@ -9,12 +9,15 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import dayjs from "dayjs";
 
+import { useTranslation } from "@/context/I18nContext";
+
 interface AnnouncementPanelProp {
   onClose: () => void;
   isTeacher?: boolean;
 }
 
 const AnnouncementPanel: React.FC<AnnouncementPanelProp> = ({ onClose }) => {
+  const { t } = useTranslation();
   const [announcements, setAnnouncements] = useState<AnnouncementPayload[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,7 +71,9 @@ const AnnouncementPanel: React.FC<AnnouncementPanelProp> = ({ onClose }) => {
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
             <EarPhoneIcon />
           </div>
-          <h2 className="text-lg text-[#0E0E0E] font-bold">Announcements</h2>
+          <h2 className="text-lg text-[#0E0E0E] font-bold">
+            {t("common.panels.announcementsTitle", { defaultValue: "Announcements" })}
+          </h2>
         </div>
         <button
           onClick={onClose}
@@ -109,7 +114,7 @@ const AnnouncementPanel: React.FC<AnnouncementPanelProp> = ({ onClose }) => {
 
                 <div className="flex items-center gap-2 text-[11px] text-gray-500">
                   <span className="bg-gray-200/80 text-gray-700 px-2 py-0.5 rounded font-medium">
-                    {note.batchName || "All Batches"}
+                    {note.batchName || t("common.panels.allBatches", { defaultValue: "All Batches" })}
                   </span>
                   {note.instructorName && (
                     <span className="truncate">By {note.instructorName}</span>

@@ -98,8 +98,10 @@ const InstructorHeader = () => {
           onCancel={() => setLogOutModal(false)}
           onSubmit={handleLogout}
           loading={logoutLoading}
-          title="Logout"
-          description="Are you sure you want to logout this account?"
+          title={t("common.modals.logoutTitle", { defaultValue: "Logout" })}
+          description={t("common.modals.logoutConfirm", {
+            defaultValue: "Are you sure you want to logout this account?",
+          })}
           iconBG="#FB4A49"
           icon={<LogoutIcon />}
         />
@@ -140,7 +142,9 @@ const InstructorHeader = () => {
         search={search}
         onChange={(e) => setSearch(e.target.value)}
         className="!max-w-[180px] xl:!max-w-[400px]"
-        placeholder="Search courses, students, topics..."
+        placeholder={t("common.nav.searchPlaceholder", {
+          defaultValue: "Search courses, students, topics...",
+        })}
       />
 
       <div className="flex items-center gap-[8px] lg:gap-[12px]">

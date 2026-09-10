@@ -116,17 +116,29 @@ const NotificationCard: React.FC<{ data: NotificationData }> = ({ data }) => (
   </div>
 );
 
+import { useTranslation } from "@/context/I18nContext";
+
 export interface NotificationProps {
   onClose: () => void;
 }
 
 const NotificationPanel: React.FC<NotificationProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const sections = Object.entries(notifications);
+
+  const getSectionTitle = (section: string) => {
+    if (section === "all") return t("common.nav.allNotifications", { defaultValue: "All Notification" });
+    if (section === "new") return t("common.nav.new", { defaultValue: "New" });
+    if (section === "today") return t("common.nav.today", { defaultValue: "Today" });
+    return section;
+  };
 
   return (
     <div>
       <div className="flex justify-between items-center bg-[#F3F6FC] px-[24px] pt-[24px] pb-[10px]">
-        <h2 className="text-lg text-[#0E0E0E] font-bold">Notification</h2>
+        <h2 className="text-lg text-[#0E0E0E] font-bold">
+          {t("common.panels.notificationsTitle", { defaultValue: "Notification" })}
+        </h2>
         <button
           onClick={onClose}
           className="cursor-pointer text-red-500 hover:text-red-700"
@@ -138,11 +150,7 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose }) => {
         {sections.map(([section, items], index) => (
           <div key={section} className="flex flex-col gap-3">
             <p className="text-sm font-bold text-[#0E0E0E] capitalize">
-              {section === "all"
-                ? "All Notification"
-                : section === "new"
-                ? "New"
-                : section}
+              {getSectionTitle(section)}
             </p>
 
             <div className="flex flex-col gap-2">

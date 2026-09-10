@@ -20,12 +20,14 @@ import Sider from "antd/es/layout/Sider";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 interface PublicLayoutProps {
   children: ReactNode;
 }
 
 const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("");
   const pathname = usePathname();
@@ -93,43 +95,43 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               {
                 key: "dashboard",
                 icon: <DashboardIcon />,
-                label: "Dashboard",
+                label: t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" }),
                 onClick: () => router.push("/dashboard"),
               },
               {
                 key: "my-courses",
                 icon: <CourseIcon />,
-                label: "My Courses",
+                label: t("dashboard.tabs.myCourses", { defaultValue: "My Courses" }),
                 onClick: () => router.push("/my-courses"),
               },
               {
                 key: "saved-courses",
                 icon: <HeartIcon />,
-                label: "Saved Courses",
+                label: t("common.nav.savedCourses", { defaultValue: "Saved Courses" }),
                 onClick: () => router.push("/saved-courses"),
               },
               {
                 key: "my-explore",
                 icon: <ExploreIcon />,
-                label: "Explore",
+                label: t("dashboard.tabs.explore", { defaultValue: "Explore" }),
                 onClick: () => router.push("/my-explore"),
               },
               {
                 key: "my-schedule",
                 icon: <ScheduleIcon />,
-                label: "Schedule",
+                label: t("dashboard.tabs.mySchedule", { defaultValue: "Schedule" }),
                 onClick: () => router.push("/my-schedule"),
               },
               {
                 key: "my-certificate",
                 icon: <CertificationIcon />,
-                label: "Certificate",
+                label: t("dashboard.tabs.certificate", { defaultValue: "Certificate" }),
                 onClick: () => router.push("/my-certificate"),
               },
               {
                 key: "my-settings",
                 icon: <SettingIcon />,
-                label: "Settings",
+                label: t("dashboard.tabs.settings", { defaultValue: "Settings" }),
                 onClick: () => router.push("/my-settings"),
               },
             ]}

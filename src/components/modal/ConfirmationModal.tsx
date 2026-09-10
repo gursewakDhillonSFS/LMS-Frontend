@@ -4,6 +4,7 @@ import { ConfirmationModalProps } from "@/utils/interface";
 import { Modal } from "antd";
 import React from "react";
 import CommonButton from "../CommonButton";
+import { useTranslation } from "@/context/I18nContext";
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   open,
@@ -15,6 +16,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   iconBG = "#00F3A2",
   loading = false,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Modal
       open={open}
@@ -46,13 +49,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
         <div className="flex gap-3 w-full">
           <CommonButton
-            text={"No"}
+            text={t("actions.no", { defaultValue: "No" })}
             onClick={onCancel}
             className="border border-black !bg-transparent !w-full"
           />
           <CommonButton
             loading={loading}
-            text={"Yes"}
+            text={t("actions.yes", { defaultValue: "Yes" })}
             onClick={onSubmit}
             className={`!bg-[${iconBG}] text-white !w-full`}
           />
