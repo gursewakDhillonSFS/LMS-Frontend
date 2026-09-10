@@ -29,26 +29,26 @@ const CommonInput: React.FC<CommonInputProps> = ({
     inputRef.current?.focus();
   };
 
-  const isActive = focused || !!value;
+  const isActive = focused || Boolean(value);
 
   return (
     <div
-      className={`relative flex flex-col justify-center items-start rounded-[8px] border bg-white p-[10px] pt-[14px] w-full transition-all duration-[150ms] ${
+      className={`relative flex flex-col justify-center items-start rounded-xl border bg-slate-50/60 hover:bg-white px-3.5 pt-4 pb-2 w-full transition-all duration-200 cursor-text ${
         focused
-          ? "border-[var(--primary)] shadow-[0_0_0_3px_rgba(49,92,255,0.12),0_1px_2px_rgba(16,24,40,0.04)]"
-          : "border-[var(--border)] shadow-[0_1px_2px_rgba(16,24,40,0.03),inset_0_1px_1px_rgba(16,24,40,0.02)] hover:border-[var(--border-strong)]"
+          ? "border-[#4F46E5] bg-white ring-3 ring-[#4F46E5]/15 shadow-sm"
+          : "border-slate-300 hover:border-slate-400 shadow-2xs"
       } ${className}`}
       onClick={handleWrapperClick}
     >
-      <div
-        className={`absolute leading-[100%] transition-all duration-[150ms] z-[5] pointer-events-none ${
+      <label
+        className={`absolute transition-all duration-150 pointer-events-none select-none font-medium ${
           isActive
-            ? "text-[11px] top-[6px] text-[var(--text-muted)]"
-            : "text-[14px] text-[var(--text-muted)]"
+            ? "text-[11px] top-1.5 font-semibold text-[#4F46E5]"
+            : "text-sm top-3 text-slate-500"
         }`}
       >
         {label}
-      </div>
+      </label>
       {isPassword ? (
         <Input.Password
           ref={inputRef}
@@ -63,9 +63,16 @@ const CommonInput: React.FC<CommonInputProps> = ({
             if (!value) setFocused(false);
           }}
           iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+            visible ? (
+              <EyeTwoTone
+                twoToneColor="#4F46E5"
+                className="text-base text-[#4F46E5] cursor-pointer p-0.5 transition-colors"
+              />
+            ) : (
+              <EyeInvisibleOutlined className="text-base text-slate-600 hover:text-slate-900 cursor-pointer p-0.5 transition-colors" />
+            )
           }
-          className="!border-none !shadow-none !text-[14px] !px-0 bg-transparent !mt-1 !text-[var(--text-primary)]"
+          className="!border-none !shadow-none !text-sm !p-0 bg-transparent !mt-1.5 !text-slate-900 font-medium w-full"
         />
       ) : (
         <Input
@@ -81,7 +88,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
           onBlur={() => {
             if (!value) setFocused(false);
           }}
-          className="!border-none !shadow-none !text-[14px] !px-0 bg-transparent !mt-1 !text-[var(--text-primary)]"
+          className="!border-none !shadow-none !text-sm !p-0 bg-transparent !mt-1.5 !text-slate-900 font-medium w-full"
         />
       )}
     </div>

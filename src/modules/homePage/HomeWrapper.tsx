@@ -6,7 +6,6 @@ import ModernSkills from "./ModernSkills";
 import HomeImageCarousel from "./HomeImageCarousel";
 import Testimonials from "./Testimonials";
 import FrequentlyQuestions from "./FrequentlyQuestions";
-import Subscription from "./Subscription";
 
 const HomeWrapper = () => {
   return (
@@ -18,7 +17,6 @@ const HomeWrapper = () => {
       <HomeImageCarousel />
       <Testimonials />
       <FrequentlyQuestions />
-      <Subscription />
     </div>
   );
 };

@@ -3,15 +3,14 @@ import { Button, Form } from "antd";
 import CommonInput from "../CommonInput";
 import CommonButton from "../CommonButton";
 import CommonLink from "../CommonLink";
-import { AppleIcon, FacebookIcon, GoogleIcon } from "@/utils/icons";
-import { usePathname, useRouter } from "next/navigation";
+import { AppleIcon, GoogleIcon } from "@/utils/icons";
+import { useRouter } from "next/navigation";
 import { Role, RoutePaths } from "@/utils/enums";
 import { cartList, loginApi, socialAuth } from "@/services/collections";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/slices/UserDataSlice";
 import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useFacebookSdk } from "@/hooks/useFacebookSdk";
 import { setCartCount } from "@/redux/slices/CourseDataSlice";
 
 const authOptions = [
@@ -38,9 +37,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
 }) => {
   const [form] = Form.useForm();
   const router = useRouter();
-  const pathname = usePathname();
   const dispatch = useDispatch();
-  const isFacebookReady = useFacebookSdk();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (value: { email: string; password: string }) => {
@@ -78,38 +75,6 @@ const SignInForm: React.FC<SignInFormProps> = ({
     }
   };
 
-  const handleFacebookLogin = () => {
-    if (!window.FB || !isFacebookReady) return;
-
-    window.FB.login(
-      (response: Facebook.LoginStatusResponse) => {
-        const token = response?.authResponse?.accessToken;
-        if (!token) {
-          console.error("No access token received from Facebook.");
-          return;
-        }
-        handleSocialAuth(token);
-      },
-      { scope: "email,public_profile" }
-    );
-  };
-
-  const handleSocialAuth = async (token: string) => {
-    const payload = {
-      provider: "facebook",
-      token: token,
-    };
-
-    try {
-      const res = await socialAuth(payload);
-      if (res?.status) {
-        console.log("Auth Success:", res);
-      }
-    } catch (error) {
-      console.error("Auth Error:", error);
-    }
-  };
-
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -119,7 +84,12 @@ const SignInForm: React.FC<SignInFormProps> = ({
         };
         const response = await socialAuth(payload);
         if (response?.status) {
-          console.log(response);
+          dispatch(setUser({ ...response?.data }));
+          if (response?.data?.role_name === Role?.INSTRUCTOR) {
+            router.push(RoutePaths?.InstructorPanel);
+          } else {
+            router.push(RoutePaths?.Dashboard);
+          }
         }
       } catch (err) {
         console.error("Google auth error", err);
@@ -130,8 +100,8 @@ const SignInForm: React.FC<SignInFormProps> = ({
   });
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-4">
-      <div className="flex flex-col gap-4">
+    <Form form={form} layout="vertical" onFinish={onFinish} className="mt-2">
+      <div className="flex flex-col gap-3.5">
         <Form.Item
           name="email"
           rules={[
@@ -175,7 +145,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
         <div className="flex items-center justify-end -mt-1">
           <CommonLink
             text="Forgot Password?"
-            className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--primary)]"
+            className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline"
             onClick={onForgotPassword}
           />
         </div>
@@ -185,15 +155,17 @@ const SignInForm: React.FC<SignInFormProps> = ({
         <CommonButton
           text="Sign In"
           loading={loading}
-          className="w-full !h-[44px] !text-[15px] font-medium !rounded-[8px]"
+          className="w-full !h-12 !text-[15px] !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
         />
       </Form.Item>
 
       <div className="flex flex-col items-center justify-center gap-4 my-5">
         <div className="flex items-center w-full">
-          <div className="border-b border-[var(--border)] flex-1"></div>
-          <span className="px-3 text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider">or</span>
-          <div className="border-b border-[var(--border)] flex-1"></div>
+          <div className="border-b border-slate-200 flex-1" />
+          <span className="px-3 text-xs text-slate-400 font-semibold uppercase tracking-wider">
+            or continue with
+          </span>
+          <div className="border-b border-slate-200 flex-1" />
         </div>
 
         <div className="w-full grid grid-cols-2 gap-3">
@@ -204,7 +176,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
               onClick={() => {
                 if (key === "google") googleLogin();
               }}
-              className="!bg-white !border !border-[var(--border)] hover:!bg-[var(--surface-subtle)] !h-[42px] !rounded-[8px] !flex !items-center !justify-center shadow-2xs transition-colors"
+              className="!bg-white !border !border-slate-300 hover:!border-slate-400 hover:!bg-slate-50 !h-11 !rounded-xl !flex !items-center !justify-center shadow-2xs transition-all"
             >
               {icon}
             </Button>
@@ -212,12 +184,14 @@ const SignInForm: React.FC<SignInFormProps> = ({
         </div>
       </div>
 
-      {!pathname.includes(RoutePaths?.BecomeInstructor) && (
-        <p className="text-center text-sm text-[var(--text-secondary)]">
-          New to Learning+?{" "}
-          <CommonLink text="Sign Up" className="font-semibold text-[var(--primary)] hover:underline" onClick={onSignUp} />
-        </p>
-      )}
+      <p className="text-center text-sm text-slate-600 pb-1">
+        New to Learning+?{" "}
+        <CommonLink
+          text="Create an Account"
+          className="font-bold text-[#4F46E5] hover:text-[#4338CA] hover:underline"
+          onClick={onSignUp}
+        />
+      </p>
     </Form>
   );
 };

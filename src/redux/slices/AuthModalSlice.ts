@@ -10,6 +10,7 @@ interface AuthState {
   token: string | null;
   user_id: string | null;
   email: string | null;
+  signupRole: "student" | "instructor";
 }
 
 const initialState: AuthState = {
@@ -21,6 +22,7 @@ const initialState: AuthState = {
   token: null,
   user_id: null,
   email: null,
+  signupRole: "student",
 };
 
 const AuthModalSlice = createSlice({
@@ -51,6 +53,9 @@ const AuthModalSlice = createSlice({
     setuserId: (state, action: PayloadAction<string | null>) => {
       state.user_id = action.payload;
     },
+    setSignupRole: (state, action: PayloadAction<"student" | "instructor">) => {
+      state.signupRole = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetAllSlices, () => initialState);
@@ -66,6 +71,7 @@ export const {
   setEmail,
   setToken,
   setuserId,
+  setSignupRole,
 } = AuthModalSlice.actions;
 
 export default AuthModalSlice.reducer;

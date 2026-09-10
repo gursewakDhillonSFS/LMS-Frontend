@@ -16,7 +16,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
       open={open}
       onCancel={onClose}
       footer={null}
-      width={460}
+      width={480}
       centered={centered}
       closable={false}
       prefixCls="common-modal"
@@ -24,22 +24,22 @@ const AuthModal: React.FC<AuthModalProps> = ({
     >
       <button
         onClick={onClose}
-        className="cursor-pointer absolute w-8 h-8 bg-[var(--surface-subtle)] hover:bg-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-full flex items-center justify-center top-4 right-4 transition-colors duration-150 z-10"
+        className="cursor-pointer absolute w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 rounded-full flex items-center justify-center top-4 right-4 transition-all duration-150 z-20 border border-slate-200 shadow-2xs"
         aria-label="Close"
       >
         <CloseIcon />
       </button>
-      <div className="flex flex-col items-center gap-2 justify-center text-center pt-2 pb-4">
-        <h2 className="text-[24px] md:text-[26px] font-bold text-[var(--text-primary)] tracking-tight">
+      <div className="flex flex-col items-center gap-1.5 justify-center text-center pt-2 pb-5 px-4">
+        <h2 className="text-2xl sm:text-[26px] font-extrabold text-slate-900 tracking-tight">
           {title}
         </h2>
         {subtitle && (
-          <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed max-w-sm">
+          <p className="text-sm text-slate-500 leading-relaxed max-w-sm">
             {subtitle}
           </p>
         )}
       </div>
-      <div>{children}</div>
+      <div className="px-2">{children}</div>
     </Modal>
   );
 };

@@ -52,7 +52,7 @@ export function middleware(request: NextRequest) {
   const teacherRoutes = ["/teacher"];
   const adminRoutes = ["/admin"];
 
-  if (pathname === "/") {
+  if (pathname === "/" || pathname === "/becomeInstructor") {
     return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
   }
 

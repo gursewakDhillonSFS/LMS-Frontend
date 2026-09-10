@@ -15,35 +15,24 @@ import { setActiveCategory } from "@/redux/slices/CategoriesSlice";
 import { useRouter } from "next/navigation";
 import { RoutePaths } from "@/utils/enums";
 import { UpOutlined, YoutubeFilled } from "@ant-design/icons";
+import { setSignup, setSignupRole } from "@/redux/slices/AuthModalSlice";
 
 type FooterItem = {
   text: string;
   link?: string;
   icon?: React.ReactNode;
-};
-
-type FooterSection = {
-  title: string;
-  items: FooterItem[];
-};
-
-const helpfulLinks: FooterSection = {
-  title: "HELPFUL LINKS",
-  items: [
-    { text: "Become an Instructor", link: RoutePaths?.BecomeInstructor },
-    { text: "Privacy Policy", link: "/privacy-policy" },
-    { text: "Terms & Condition", link: "/terms" },
-  ],
+  action?: () => void;
 };
 
 const defaultCategories = [
   { name: "Data Science", id: "data-science" },
   { name: "Digital Marketing", id: "digital-marketing" },
   { name: "Mobile Development", id: "mobile-development" },
+  { name: "UI/UX Design", id: "ui-ux-design" },
   { name: "Web Development", id: "web-development" },
 ];
 
-const contactInfo: FooterItem[] = [
+const contactInfo = [
   {
     text: "(252) 555-0126",
     icon: <PhoneCallIcon />,
@@ -68,11 +57,16 @@ const Footer: React.FC = () => {
     (state: RootState) => state.categories.categories
   );
 
-  const handleClick = (id?: string) => {
+  const handleClickCategory = (id?: string) => {
     if (id) {
       dispatch(setActiveCategory(id));
     }
     router.push(RoutePaths?.Browse);
+  };
+
+  const handleBecomeInstructor = () => {
+    dispatch(setSignupRole("instructor"));
+    dispatch(setSignup(true));
   };
 
   const scrollToTop = () => {
@@ -81,53 +75,56 @@ const Footer: React.FC = () => {
 
   const displayCategories =
     categories && categories.length > 0
-      ? categories.slice(0, 4)
+      ? categories.slice(0, 5)
       : defaultCategories.map((c) => ({
           category_id: c.id,
           category_name: c.name,
         }));
 
   return (
-    <footer className="bg-[#090D1A] text-white pt-16 pb-8 border-t border-slate-800/80">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-16 xl:px-24">
-        {/* Main Footer Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
-          {/* Brand Column */}
-          <div className="lg:col-span-4 flex flex-col items-start gap-4">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
+    <footer className="bg-[#090D1A] text-white pt-12 pb-6 border-t border-slate-800/80">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        {/* Main 4 Balanced Footer Columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-8 border-b border-slate-800/80">
+          {/* Brand Column (Span 4) */}
+          <div className="lg:col-span-4 flex flex-col items-start gap-3">
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => router.push("/")}
+            >
               <HeaderLogoIcon textColor="#ffffff" />
             </div>
             <p className="text-xs text-slate-400 font-medium">
               Learn. Build. Grow.
             </p>
             {/* Social Links */}
-            <div className="flex items-center gap-3 mt-2">
-              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
+            <div className="flex items-center gap-2.5 mt-2">
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
                 <FaceBookIcon />
               </span>
-              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
                 <LinkdinIcon />
               </span>
-              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
                 <TwitterIcon />
               </span>
-              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white text-sm">
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white text-sm">
                 <YoutubeFilled />
               </span>
             </div>
           </div>
 
-          {/* Categories Column */}
-          <div className="lg:col-span-2 flex flex-col gap-3.5">
+          {/* Categories Column (Span 3) */}
+          <div className="lg:col-span-3 flex flex-col gap-3">
             <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
               CATEGORIES
             </h4>
-            <ul className="flex flex-col gap-2.5">
+            <ul className="flex flex-col gap-2">
               {displayCategories.map((item) => (
                 <li
                   key={item.category_id}
                   className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
-                  onClick={() => handleClick(item.category_id)}
+                  onClick={() => handleClickCategory(item.category_id)}
                 >
                   {item.category_name}
                 </li>
@@ -135,40 +132,35 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Additional Category / Column */}
-          <div className="lg:col-span-2 flex flex-col gap-3.5 pt-7 sm:pt-0">
-            <ul className="flex flex-col gap-2.5 mt-0 lg:mt-7">
+          {/* Helpful Links Column (Span 2) */}
+          <div className="lg:col-span-2 flex flex-col gap-3">
+            <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
+              HELPFUL LINKS
+            </h4>
+            <ul className="flex flex-col gap-2">
               <li
                 className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
-                onClick={() => handleClick("ui-ux-design")}
+                onClick={handleBecomeInstructor}
               >
-                UI/UX Design
+                Become an Instructor
+              </li>
+              <li
+                className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
+                onClick={() => router.push("/privacy-policy")}
+              >
+                Privacy Policy
+              </li>
+              <li
+                className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
+                onClick={() => router.push("/terms")}
+              >
+                Terms & Condition
               </li>
             </ul>
           </div>
 
-          {/* Helpful Links */}
-          <div className="lg:col-span-2 flex flex-col gap-3.5">
-            <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
-              {helpfulLinks.title}
-            </h4>
-            <ul className="flex flex-col gap-2.5">
-              {helpfulLinks.items.map((item) => (
-                <li
-                  key={item.text}
-                  className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
-                  onClick={() => {
-                    if (item.link) router.push(item.link);
-                  }}
-                >
-                  {item.text}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="lg:col-span-2 flex flex-col gap-3.5">
+          {/* Contact Info Column (Span 3) */}
+          <div className="lg:col-span-3 flex flex-col gap-3">
             <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
               CONTACT INFO
             </h4>
@@ -176,7 +168,7 @@ const Footer: React.FC = () => {
               {contactInfo.map((contact) => (
                 <li
                   key={contact.text}
-                  className="flex items-start gap-2 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+                  className="flex items-start gap-2.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
                 >
                   <span className="mt-0.5 shrink-0 opacity-70">{contact.icon}</span>
                   <a href={contact.link} className="hover:underline break-words">
@@ -189,8 +181,8 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Copyright & Scroll To Top */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div className="w-full text-center">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <div className="w-full text-center sm:text-left">
             © 2025. Learning+. All Rights Reserved.
           </div>
           <button
