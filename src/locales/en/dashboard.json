@@ -1,0 +1,33 @@
+{
+  "tabs": {
+    "dashboard": "Dashboard",
+    "myCourses": "My Courses",
+    "mySchedule": "My Schedule",
+    "certificates": "Certificates",
+    "explore": "Explore",
+    "chat": "Messages",
+    "settings": "Settings",
+    "announcements": "Announcements",
+    "assignments": "Assignments",
+    "quizzes": "Quizzes",
+    "liveClasses": "Live Classes",
+    "students": "Students",
+    "teachers": "Teachers",
+    "courses": "Courses"
+  },
+  "student": {
+    "welcome": "Welcome back",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "certificatesEarned": "Certificates Earned",
+    "continueLearning": "Continue Learning",
+    "upcomingSchedule": "Upcoming Schedule"
+  },
+  "instructor": {
+    "panel": "Instructor Panel",
+    "totalStudents": "Total Students",
+    "activeCourses": "Active Courses",
+    "totalRevenue": "Total Revenue",
+    "recentSubmissions": "Recent Submissions"
+  }
+}

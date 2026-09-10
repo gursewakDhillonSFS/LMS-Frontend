@@ -1,0 +1,44 @@
+{
+  "badges": {
+    "proIncluded": "Inclus avec Skillora Pro",
+    "realProjects": "Projets concrets",
+    "free": "Inscription gratuite",
+    "verified": "Certificat vérifié"
+  },
+  "stats": {
+    "rating": "Note",
+    "level": "Niveau - Tous niveaux",
+    "duration": "Durée du cours",
+    "schedule": "Horaires flexibles à votre rythme",
+    "enrolled": "apprenants inscrits"
+  },
+  "tabs": {
+    "overview": "Aperçu",
+    "curriculum": "Programme",
+    "instructor": "Formateur",
+    "reviews": "Avis"
+  },
+  "sections": {
+    "whatYouWillLearn": "Ce que vous apprendrez",
+    "aboutCourse": "À propos de ce cours",
+    "meetTeacher": "Rencontrez votre formateur",
+    "skillsGained": "Compétences acquises",
+    "reviewsTitle": "Avis des apprenants",
+    "keyFeatures": "Caractéristiques clés",
+    "projectBased": "Axé sur les projets",
+    "lifetimeAccess": "Accès à vie",
+    "certificateAwarded": "Certificat accrédité"
+  },
+  "sidebar": {
+    "courseIncludes": "Ce cours comprend",
+    "onDemandVideo": "heures de vidéo HD à la demande",
+    "practicalProjects": "projets pratiques et devoirs",
+    "downloadableFiles": "ressources téléchargeables",
+    "completionCertificate": "Certificat de réussite vérifié",
+    "lifetimeAccess": "Accès à vie complet sur web et mobile",
+    "moneyBack": "Garantie satisfait ou remboursé de 30 jours",
+    "relatedCourses": "Cours associés",
+    "learnAtYourPace": "Apprenez à votre rythme",
+    "proPromo": "Obtenez un accès illimité à ce cours et à plus de 1 000 autres avec Skillora Pro."
+  }
+}

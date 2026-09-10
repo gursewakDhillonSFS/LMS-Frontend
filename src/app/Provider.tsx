@@ -156,6 +156,10 @@ const antdTheme = {
 };
 
 import { setMessageInstance } from "@/utils/toast";
+import { I18nProvider, useTranslation } from "@/context/I18nContext";
+import { SupportedLocale } from "@/locales";
+import enUS from "antd/locale/en_US";
+import frFR from "antd/locale/fr_FR";
 
 function AntdAppBridge() {
   const { message } = App.useApp();
@@ -165,25 +169,47 @@ function AntdAppBridge() {
   return null;
 }
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+function AntdLocalizedConfig({ children }: { children: React.ReactNode }) {
+  const { locale } = useTranslation();
+  const antdLocale = locale === "fr" ? frFR : enUS;
+
   return (
-    <ConfigProvider theme={antdTheme}>
+    <ConfigProvider theme={antdTheme} locale={antdLocale}>
       <App>
         <AntdAppBridge />
-        <ReduxProvider store={store}>
-          <PersistGate
-            loading={
-              <div className="w-full h-screen flex items-center justify-center" style={{ backgroundColor: "#F8F9FB" }}>
-                <Spin size="large" />
-              </div>
-            }
-            persistor={persistor}
-          >
-            <GlobalAnnouncementListener />
-            {children}
-          </PersistGate>
-        </ReduxProvider>
+        {children}
       </App>
     </ConfigProvider>
+  );
+}
+
+export default function Providers({
+  children,
+  initialLocale,
+}: {
+  children: React.ReactNode;
+  initialLocale?: SupportedLocale;
+}) {
+  return (
+    <I18nProvider initialLocale={initialLocale}>
+      <ReduxProvider store={store}>
+        <PersistGate
+          loading={
+            <div
+              className="w-full h-screen flex items-center justify-center"
+              style={{ backgroundColor: "#F8F9FB" }}
+            >
+              <Spin size="large" />
+            </div>
+          }
+          persistor={persistor}
+        >
+          <AntdLocalizedConfig>
+            <GlobalAnnouncementListener />
+            {children}
+          </AntdLocalizedConfig>
+        </PersistGate>
+      </ReduxProvider>
+    </I18nProvider>
   );
 }

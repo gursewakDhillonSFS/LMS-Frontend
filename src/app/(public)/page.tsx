@@ -11,6 +11,12 @@ export const metadata: Metadata = {
     "Explore 1,000+ interactive online courses in Software Development, Data Science, AI, Design, and Business. Learn from industry experts and earn verified certificates.",
   alternates: {
     canonical: `${baseUrl}`,
+    languages: {
+      en: `${baseUrl}`,
+      pa: `${baseUrl}?lang=pa`,
+      fr: `${baseUrl}?lang=fr`,
+      "x-default": `${baseUrl}`,
+    },
   },
   openGraph: {
     title: "Skillora — Master In-Demand Tech, Design & Business Skills",

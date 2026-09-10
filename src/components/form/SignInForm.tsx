@@ -12,6 +12,7 @@ import { setUser } from "@/redux/slices/UserDataSlice";
 import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { setCartCount } from "@/redux/slices/CourseDataSlice";
+import { useTranslation } from "@/context/I18nContext";
 
 const authOptions = [
   {
@@ -35,6 +36,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
   onForgotPassword,
   onSignUp,
 }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -105,16 +107,16 @@ const SignInForm: React.FC<SignInFormProps> = ({
         <Form.Item
           name="email"
           rules={[
-            { required: true, message: "Please enter your email" },
+            { required: true, message: t("auth.validation.emailRequired") },
             {
               type: "email",
-              message: "Please enter a valid email address",
+              message: t("auth.validation.emailInvalid"),
             },
           ]}
           className="!mb-0"
         >
           <CommonInput
-            label="Email Address"
+            label={t("auth.login.email")}
             type="email"
             value={form.getFieldValue("email") || ""}
             onChange={(e) => form.setFieldsValue({ email: e.target.value })}
@@ -124,16 +126,16 @@ const SignInForm: React.FC<SignInFormProps> = ({
         <Form.Item
           name="password"
           rules={[
-            { required: true, message: "Please enter your password" },
+            { required: true, message: t("auth.validation.passwordRequired") },
             {
               min: 8,
-              message: "Password must be at least 8 characters",
+              message: t("auth.validation.passwordMin"),
             },
           ]}
           className="!mb-0"
         >
           <CommonInput
-            label="Password"
+            label={t("auth.login.password")}
             isPassword
             value={form.getFieldValue("password") || ""}
             onChange={(e) =>
@@ -144,7 +146,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
 
         <div className="flex items-center justify-end -mt-1">
           <CommonLink
-            text="Forgot Password?"
+            text={t("auth.login.forgotPassword")}
             className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline"
             onClick={onForgotPassword}
           />
@@ -153,7 +155,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
 
       <Form.Item className="!mb-0 !mt-5">
         <CommonButton
-          text="Sign In"
+          text={t("auth.login.submit")}
           loading={loading}
           className="w-full !h-12 !text-[15px] !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
         />
@@ -163,7 +165,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
         <div className="flex items-center w-full">
           <div className="border-b border-slate-200 flex-1" />
           <span className="px-3 text-xs text-slate-400 font-semibold uppercase tracking-wider">
-            or continue with
+            {t("auth.login.or")}
           </span>
           <div className="border-b border-slate-200 flex-1" />
         </div>
@@ -176,7 +178,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
               onClick={() => {
                 if (key === "google") googleLogin();
               }}
-              className="!bg-white !border !border-slate-300 hover:!border-slate-400 hover:!bg-slate-50 !h-11 !rounded-xl !flex !items-center !justify-center shadow-2xs transition-all"
+              className="!bg-white !border !border-slate-300 hover:!border-slate-400 hover:!bg-slate-50 !h-11 !rounded-xl !flex !items-center !justify-center shadow-2xs transition-all cursor-pointer"
             >
               {icon}
             </Button>
@@ -185,9 +187,9 @@ const SignInForm: React.FC<SignInFormProps> = ({
       </div>
 
       <p className="text-center text-sm text-slate-600 pb-1">
-        New to Skillora?{" "}
+        {t("auth.login.noAccount")}{" "}
         <CommonLink
-          text="Create an Account"
+          text={t("auth.login.createAccount")}
           className="font-bold text-[#4F46E5] hover:text-[#4338CA] hover:underline"
           onClick={onSignUp}
         />

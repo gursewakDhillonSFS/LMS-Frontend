@@ -1,0 +1,33 @@
+{
+  "tabs": {
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "myCourses": "ਮੇਰੇ ਕੋਰਸ",
+    "mySchedule": "ਮੇਰਾ ਸਮਾਂ-ਸਾਰਣੀ",
+    "certificates": "ਸਰਟੀਫਿਕੇਟ",
+    "explore": "ਖੋਜੋ",
+    "chat": "ਸੁਨੇਹੇ",
+    "settings": "ਸੈਟਿੰਗਾਂ",
+    "announcements": "ਘੋਸ਼ਣਾਵਾਂ",
+    "assignments": "ਅਸਾਈਨਮੈਂਟਸ",
+    "quizzes": "ਕੁਇਜ਼",
+    "liveClasses": "ਲਾਈਵ ਕਲਾਸਾਂ",
+    "students": "ਵਿਦਿਆਰਥੀ",
+    "teachers": "ਅਧਿਆਪਕ",
+    "courses": "ਕੋਰਸ"
+  },
+  "student": {
+    "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ",
+    "inProgress": "ਜਾਰੀ ਕੋਰਸ",
+    "completed": "ਮੁਕੰਮਲ ਕੀਤੇ",
+    "certificatesEarned": "ਪ੍ਰਾਪਤ ਸਰਟੀਫਿਕੇਟ",
+    "continueLearning": "ਸਿੱਖਣਾ ਜਾਰੀ ਰੱਖੋ",
+    "upcomingSchedule": "ਆਉਣ ਵਾਲੀ ਸਮਾਂ-ਸਾਰਣੀ"
+  },
+  "instructor": {
+    "panel": "ਅਧਿਆਪਕ ਪੈਨਲ",
+    "totalStudents": "ਕੁੱਲ ਵਿਦਿਆਰਥੀ",
+    "activeCourses": "ਸਰਗਰਮ ਕੋਰਸ",
+    "totalRevenue": "ਕੁੱਲ ਕਮਾਈ",
+    "recentSubmissions": "ਹਾਲੀਆ ਸਬਮਿਸ਼ਨ"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "badges": {
+    "proIncluded": "Included with Skillora Pro",
+    "realProjects": "Build Real Projects",
+    "free": "Free Enrollment",
+    "verified": "Verified Certificate"
+  },
+  "stats": {
+    "rating": "Rating",
+    "level": "Level - All levels welcome",
+    "duration": "Course duration",
+    "schedule": "Flexible self-paced schedule",
+    "enrolled": "learners enrolled"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "curriculum": "Curriculum",
+    "instructor": "Instructor",
+    "reviews": "Reviews"
+  },
+  "sections": {
+    "whatYouWillLearn": "What you'll learn",
+    "aboutCourse": "About this course",
+    "meetTeacher": "Meet your instructor",
+    "skillsGained": "Skills you'll gain",
+    "reviewsTitle": "Learner reviews",
+    "keyFeatures": "Key Features",
+    "projectBased": "Project Based",
+    "lifetimeAccess": "Lifetime Access",
+    "certificateAwarded": "Accredited Certificate"
+  },
+  "sidebar": {
+    "courseIncludes": "This Course Includes",
+    "onDemandVideo": "hours of on-demand HD video",
+    "practicalProjects": "hands-on projects & assignments",
+    "downloadableFiles": "downloadable resource files",
+    "completionCertificate": "Verified Certificate of Completion",
+    "lifetimeAccess": "Full lifetime access on web & mobile",
+    "moneyBack": "30-Day Money-Back Guarantee",
+    "relatedCourses": "Related Courses",
+    "learnAtYourPace": "Learn At Your Own Pace",
+    "proPromo": "Get unlimited access to this course and 1,000+ others with Skillora Pro."
+  }
+}

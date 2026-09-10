@@ -23,8 +23,11 @@ import { markAnnouncementsAsReadApi } from "@/services/collections";
 import { RootState } from "@/redux/store";
 import { RoutePaths } from "@/utils/enums";
 import Cookies from "js-cookie";
+import { useTranslation } from "@/context/I18nContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const UserHeader = () => {
+  const { t } = useTranslation();
   const full_name = useSelector(
     (state: RootState) => state.userdata?.full_name
   );
@@ -43,7 +46,7 @@ const UserHeader = () => {
           onClick={() => setChangePassword(true)}
           className="flex items-center gap-[8px] text-[14px] font-[400] px-[12px] py-[8px] rounded-[8px] text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
         >
-          <span>Change Password</span>
+          <span>{t("auth.changePassword.title")}</span>
         </div>
       ),
     },
@@ -51,7 +54,7 @@ const UserHeader = () => {
       key: "logout",
       label: (
         <div className="flex items-center gap-[8px] text-[14px] font-[400] text-[var(--error)] px-[12px] py-[8px] rounded-[8px] hover:bg-[var(--error-light)] transition-all duration-[150ms]">
-          <span>Log Out</span>
+          <span>{t("common.nav.logout")}</span>
         </div>
       ),
       onClick: () => {
@@ -183,9 +186,7 @@ const UserHeader = () => {
             <CartIcon />
           </button>
         </Badge>
-        <div className="hidden sm:flex items-center gap-[4px] px-[4px]">
-          <GlobeIcon /> <span className="text-[13px] font-[500] text-[var(--text-secondary)]">EN</span>
-        </div>
+        <LanguageSwitcher variant="header" />
         <div className="w-[1px] h-[24px] bg-[var(--border)]"></div>
         <Dropdown
           prefixCls="custom-dropdown-header"

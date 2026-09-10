@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "title": "Explore All Courses",
+    "subtitle": "Discover professional programs created to take you from foundational basics to advanced mastery."
+  },
+  "filters": {
+    "title": "Filter Courses",
+    "categories": "Categories",
+    "ratings": "Ratings",
+    "fourAndAbove": "4.5 & up",
+    "fourOnly": "4.0 & up",
+    "price": "Price",
+    "allPrices": "All Prices",
+    "freeOnly": "Free Courses",
+    "paidOnly": "Premium Courses",
+    "clearAll": "Clear All Filters"
+  },
+  "results": {
+    "showing": "Showing",
+    "of": "of",
+    "courses": "courses",
+    "noCoursesFound": "No courses match your criteria",
+    "resetSuggestion": "Try clearing your filters or searching for different keywords."
+  },
+  "sort": {
+    "label": "Sort By",
+    "popular": "Most Popular",
+    "newest": "Newest",
+    "highestRated": "Highest Rated",
+    "priceLowHigh": "Price: Low to High",
+    "priceHighLow": "Price: High to Low"
+  }
+}

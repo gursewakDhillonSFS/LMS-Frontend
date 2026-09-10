@@ -24,12 +24,14 @@ import { RoutePaths } from "@/utils/enums";
 import { usePathname } from "next/navigation";
 import React, { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 interface PublicLayoutProps {
   children: ReactNode;
 }
 
 const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
   const login = useSelector((state: RootState) => state.authmodal.signin);
   const signUp = useSelector((state: RootState) => state.authmodal.signup);
   const otp = useSelector((state: RootState) => state.authmodal.otpVerify);
@@ -65,8 +67,8 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         <AuthModal
           open={login}
           onClose={() => dispatch(setSignin(false))}
-          title="Log Into Account"
-          subtitle="Welcome to Skillora, please enter your login details to access your account."
+          title={t("auth.login.title")}
+          subtitle={t("auth.login.subtitle")}
         >
           <SignInForm
             onSignUp={() => {
@@ -84,8 +86,8 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         <AuthModal
           open={signUp}
           onClose={() => dispatch(setSignup(false))}
-          title="Sign up"
-          subtitle="Learn on your own time from top universities and businesses."
+          title={t("auth.signup.title")}
+          subtitle={t("auth.signup.subtitle")}
         >
           <SignUpForm
             onSignin={() => {
@@ -99,9 +101,9 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         <AuthModal
           open={forgetPassword}
           onClose={() => dispatch(setForgotPass(false))}
-          title="Forgot password"
+          title={t("auth.forgot.title")}
           centered={true}
-          subtitle="Enter the email address you use on Skillora. We'll send you an OTP to reset your password."
+          subtitle={t("auth.forgot.subtitle")}
         >
           <ForgetPassword
             onOtp={() => {
@@ -119,9 +121,9 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         <AuthModal
           open={otp}
           onClose={() => dispatch(setOtpVerify(false))}
-          title="OTP Verification"
+          title={t("auth.otp.title")}
           centered={true}
-          subtitle="Please enter the 6-digit OTP sent"
+          subtitle={t("auth.otp.subtitle")}
         >
           <OtpVerification
             onSignin={() => {
@@ -135,9 +137,9 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         <AuthModal
           open={changePass}
           onClose={() => dispatch(setChangePass(false))}
-          title="Change Password"
+          title={t("auth.changePassword.title")}
           centered={true}
-          subtitle="Enter a new password, not less than 8 characters and not be your previous password"
+          subtitle={t("auth.changePassword.subtitle")}
         >
           <ChangePassword
             onSignin={() => {

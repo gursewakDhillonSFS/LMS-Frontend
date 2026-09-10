@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "badge": "NOUVEAUX PARCOURS PROFESSIONNELS 2026",
+    "titleLine1": "Maîtrisez les compétences demandées.",
+    "titleHighlight": "Façonnez votre",
+    "titleLine2": "Avenir.",
+    "description": "Apprenez les meilleures compétences en tech, design, IA et gestion grâce à des cours axés sur des projets réels animés par des experts de l'industrie.",
+    "exploreCta": "Explorer plus de 1 000 cours",
+    "trialCta": "Démarrer l'essai gratuit de 7 jours",
+    "activeLearners": "Apprenants actifs",
+    "coursesCount": "Cours certifiés",
+    "mentorsCount": "Mentors experts",
+    "learnerStory": "Apprendre · Évoluer · Réussir"
+  },
+  "features": {
+    "title": "Pourquoi choisir Skillora",
+    "subtitle": "Tout ce dont vous avez besoin pour accélérer votre parcours professionnel",
+    "handsOn": "Projets pratiques",
+    "handsOnDesc": "Créez de véritables pièces de portfolio validées par des leaders de la tech",
+    "expertGuidance": "Mentorat d'experts",
+    "expertGuidanceDesc": "Bénéficiez de conseils hebdomadaires directs de professionnels expérimentés",
+    "certified": "Certificats accrédités",
+    "certifiedDesc": "Des diplômes partageables reconnus par les plus grandes entreprises"
+  },
+  "categories": {
+    "badge": "EXPLORER LES DOMAINES",
+    "title": "Parcourir les meilleures catégories",
+    "subtitle": "Trouvez le parcours d'apprentissage idéal pour vos objectifs de carrière"
+  },
+  "popularCourses": {
+    "badge": "COURS POPULAIRES",
+    "title": "Cours tendances ce mois-ci",
+    "subtitle": "Découvrez les programmes les mieux notés choisis par notre communauté",
+    "allTab": "Toutes les catégories",
+    "viewAll": "Voir tous les cours"
+  },
+  "inspiring": {
+    "badge": "RÉUSSITE DES APPRENANTS",
+    "title": "Accompagner les apprenants du monde entier",
+    "subtitle": "Rejoignez notre communauté dynamique qui fait progresser sa carrière chaque jour",
+    "graduates": "Diplômés embauchés",
+    "completionRate": "Taux de réussite des cours",
+    "partnerCompanies": "Entreprises partenaires"
+  },
+  "testimonials": {
+    "badge": "TÉMOIGNAGES",
+    "title": "Ce que disent nos apprenants",
+    "subtitle": "Rejoignez des milliers d'étudiants qui ont déjà transformé leur vie grâce à Skillora.",
+    "viewAll": "Voir tous les avis"
+  },
+  "faq": {
+    "badge": "FOIRE AUX QUESTIONS",
+    "title": "Des questions ? Nous avons les réponses.",
+    "subtitle": "Trouvez des réponses rapides aux questions courantes sur nos cours, notre plateforme et plus encore."
+  },
+  "ctaBanner": {
+    "title": "Développez vos compétences. Façonnez votre avenir.",
+    "subtitle": "Commencez votre essai gratuit de 7 jours dès aujourd'hui. Annulez à tout moment en un clic.",
+    "signUp": "Inscrivez-vous gratuitement",
+    "watchVideo": "Regarder la vidéo"
+  }
+}

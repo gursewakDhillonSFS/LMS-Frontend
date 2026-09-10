@@ -1,0 +1,27 @@
+{
+  "profile": {
+    "title": "Profil du compte",
+    "subtitle": "Gérez vos informations personnelles et préférences",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Adresse e-mail",
+    "language": "Langue préférée",
+    "save": "Enregistrer le profil",
+    "success": "Profil mis à jour avec succès !"
+  },
+  "membership": {
+    "title": "Mon abonnement et mes souscriptions",
+    "currentPlan": "Forfait actuel",
+    "planName": "Skillora Pro",
+    "price": "99 $/mois",
+    "renewsOn": "Renouvellement le",
+    "changePlan": "Changer de forfait",
+    "cancelSubscription": "Résilier l'abonnement"
+  },
+  "notifications": {
+    "title": "Préférences de notifications",
+    "emailNotifs": "Notifications par e-mail",
+    "courseUpdates": "Annonces de cours et rappels",
+    "promos": "Réductions exclusives et recommandations"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "Skillora",
+    "pro": "Skillora Pro",
+    "tagline": "Apprendre · Créer · Grandir"
+  },
+  "nav": {
+    "home": "Accueil",
+    "browse": "Explorer les cours",
+    "allCourses": "Tous les cours",
+    "categories": "Catégories",
+    "subscription": "Skillora Pro",
+    "searchPlaceholder": "Rechercher des cours, compétences ou mentors...",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "dashboard": "Tableau de bord",
+    "myCourses": "Mes cours",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "membership": "Abonnement",
+    "logout": "Déconnexion",
+    "more": "Plus"
+  },
+  "actions": {
+    "explore": "Explorer",
+    "startForFree": "Commencer gratuitement",
+    "startTrial": "Démarrer l'essai gratuit de 7 jours",
+    "buyNow": "Acheter maintenant",
+    "startCourse": "Commencer le cours",
+    "enrollNow": "S'inscrire",
+    "viewAll": "Tout afficher",
+    "continue": "Continuer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "back": "Retour",
+    "finish": "Terminer",
+    "submit": "Valider",
+    "confirm": "Confirmer",
+    "viewProfile": "Voir le profil",
+    "watchVideo": "Voir la vidéo",
+    "readMore": "Lire la suite",
+    "readLess": "Réduire",
+    "clear": "Effacer",
+    "apply": "Appliquer"
+  },
+  "languages": {
+    "title": "Langue",
+    "select": "Choisir la langue",
+    "en": "English",
+    "pa": "ਪੰਜਾਬੀ",
+    "fr": "Français"
+  },
+  "footer": {
+    "tagline": "Maîtrisez les compétences demandées. Façonnez votre avenir.",
+    "categories": "Principales catégories",
+    "helpfulLinks": "Liens utiles",
+    "contactUs": "Contactez-nous",
+    "aboutUs": "À propos",
+    "careers": "Carrières",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "help": "Centre d'aide",
+    "copyright": "© 2026 Skillora. Tous droits réservés."
+  },
+  "general": {
+    "loading": "Chargement...",
+    "noData": "Aucune donnée disponible",
+    "or": "ou",
+    "reviews": "Avis",
+    "rating": "Note",
+    "students": "Étudiants",
+    "courses": "Cours",
+    "level": "Niveau",
+    "duration": "Durée",
+    "free": "Gratuit",
+    "all": "Tous",
+    "popular": "Populaire"
+  }
+}

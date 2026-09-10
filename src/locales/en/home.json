@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "badge": "NEW CAREER TRACKS 2026",
+    "titleLine1": "Master In-Demand Skills.",
+    "titleHighlight": "Shape Your",
+    "titleLine2": "Future.",
+    "description": "Learn top tech, design, AI, and business skills through immersive project-driven courses led by world-class industry practitioners.",
+    "exploreCta": "Explore 1,000+ Courses",
+    "trialCta": "Start 7-Day Free Trial",
+    "activeLearners": "Active Learners",
+    "coursesCount": "Certified Courses",
+    "mentorsCount": "Expert Mentors",
+    "learnerStory": "Learn · Grow · Succeed"
+  },
+  "features": {
+    "title": "Why Choose Skillora",
+    "subtitle": "Everything you need to accelerate your professional journey",
+    "handsOn": "Hands-on Projects",
+    "handsOnDesc": "Build real portfolio pieces verified by tech leaders",
+    "expertGuidance": "Expert Mentorship",
+    "expertGuidanceDesc": "Direct weekly guidance from experienced practitioners",
+    "certified": "Accredited Certificates",
+    "certifiedDesc": "Shareable credentials recognized across top companies"
+  },
+  "categories": {
+    "badge": "EXPLORE DOMAINS",
+    "title": "Browse Top Categories",
+    "subtitle": "Find the perfect learning pathway for your career goals"
+  },
+  "popularCourses": {
+    "badge": "POPULAR COURSES",
+    "title": "Trending Courses This Month",
+    "subtitle": "Explore the highest-rated programs chosen by our community",
+    "allTab": "All Categories",
+    "viewAll": "View All Courses"
+  },
+  "inspiring": {
+    "badge": "LEARNER SUCCESS",
+    "title": "Empowering Learners Worldwide",
+    "subtitle": "Join our diverse community advancing their careers every single day",
+    "graduates": "Graduates Employed",
+    "completionRate": "Course Completion Rate",
+    "partnerCompanies": "Hiring Partners"
+  },
+  "testimonials": {
+    "badge": "TESTIMONIALS",
+    "title": "What Our Learners Say",
+    "subtitle": "Join thousands of students who have already transformed their lives with Skillora.",
+    "viewAll": "View All Reviews"
+  },
+  "faq": {
+    "badge": "FREQUENTLY ASKED QUESTIONS",
+    "title": "Got Questions? We Have Answers.",
+    "subtitle": "Find quick answers to common questions about our courses, platform, and more."
+  },
+  "ctaBanner": {
+    "title": "Build your skills. Shape your future.",
+    "subtitle": "Start your 7-day free trial today. Cancel anytime with one click.",
+    "signUp": "Sign Up for Free",
+    "watchVideo": "Watch Video"
+  }
+}

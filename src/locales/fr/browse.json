@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "title": "Explorer tous les cours",
+    "subtitle": "Découvrez des programmes professionnels conçus pour vous faire passer des bases fondamentales à la maîtrise avancée."
+  },
+  "filters": {
+    "title": "Filtrer les cours",
+    "categories": "Catégories",
+    "ratings": "Évaluations",
+    "fourAndAbove": "4,5 et plus",
+    "fourOnly": "4,0 et plus",
+    "price": "Prix",
+    "allPrices": "Tous les prix",
+    "freeOnly": "Cours gratuits",
+    "paidOnly": "Cours payants",
+    "clearAll": "Réinitialiser les filtres"
+  },
+  "results": {
+    "showing": "Affichage de",
+    "of": "sur",
+    "courses": "cours",
+    "noCoursesFound": "Aucun cours ne correspond à vos critères",
+    "resetSuggestion": "Essayez de réinitialiser vos filtres ou de rechercher d'autres mots-clés."
+  },
+  "sort": {
+    "label": "Trier par",
+    "popular": "Les plus populaires",
+    "newest": "Nouveautés",
+    "highestRated": "Mieux notés",
+    "priceLowHigh": "Prix : croissant",
+    "priceHighLow": "Prix : décroissant"
+  }
+}

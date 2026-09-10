@@ -7,6 +7,7 @@ import {
   Fjalla_One,
   Poppins,
   Plus_Jakarta_Sans,
+  Noto_Sans_Gurmukhi,
 } from "next/font/google";
 import "./globals.css";
 import Provider from "./Provider";
@@ -44,6 +45,13 @@ const fjallaOne = Fjalla_One({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-fjalla-one",
+  display: "swap",
+});
+
+const notoSansGurmukhi = Noto_Sans_Gurmukhi({
+  subsets: ["gurmukhi"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-noto-gurmukhi",
   display: "swap",
 });
 
@@ -85,6 +93,12 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
+    languages: {
+      en: "/",
+      pa: "/?lang=pa",
+      fr: "/?lang=fr",
+      "x-default": "/",
+    },
   },
   icons: {
     icon: [
@@ -123,16 +137,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { cookies } from "next/headers";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value;
+  const initialLocale =
+    localeCookie === "pa" || localeCookie === "fr" ? localeCookie : "en";
+
   const organizationSchema = getOrganizationSchema(baseUrl);
   const websiteSchema = getWebSiteSchema(baseUrl);
 
   return (
-    <html lang="en">
+    <html lang={initialLocale}>
       <head>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -143,16 +164,16 @@ export default function RootLayout({
         <JsonLd id="website-schema" data={websiteSchema} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${fjallaOne.variable} ${poppins.variable} ${plus_jakarta.variable} antialiased scrollbar-hide`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fjallaOne.variable} ${poppins.variable} ${plus_jakarta.variable} ${notoSansGurmukhi.variable} antialiased scrollbar-hide`}
         style={{
           fontFamily:
-            "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            "var(--font-geist-sans), var(--font-noto-gurmukhi), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         }}
       >
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
         >
-          <Provider>{children}</Provider>
+          <Provider initialLocale={initialLocale as any}>{children}</Provider>
         </GoogleOAuthProvider>
       </body>
     </html>

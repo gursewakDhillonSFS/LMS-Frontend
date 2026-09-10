@@ -7,8 +7,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { FC } from "react";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 const HeroSection: FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -28,28 +30,26 @@ const HeroSection: FC = () => {
           {/* Top Pill Badge */}
           <div className="inline-flex items-center gap-2 bg-[#EEF4FF] border border-[#D5E3FC] px-3.5 py-1.5 rounded-full text-[#315CFF] text-[12px] font-semibold shadow-xs">
             <span>⚡</span>
-            <span>Learn Without Limits</span>
+            <span>{t("home.hero.badge")}</span>
           </div>
 
           {/* Headline */}
           <h1 className="text-[36px] sm:text-[46px] lg:text-[54px] font-extrabold text-[var(--text-primary)] tracking-tight leading-[1.12]">
-            Build Your Skills, <br />
+            {t("home.hero.titleLine1")} <br />
             <span className="text-[var(--primary)] bg-gradient-to-r from-[#315CFF] to-[#6366F1] bg-clip-text text-transparent">
-              Shape Your Future
+              {t("home.hero.titleHighlight")} {t("home.hero.titleLine2")}
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] leading-relaxed">
-            Access world-class courses, expert instructors and hands-on learning.
-            Gain new skills, earn certificates and achieve your goals — all in one
-            place.
+            {t("home.hero.description")}
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap items-center gap-3.5 pt-1">
             <CommonButton
-              text="Start Learning Free →"
+              text={`${t("home.hero.trialCta")} →`}
               onClick={handleSignup}
               className="!h-[44px] !px-6 !text-[14px]"
             />
@@ -57,12 +57,12 @@ const HeroSection: FC = () => {
             <button
               type="button"
               onClick={() => router.push(RoutePaths?.Browse)}
-              className="h-[44px] px-5 bg-white border border-[var(--border)] rounded-[8px] text-[var(--text-primary)] font-medium text-[14px] flex items-center gap-2 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:bg-[var(--surface-subtle)] hover:border-[var(--border-strong)] transition-all hover:-translate-y-px active:translate-y-0"
+              className="h-[44px] px-5 bg-white border border-[var(--border)] rounded-[8px] text-[var(--text-primary)] font-medium text-[14px] flex items-center gap-2 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:bg-[var(--surface-subtle)] hover:border-[var(--border-strong)] transition-all hover:-translate-y-px active:translate-y-0 cursor-pointer"
             >
               <span className="w-5 h-5 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[10px] text-[var(--primary)]">
                 ▶
               </span>
-              <span>Watch Video</span>
+              <span>{t("home.ctaBanner.watchVideo")}</span>
             </button>
           </div>
 
@@ -70,15 +70,15 @@ const HeroSection: FC = () => {
           <div className="flex flex-wrap items-center gap-6 pt-3 text-[13px] font-medium text-[var(--text-secondary)]">
             <span className="flex items-center gap-2">
               <span className="text-[16px]">🎓</span>
-              <span>1000+ Courses</span>
+              <span>1,000+ {t("home.hero.coursesCount")}</span>
             </span>
             <span className="flex items-center gap-2">
               <span className="text-[16px]">👥</span>
-              <span>Expert Instructors</span>
+              <span>{t("home.hero.mentorsCount")}</span>
             </span>
             <span className="flex items-center gap-2">
               <span className="text-[16px]">📜</span>
-              <span>Certificates</span>
+              <span>{t("course.badges.verified")}</span>
             </span>
           </div>
         </div>

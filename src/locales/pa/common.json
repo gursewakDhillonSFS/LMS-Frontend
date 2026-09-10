@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "ਸਕਿੱਲੋਰਾ",
+    "pro": "ਸਕਿੱਲੋਰਾ ਪ੍ਰੋ",
+    "tagline": "ਸਿੱਖੋ · ਬਣਾਓ · ਵਧੋ"
+  },
+  "nav": {
+    "home": "ਮੁੱਖ ਪੰਨਾ",
+    "browse": "ਕੋਰਸ ਖੋਜੋ",
+    "allCourses": "ਸਾਰੇ ਕੋਰਸ",
+    "categories": "ਸ਼੍ਰੇਣੀਆਂ",
+    "subscription": "ਸਕਿੱਲੋਰਾ ਪ੍ਰੋ",
+    "searchPlaceholder": "ਕੋਰਸ, ਵਿਸ਼ੇ ਜਾਂ ਅਧਿਆਪਕ ਖੋਜੋ...",
+    "signIn": "ਲਾਗ ਇਨ",
+    "signUp": "ਸਾਈਨ ਅੱਪ",
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "myCourses": "ਮੇਰੇ ਕੋਰਸ",
+    "profile": "ਪ੍ਰੋਫਾਈਲ",
+    "settings": "ਸੈਟਿੰਗਾਂ",
+    "membership": "ਮੈਂਬਰਸ਼ਿਪ",
+    "logout": "ਲਾਗ ਆਊਟ",
+    "more": "ਹੋਰ"
+  },
+  "actions": {
+    "explore": "ਕੋਰਸ ਵੇਖੋ",
+    "startForFree": "ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ",
+    "startTrial": "7-ਦਿਨਾਂ ਦਾ ਮੁਫ਼ਤ ਟ੍ਰਾਇਲ ਸ਼ੁਰੂ ਕਰੋ",
+    "buyNow": "ਹੁਣੇ ਖਰੀਦੋ",
+    "startCourse": "ਕੋਰਸ ਸ਼ੁਰੂ ਕਰੋ",
+    "enrollNow": "ਦਾਖਲਾ ਲਵੋ",
+    "viewAll": "ਸਾਰੇ ਵੇਖੋ",
+    "continue": "ਜਾਰੀ ਰੱਖੋ",
+    "cancel": "ਰੱਦ ਕਰੋ",
+    "save": "ਤਬਦੀਲੀਆਂ ਸੰਭਾਲੋ",
+    "back": "ਪਿੱਛੇ",
+    "finish": "ਸੰਪੰਨ ਕਰੋ",
+    "submit": "ਜਮ੍ਹਾ ਕਰੋ",
+    "confirm": "ਪੁਸ਼ਟੀ ਕਰੋ",
+    "viewProfile": "ਪ੍ਰੋਫਾਈਲ ਵੇਖੋ",
+    "watchVideo": "ਵੀਡੀਓ ਵੇਖੋ",
+    "readMore": "ਹੋਰ ਪੜ੍ਹੋ",
+    "readLess": "ਘੱਟ ਵੇਖੋ",
+    "clear": "ਸਾਫ਼ ਕਰੋ",
+    "apply": "ਲਾਗੂ ਕਰੋ"
+  },
+  "languages": {
+    "title": "ਭਾਸ਼ਾ",
+    "select": "ਭਾਸ਼ਾ ਚੁਣੋ",
+    "en": "English",
+    "pa": "ਪੰਜਾਬੀ",
+    "fr": "Français"
+  },
+  "footer": {
+    "tagline": "ਮੰਗ ਵਾਲੇ ਹੁਨਰ ਸਿੱਖੋ। ਆਪਣਾ ਭਵਿੱਖ ਸੰਵਾਰੋ।",
+    "categories": "ਪ੍ਰਮੁੱਖ ਸ਼੍ਰੇਣੀਆਂ",
+    "helpfulLinks": "ਮਦਦਗਾਰ ਲਿੰਕ",
+    "contactUs": "ਸੰਪਰਕ ਕਰੋ",
+    "aboutUs": "ਸਾਡੇ ਬਾਰੇ",
+    "careers": "ਕਰੀਅਰ",
+    "terms": "ਨਿਯਮ ਅਤੇ ਸ਼ਰਤਾਂ",
+    "privacy": "ਗੋਪਨੀਯਤਾ ਨੀਤੀ",
+    "help": "ਸਹਾਇਤਾ ਕੇਂਦਰ",
+    "copyright": "© 2026 ਸਕਿੱਲੋਰਾ। ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।"
+  },
+  "general": {
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+    "noData": "ਕੋਈ ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ",
+    "or": "ਜਾਂ",
+    "reviews": "ਸਮੀਖਿਆਵਾਂ",
+    "rating": "ਰੇਟਿੰਗ",
+    "students": "ਵਿਦਿਆਰਥੀ",
+    "courses": "ਕੋਰਸ",
+    "level": "ਪੱਧਰ",
+    "duration": "ਸਮਾਂ",
+    "free": "ਮੁਫ਼ਤ",
+    "all": "ਸਾਰੇ",
+    "popular": "ਪ੍ਰਸਿੱਧ"
+  }
+}

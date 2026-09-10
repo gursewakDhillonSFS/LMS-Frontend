@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "Skillora",
+    "pro": "Skillora Pro",
+    "tagline": "Learn · Build · Grow"
+  },
+  "nav": {
+    "home": "Home",
+    "browse": "Browse Courses",
+    "allCourses": "All Courses",
+    "categories": "Categories",
+    "subscription": "Skillora Pro",
+    "searchPlaceholder": "Search courses, topics, instructors...",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "dashboard": "Dashboard",
+    "myCourses": "My Courses",
+    "profile": "Profile",
+    "settings": "Settings",
+    "membership": "Membership",
+    "logout": "Logout",
+    "more": "More"
+  },
+  "actions": {
+    "explore": "Explore Courses",
+    "startForFree": "Start for Free",
+    "startTrial": "Start 7-Day Free Trial",
+    "buyNow": "Buy Now",
+    "startCourse": "Start Course",
+    "enrollNow": "Enroll Now",
+    "viewAll": "View All",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "back": "Back",
+    "finish": "Finish",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "viewProfile": "View Profile",
+    "watchVideo": "Watch Video",
+    "readMore": "Read more",
+    "readLess": "Read less",
+    "clear": "Clear",
+    "apply": "Apply"
+  },
+  "languages": {
+    "title": "Language",
+    "select": "Select Language",
+    "en": "English",
+    "pa": "ਪੰਜਾਬੀ",
+    "fr": "Français"
+  },
+  "footer": {
+    "tagline": "Master In-Demand Skills. Shape Your Future.",
+    "categories": "Top Categories",
+    "helpfulLinks": "Helpful Links",
+    "contactUs": "Contact Us",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "help": "Help Center",
+    "copyright": "© 2026 Skillora. All Rights Reserved."
+  },
+  "general": {
+    "loading": "Loading...",
+    "noData": "No data found",
+    "or": "or",
+    "reviews": "reviews",
+    "rating": "Rating",
+    "students": "students",
+    "courses": "courses",
+    "level": "Level",
+    "duration": "Duration",
+    "free": "Free",
+    "all": "All",
+    "popular": "Popular"
+  }
+}

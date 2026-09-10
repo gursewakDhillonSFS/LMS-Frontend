@@ -1,0 +1,44 @@
+{
+  "badges": {
+    "proIncluded": "ਸਕਿੱਲੋਰਾ ਪ੍ਰੋ ਵਿੱਚ ਸ਼ਾਮਲ",
+    "realProjects": "ਅਸਲ ਪ੍ਰੋਜੈਕਟ ਬਣਾਓ",
+    "free": "ਮੁਫ਼ਤ ਦਾਖਲਾ",
+    "verified": "ਪ੍ਰਮਾਣਿਤ ਸਰਟੀਫਿਕੇਟ"
+  },
+  "stats": {
+    "rating": "ਰੇਟਿੰਗ",
+    "level": "ਪੱਧਰ - ਸਾਰੇ ਪੱਧਰਾਂ ਲਈ ਢੁਕਵਾਂ",
+    "duration": "ਕੋਰਸ ਦੀ ਮਿਆਦ",
+    "schedule": "ਲਚਕਦਾਰ ਆਪਣੀ ਰਫ਼ਤਾਰ ਨਾਲ ਸਿੱਖੋ",
+    "enrolled": "ਸਿੱਖਿਆਰਥੀ ਦਾਖਲ ਹੋਏ"
+  },
+  "tabs": {
+    "overview": "ਸੰਖੇਪ ਜਾਣਕਾਰੀ",
+    "curriculum": "ਪਾਠਕ੍ਰਮ",
+    "instructor": "ਅਧਿਆਪਕ",
+    "reviews": "ਸਮੀਖਿਆਵਾਂ"
+  },
+  "sections": {
+    "whatYouWillLearn": "ਤੁਸੀਂ ਕੀ ਸਿੱਖੋਗੇ",
+    "aboutCourse": "ਇਸ ਕੋਰਸ ਬਾਰੇ",
+    "meetTeacher": "ਆਪਣੇ ਅਧਿਆਪਕ ਨੂੰ ਮਿਲੋ",
+    "skillsGained": "ਤੁਸੀਂ ਕਿਹੜੇ ਹੁਨਰ ਸਿੱਖੋਗੇ",
+    "reviewsTitle": "ਸਿੱਖਿਆਰਥੀਆਂ ਦੀਆਂ ਸਮੀਖਿਆਵਾਂ",
+    "keyFeatures": "ਮੁੱਖ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ",
+    "projectBased": "ਪ੍ਰੋਜੈਕਟ ਅਧਾਰਤ",
+    "lifetimeAccess": "ਜੀਵਨ ਭਰ ਲਈ ਪਹੁੰਚ",
+    "certificateAwarded": "ਮਾਨਤਾ ਪ੍ਰਾਪਤ ਸਰਟੀਫਿਕੇਟ"
+  },
+  "sidebar": {
+    "courseIncludes": "ਇਸ ਕੋਰਸ ਵਿੱਚ ਸ਼ਾਮਲ ਹਨ",
+    "onDemandVideo": "ਘੰਟਿਆਂ ਦੀ ਆਨ-ਡਿਮਾਂਡ ਐਚਡੀ ਵੀਡੀਓ",
+    "practicalProjects": "ਵਿਹਾਰਕ ਪ੍ਰੋਜੈਕਟ ਅਤੇ ਅਸਾਈਨਮੈਂਟ",
+    "downloadableFiles": "ਡਾਊਨਲੋਡ ਕਰਨ ਯੋਗ ਸਰੋਤ ਫ਼ਾਈਲਾਂ",
+    "completionCertificate": "ਪੂਰਾ ਕਰਨ ਦਾ ਪ੍ਰਮਾਣਿਤ ਸਰਟੀਫਿਕੇਟ",
+    "lifetimeAccess": "ਵੈੱਬ ਅਤੇ ਮੋਬਾਈਲ 'ਤੇ ਪੂਰੀ ਉਮਰ ਲਈ ਪਹੁੰਚ",
+    "moneyBack": "30 ਦਿਨਾਂ ਦੀ ਪੈਸੇ ਵਾਪਸੀ ਦੀ ਗਾਰੰਟੀ",
+    "relatedCourses": "ਸੰਬੰਧਿਤ ਕੋਰਸ",
+    "learnAtYourPace": "ਆਪਣੀ ਰਫ਼ਤਾਰ ਨਾਲ ਸਿੱਖੋ",
+    "proPromo": "ਸਕਿੱਲੋਰਾ ਪ੍ਰੋ ਨਾਲ ਇਸ ਕੋਰਸ ਅਤੇ 1,000+ ਹੋਰ ਕੋਰਸਾਂ ਤੱਕ ਅਸੀਮਿਤ ਪਹੁੰਚ ਪ੍ਰਾਪਤ ਕਰੋ।"
+  }
+}

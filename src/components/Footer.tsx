@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { RoutePaths } from "@/utils/enums";
 import { UpOutlined, YoutubeFilled } from "@ant-design/icons";
 import { setSignup, setSignupRole } from "@/redux/slices/AuthModalSlice";
+import { useTranslation } from "@/context/I18nContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 type FooterItem = {
   text: string;
@@ -51,6 +53,7 @@ const contactInfo = [
 ];
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const router = useRouter();
   const categories = useSelector(
@@ -95,7 +98,7 @@ const Footer: React.FC = () => {
               <HeaderLogoIcon textColor="#ffffff" />
             </div>
             <p className="text-xs text-slate-400 font-medium">
-              Learn. Build. Grow.
+              {t("common.brand.tagline")}
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-2.5 mt-2">
@@ -117,7 +120,7 @@ const Footer: React.FC = () => {
           {/* Categories Column (Span 3) */}
           <div className="lg:col-span-3 flex flex-col gap-3">
             <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
-              CATEGORIES
+              {t("common.footer.categories")}
             </h4>
             <ul className="flex flex-col gap-2">
               {displayCategories.map((item) => (
@@ -135,7 +138,7 @@ const Footer: React.FC = () => {
           {/* Helpful Links Column (Span 2) */}
           <div className="lg:col-span-2 flex flex-col gap-3">
             <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
-              HELPFUL LINKS
+              {t("common.footer.helpfulLinks")}
             </h4>
             <ul className="flex flex-col gap-2">
               <li
@@ -148,13 +151,13 @@ const Footer: React.FC = () => {
                 className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
                 onClick={() => router.push("/privacy-policy")}
               >
-                Privacy Policy
+                {t("common.footer.privacy")}
               </li>
               <li
                 className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
                 onClick={() => router.push("/terms")}
               >
-                Terms & Condition
+                {t("common.footer.terms")}
               </li>
             </ul>
           </div>
@@ -162,7 +165,7 @@ const Footer: React.FC = () => {
           {/* Contact Info Column (Span 3) */}
           <div className="lg:col-span-3 flex flex-col gap-3">
             <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
-              CONTACT INFO
+              {t("common.footer.contactUs")}
             </h4>
             <ul className="flex flex-col gap-2.5">
               {contactInfo.map((contact) => (
@@ -180,18 +183,21 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Copyright & Scroll To Top */}
+        {/* Copyright, Language Switcher & Scroll To Top */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div className="w-full text-center sm:text-left">
-            © 2026. Skillora. All Rights Reserved.
+          <div className="text-center sm:text-left">
+            {t("common.footer.copyright")}
           </div>
-          <button
-            onClick={scrollToTop}
-            aria-label="Scroll to top"
-            className="shrink-0 w-8 h-8 rounded-full bg-slate-800 hover:bg-[#4F46E5] text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-          >
-            <UpOutlined className="text-xs" />
-          </button>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher variant="footer" />
+            <button
+              onClick={scrollToTop}
+              aria-label="Scroll to top"
+              className="shrink-0 w-8 h-8 rounded-full bg-slate-800 hover:bg-[#4F46E5] text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+            >
+              <UpOutlined className="text-xs" />
+            </button>
+          </div>
         </div>
       </div>
     </footer>

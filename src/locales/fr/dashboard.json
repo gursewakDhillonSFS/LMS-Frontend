@@ -1,0 +1,33 @@
+{
+  "tabs": {
+    "dashboard": "Tableau de bord",
+    "myCourses": "Mes cours",
+    "mySchedule": "Mon planning",
+    "certificates": "Certificats",
+    "explore": "Explorer",
+    "chat": "Messages",
+    "settings": "Paramètres",
+    "announcements": "Annonces",
+    "assignments": "Devoirs",
+    "quizzes": "Quiz",
+    "liveClasses": "Cours en direct",
+    "students": "Étudiants",
+    "teachers": "Enseignants",
+    "courses": "Cours"
+  },
+  "student": {
+    "welcome": "Bon retour",
+    "inProgress": "En cours",
+    "completed": "Terminés",
+    "certificatesEarned": "Certificats obtenus",
+    "continueLearning": "Continuer l'apprentissage",
+    "upcomingSchedule": "Planning à venir"
+  },
+  "instructor": {
+    "panel": "Espace Formateur",
+    "totalStudents": "Total des étudiants",
+    "activeCourses": "Cours actifs",
+    "totalRevenue": "Revenus totaux",
+    "recentSubmissions": "Soumissions récentes"
+  }
+}

@@ -15,8 +15,11 @@ import { courseData } from "@/utils/interface";
 import UserAvatarDisplay from "./UserAvatarDisplay";
 import { setCourseData } from "@/redux/slices/CourseDataSlice";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "@/context/I18nContext";
 
 const Header = () => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
@@ -97,7 +100,7 @@ const Header = () => {
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              All Courses
+              {t("common.nav.allCourses")}
             </Link>
 
             {categories.slice(0, 2).map((cat) => (
@@ -117,7 +120,7 @@ const Header = () => {
                   type="button"
                   className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg whitespace-nowrap transition-colors cursor-pointer"
                 >
-                  <span>More</span>
+                  <span>{t("common.nav.more")}</span>
                   <DownArrowIcon />
                 </button>
 
@@ -144,7 +147,7 @@ const Header = () => {
             search={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full"
-            placeholder="Search courses, topics, instructors..."
+            placeholder={t("common.nav.searchPlaceholder")}
           />
 
           {search && searchData && searchData?.length > 0 && (
@@ -155,7 +158,7 @@ const Header = () => {
                 </div>
               ) : searchData.length === 0 ? (
                 <div className="p-4 text-center text-slate-500 text-sm">
-                  No results found
+                  {t("common.general.noData")}
                 </div>
               ) : (
                 <div className="flex flex-col py-1">
@@ -181,10 +184,7 @@ const Header = () => {
 
         {/* Right: Language Selector, Auth Buttons & Mobile Menu Toggle */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="hidden sm:flex items-center gap-1 text-slate-600">
-            <GlobeIcon />
-            <span className="text-xs font-semibold">EN</span>
-          </div>
+          <LanguageSwitcher variant="header" />
 
           <div className="hidden sm:block border-l border-slate-200 h-5" />
 
@@ -192,11 +192,11 @@ const Header = () => {
             onClick={handleSignin}
             className="hidden sm:inline-flex text-sm font-medium text-slate-700 hover:text-[#4F46E5] transition-colors px-2 py-1 rounded-md cursor-pointer"
           >
-            Sign in
+            {t("common.nav.signIn")}
           </button>
 
           <CommonButton
-            text="Sign Up"
+            text={t("common.nav.signUp")}
             onClick={handleSignup}
             className="!h-9 !px-4 !text-xs sm:!text-sm !font-semibold !rounded-lg !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-xs"
           />
@@ -228,7 +228,7 @@ const Header = () => {
               }}
               className="px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg"
             >
-              All Courses
+              {t("common.nav.allCourses")}
             </Link>
 
             {categories.map((cat) => (
@@ -246,18 +246,17 @@ const Header = () => {
             ))}
           </nav>
 
-          <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-slate-600 text-xs font-semibold">
-              <GlobeIcon />
-              <span>Language: English (EN)</span>
-            </div>
+          <div className="border-t border-slate-100 pt-3 flex flex-col gap-2.5">
+            <LanguageSwitcher variant="mobile" />
 
-            <button
-              onClick={handleSignin}
-              className="text-sm font-semibold text-[#4F46E5] hover:underline cursor-pointer"
-            >
-              Sign In
-            </button>
+            <div className="flex items-center justify-between pt-1">
+              <button
+                onClick={handleSignin}
+                className="text-sm font-semibold text-[#4F46E5] hover:underline cursor-pointer"
+              >
+                {t("common.nav.signIn")}
+              </button>
+            </div>
           </div>
         </div>
       )}
