@@ -92,7 +92,6 @@ const Announcements = () => {
         return [ann, ...prev].slice(0, limit);
       });
       setTotal((prev) => prev + 1);
-      toast.info(`📢 New announcement published: "${ann.title}"!`);
     }
   }, [activeTab, limit]);
 

@@ -155,7 +155,6 @@ const CourseDetails = () => {
         if (prev.some((a) => a._id === ann._id)) return prev;
         return [ann, ...prev];
       });
-      toast.info(`📢 New Announcement: "${ann.title}"`);
     }
   }, [courseIds]);
 

@@ -18,6 +18,7 @@ const AnnouncementPanel: React.FC<AnnouncementPanelProp> = ({ onClose }) => {
   const [announcements, setAnnouncements] = useState<AnnouncementPayload[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const user_id = useSelector((state: RootState) => state.userdata?.user_id);
   const recentRealtime = useSelector(
     (state: RootState) => state.announcement?.recentAnnouncements || []
   );
@@ -28,6 +29,7 @@ const AnnouncementPanel: React.FC<AnnouncementPanelProp> = ({ onClose }) => {
       const param = new URLSearchParams();
       param.append("page", "1");
       param.append("limit", "30");
+      param.append("excludeSelf", "true");
       const res = await getMyAnnouncementsApi(param);
       if (res?.status && res?.data?.announcements) {
         setAnnouncements(res.data.announcements);
@@ -48,12 +50,16 @@ const AnnouncementPanel: React.FC<AnnouncementPanelProp> = ({ onClose }) => {
     if (recentRealtime.length > 0) {
       setAnnouncements((prev) => {
         const prevIds = new Set(prev.map((a) => a._id));
-        const newItems = recentRealtime.filter((a) => !prevIds.has(a._id));
+        const newItems = recentRealtime.filter(
+          (a) =>
+            !prevIds.has(a._id) &&
+            (!user_id || String(a.instructorId) !== String(user_id))
+        );
         if (newItems.length === 0) return prev;
         return [...newItems, ...prev];
       });
     }
-  }, [recentRealtime]);
+  }, [recentRealtime, user_id]);
 
   return (
     <div className="flex flex-col h-full bg-white">

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store";
 import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
@@ -27,6 +28,12 @@ interface SocketDeletedPayload {
 const GlobalAnnouncementListener: React.FC = () => {
   const dispatch = useDispatch();
   const socketRef = useRef<Socket | null>(null);
+
+  const currentUserId = useSelector(
+    (state: RootState) => state.userdata?.user_id
+  );
+  const currentUserIdRef = useRef(currentUserId);
+  currentUserIdRef.current = currentUserId;
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -69,24 +76,34 @@ const GlobalAnnouncementListener: React.FC = () => {
     });
 
     socket.on("announcement:new", (payload: SocketNewPayload) => {
-      if (payload?.data) {
-        dispatch(incrementUnreadCount());
-        dispatch(addRealtimeAnnouncement(payload.data));
+      if (!payload?.data) return;
 
-        toast.info(
-          <div className="flex flex-col gap-1">
-            <span className="font-semibold text-sm text-[#0E0E0E]">
-              📢 {payload.data.title}
-            </span>
-            <span className="text-xs text-gray-500">
-              {payload.data.courseName} • {payload.data.batchName || "All Batches"}
-            </span>
-          </div>,
-          {
-            autoClose: 5000,
-          }
-        );
+      // DO NOT notify or increment unread for user's own posted announcement!
+      const myId = currentUserIdRef.current;
+      if (
+        myId &&
+        payload.data.instructorId &&
+        String(payload.data.instructorId) === String(myId)
+      ) {
+        return;
       }
+
+      dispatch(incrementUnreadCount());
+      dispatch(addRealtimeAnnouncement(payload.data));
+
+      toast.info(
+        <div className="flex flex-col gap-1">
+          <span className="font-semibold text-sm text-[#0E0E0E]">
+            📢 {payload.data.title}
+          </span>
+          <span className="text-xs text-gray-500">
+            {payload.data.courseName} • {payload.data.batchName || "All Batches"}
+          </span>
+        </div>,
+        {
+          autoClose: 5000,
+        }
+      );
     });
 
     socket.on("announcement:deleted", (payload: SocketDeletedPayload) => {
