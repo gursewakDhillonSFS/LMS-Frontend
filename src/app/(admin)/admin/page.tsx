@@ -2,6 +2,7 @@
 import { getApi } from "@/services/methods";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "@/context/I18nContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const AdminPanel = () => {
   const { t } = useTranslation();
@@ -40,9 +41,12 @@ const AdminPanel = () => {
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
           {t("dashboard.admin.title", { defaultValue: "Admin Administration Panel" })}
         </h1>
-        <span className="text-xs bg-slate-100 text-[var(--text-secondary)] px-3 py-1 rounded-full font-medium border border-[var(--border)]">
-          {t("dashboard.admin.overview", { defaultValue: "System Overview" })}
-        </span>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher variant="header" />
+          <span className="text-xs bg-slate-100 text-[var(--text-secondary)] px-3 py-1 rounded-full font-medium border border-[var(--border)]">
+            {t("dashboard.admin.overview", { defaultValue: "System Overview" })}
+          </span>
+        </div>
       </div>
 
       {overview ? (

@@ -46,13 +46,15 @@ const Profile = () => {
       formData.append("lastName", values.lname);
       if (values.preferredLanguage) {
         formData.append("preferredLanguage", values.preferredLanguage);
-        await setLocale(values.preferredLanguage);
       }
 
       const res = await updateUserProfileApi(formData);
       if (res?.status) {
         dispatch(updateUser(res.data));
         toast.success(t("settings.profile.success"));
+        if (values.preferredLanguage && values.preferredLanguage !== locale) {
+          await setLocale(values.preferredLanguage);
+        }
       } else {
         toast.error(res?.message || "Failed to update profile details");
       }

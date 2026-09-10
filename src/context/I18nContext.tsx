@@ -83,10 +83,17 @@ export const I18nProvider: React.FC<{
   const setLocale = useCallback(async (newLocale: SupportedLocale) => {
     if (newLocale !== "en" && newLocale !== "pa" && newLocale !== "fr") return;
 
+    const currentCookie = Cookies.get("NEXT_LOCALE");
+    const isSame = currentCookie === newLocale && locale === newLocale;
+
     setLocaleState(newLocale);
 
     try {
-      Cookies.set("NEXT_LOCALE", newLocale, { expires: 365, path: "/" });
+      Cookies.set("NEXT_LOCALE", newLocale, {
+        expires: 365,
+        path: "/",
+        sameSite: "lax",
+      });
       if (typeof window !== "undefined") {
         localStorage.setItem("NEXT_LOCALE", newLocale);
       }
@@ -94,17 +101,30 @@ export const I18nProvider: React.FC<{
         document.documentElement.lang = newLocale;
       }
 
-      // If user is authenticated, sync to backend user profile
+      // If user is authenticated, sync to backend user profile with a quick timeout so it doesn't block reload
       const token = Cookies.get("token");
       if (token) {
-        Api.put("/user/profile", { preferredLanguage: newLocale }).catch(() => {
+        try {
+          await Promise.race([
+            Api.patch("/auth/user/v1/update-profile", { preferredLanguage: newLocale }),
+            new Promise((resolve) => setTimeout(resolve, 400)),
+          ]);
+        } catch {
           // Non-critical, ignore sync failure
-        });
+        }
+      }
+
+      // Do a full reload to reflect changes across the entire application
+      if (!isSame && typeof window !== "undefined") {
+        window.location.reload();
       }
     } catch (e) {
       console.warn("Could not persist locale preference:", e);
+      if (!isSame && typeof window !== "undefined") {
+        window.location.reload();
+      }
     }
-  }, []);
+  }, [locale]);
 
   const t = useCallback(
     (key: string, params?: Record<string, string | number>): string => {
