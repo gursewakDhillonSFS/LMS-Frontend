@@ -1,125 +1,197 @@
 export const HeaderLogoIcon = ({
-  width = "148",
-  height = "38",
-  textColor = "#0F172A",
-  iconColor = "#4F46E5",
+  width = "180",
+  height = "42",
+  textColor = "#0B192C",
+  className = "",
 }: {
   width?: string | number;
   height?: string | number;
   textColor?: string;
   iconColor?: string;
+  className?: string;
+}) => {
+  const isDark = textColor === "#ffffff" || textColor === "#FFFFFF" || textColor === "white";
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 210 46"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`shrink-0 ${className}`}
+    >
+      <defs>
+        {/* Dark Mode: Vibrant Violet-to-Blue Skullcap */}
+        <linearGradient id="hat-dark-base" x1="8" y1="18" x2="38" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#7C3AED" />
+          <stop offset="50%" stopColor="#4F46E5" />
+          <stop offset="100%" stopColor="#2563EB" />
+        </linearGradient>
+
+        {/* Light Mode: Deep Navy / Indigo Skullcap */}
+        <linearGradient id="hat-light-base" x1="8" y1="18" x2="38" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#1E293B" />
+          <stop offset="50%" stopColor="#0F172A" />
+          <stop offset="100%" stopColor="#1D4ED8" />
+        </linearGradient>
+
+        {/* Mortarboard Diamond Gradients */}
+        <linearGradient id="mortar-white" x1="4" y1="6" x2="40" y2="24" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="100%" stopColor="#F1F5F9" />
+        </linearGradient>
+
+        <linearGradient id="mortar-dark" x1="4" y1="6" x2="40" y2="24" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#1E293B" />
+          <stop offset="100%" stopColor="#0B192C" />
+        </linearGradient>
+      </defs>
+
+      {/* Graduation Cap Emblem */}
+      <g transform="translate(2, 2)">
+        {/* Skullcap Base */}
+        <path
+          d="M10 18.5 V23 C10 27.5 15.5 32.5 22 34 C28.5 32.5 34 27.5 34 23 V18.5 L22 24.5 L10 18.5 Z"
+          fill={isDark ? "url(#hat-dark-base)" : "url(#hat-light-base)"}
+        />
+
+        {/* Mortarboard 3D Rim Bevel */}
+        <path
+          d="M4 14.5 L22 23.5 L40 14.5 L40 16 L22 25 L4 16 Z"
+          fill={isDark ? "#94A3B8" : "#0A1128"}
+          fillOpacity={isDark ? 0.9 : 0.8}
+        />
+
+        {/* Mortarboard Diamond Top */}
+        <path
+          d="M22 5.5 L40 14.5 L22 23.5 L4 14.5 Z"
+          fill={isDark ? "url(#mortar-white)" : "url(#mortar-dark)"}
+          stroke={isDark ? "#E2E8F0" : "#334155"}
+          strokeWidth="0.75"
+        />
+
+        {/* Button */}
+        <ellipse cx="22" cy="14.5" rx="1.8" ry="1.1" fill={isDark ? "#CBD5E1" : "#38BDF8"} />
+
+        {/* Tassel Cord */}
+        <path
+          d="M22 14.5 Q30 15 35 17.5 V27"
+          fill="none"
+          stroke={isDark ? "#FFFFFF" : "#2563EB"}
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Tassel Bead & Drop */}
+        <circle cx="35" cy="27.5" r="1.8" fill={isDark ? "#FFFFFF" : "#2563EB"} />
+        <path
+          d="M33.5 28.5 L36.5 28.5 L37 32.5 L33 32.5 Z"
+          fill={isDark ? "#E2E8F0" : "#3B82F6"}
+        />
+      </g>
+
+      {/* Vertical Separator Divider Bar */}
+      <line
+        x1="52"
+        y1="9"
+        x2="52"
+        y2="37"
+        stroke={isDark ? "#334155" : "#CBD5E1"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+
+      {/* Typography: Wordmark + Tagline */}
+      <g transform="translate(62, 0)">
+        {/* Skillora Wordmark */}
+        <text
+          x="0"
+          y="24"
+          fontFamily="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+          fontSize="23"
+          fontWeight="800"
+          letterSpacing="-0.5px"
+          fill={isDark ? "#FFFFFF" : textColor}
+        >
+          Skillora
+        </text>
+
+        {/* Tagline */}
+        <text
+          x="1"
+          y="37"
+          fontFamily="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+          fontSize="8.5"
+          fontWeight="600"
+          letterSpacing="1.8px"
+          fill={isDark ? "#94A3B8" : "#64748B"}
+        >
+          Learn · Build · Grow
+        </text>
+      </g>
+    </svg>
+  );
+};
+
+export const HeaderSmallLogo = ({
+  color = "#2563EB",
+  width = 36,
+  height = 36,
+}: {
+  color?: string;
+  width?: number | string;
+  height?: number | string;
 }) => (
   <svg
     width={width}
     height={height}
-    viewBox="0 0 160 40"
+    viewBox="0 0 48 48"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="shrink-0"
   >
     <defs>
-      <linearGradient id="skillora-mark-grad" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <linearGradient id="small-hat-base" x1="10" y1="18" x2="38" y2="34" gradientUnits="userSpaceOnUse">
         <stop offset="0%" stopColor="#6366F1" />
-        <stop offset="50%" stopColor="#4F46E5" />
-        <stop offset="100%" stopColor="#06B6D4" />
-      </linearGradient>
-      <linearGradient id="skillora-top-facet" x1="4" y1="4" x2="28" y2="18" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#818CF8" />
-        <stop offset="100%" stopColor="#4F46E5" />
-      </linearGradient>
-      <linearGradient id="skillora-accent-grad" x1="90" y1="12" x2="155" y2="28" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#4F46E5" />
-        <stop offset="100%" stopColor="#06B6D4" />
-      </linearGradient>
-    </defs>
-
-    {/* Modern Geometric Isometric S Emblem */}
-    <g transform="translate(2, 2)">
-      {/* Top Prism Facet */}
-      <path
-        d="M18 2L32 9.5L18 17L4 9.5L18 2Z"
-        fill="url(#skillora-top-facet)"
-      />
-      {/* Left Prism Facet */}
-      <path
-        d="M4 9.5L18 17V33L4 25.5V9.5Z"
-        fill="url(#skillora-mark-grad)"
-        fillOpacity="0.9"
-      />
-      {/* Right Prism Facet */}
-      <path
-        d="M18 17L32 9.5V25.5L18 33V17Z"
-        fill="#3730A3"
-      />
-      {/* Dynamic S Wave Cutout / Overlay */}
-      <path
-        d="M12 11.5L24 18L24 23.5L12 17L12 11.5Z"
-        fill="#FFFFFF"
-        fillOpacity="0.95"
-      />
-      <circle cx="18" cy="18" r="2.5" fill="#06B6D4" />
-    </g>
-
-    {/* Modern Clean Typography: Skillora */}
-    <text
-      x="44"
-      y="27"
-      fontFamily="system-ui, -apple-system, sans-serif"
-      fontSize="24"
-      fontWeight="800"
-      letterSpacing="-0.5px"
-      fill={textColor}
-    >
-      Skill
-    </text>
-    <text
-      x="96"
-      y="27"
-      fontFamily="system-ui, -apple-system, sans-serif"
-      fontSize="24"
-      fontWeight="800"
-      letterSpacing="-0.5px"
-      fill={textColor === "#ffffff" ? "#818CF8" : "url(#skillora-accent-grad)"}
-    >
-      ora
-    </text>
-    {/* Small Star / Dot Accent */}
-    <circle cx="148" cy="14" r="2.5" fill="#4F46E5" />
-  </svg>
-);
-
-export const HeaderSmallLogo = ({ color = "#4F46E5" }) => (
-  <svg
-    width="36"
-    height="36"
-    viewBox="0 0 36 36"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="small-skillora-grad" x1="2" y1="2" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#818CF8" />
         <stop offset="60%" stopColor="#4F46E5" />
-        <stop offset="100%" stopColor="#06B6D4" />
+        <stop offset="100%" stopColor="#2563EB" />
+      </linearGradient>
+      <linearGradient id="small-hat-diamond" x1="4" y1="6" x2="44" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#1E293B" />
+        <stop offset="100%" stopColor="#0B192C" />
       </linearGradient>
     </defs>
+    {/* Skullcap Base */}
     <path
-      d="M18 2L32 9.5L18 17L4 9.5L18 2Z"
-      fill="#818CF8"
+      d="M12 19 V24 C12 28.5 17.5 33.5 24 35 C30.5 33.5 36 28.5 36 24 V19 L24 25.5 L12 19 Z"
+      fill="url(#small-hat-base)"
     />
+    {/* 3D Mortarboard Rim */}
     <path
-      d="M4 9.5L18 17V33L4 25.5V9.5Z"
-      fill="url(#small-skillora-grad)"
+      d="M5 15 L24 24.5 L43 15 L43 16.5 L24 26 L5 16.5 Z"
+      fill="#0A1128"
+      fillOpacity={0.8}
     />
+    {/* Mortarboard Top */}
     <path
-      d="M18 17L32 9.5V25.5L18 33V17Z"
-      fill="#3730A3"
+      d="M24 5.5 L43 15 L24 24.5 L5 15 Z"
+      fill="url(#small-hat-diamond)"
+      stroke="#60A5FA"
+      strokeWidth="0.75"
     />
+    {/* Center Button */}
+    <ellipse cx="24" cy="15" rx="2" ry="1.2" fill="#38BDF8" />
+    {/* Tassel */}
     <path
-      d="M12 11.5L24 18L24 23.5L12 17L12 11.5Z"
-      fill="#FFFFFF"
-      fillOpacity="0.95"
+      d="M24 15 Q33 16 38 18.5 V28"
+      fill="none"
+      stroke="#38BDF8"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
+    <circle cx="38" cy="28.5" r="1.8" fill="#60A5FA" />
+    <path d="M36.5 29.5 L39.5 29.5 L40 33.5 L36 33.5 Z" fill="#38BDF8" />
   </svg>
 );
 
