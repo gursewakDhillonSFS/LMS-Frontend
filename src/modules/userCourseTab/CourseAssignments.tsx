@@ -8,7 +8,7 @@ import { AssignmentTab } from "@/utils/constant";
 import { AssignmentIcon, StopWatchIcon } from "@/utils/icons";
 import { Spin } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { submitAssignmentApi } from "@/services/collections";
 

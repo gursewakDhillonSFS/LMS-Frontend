@@ -8,7 +8,7 @@ import CommonButton from "../CommonButton";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { createInstrucotor } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import useCategories from "@/hooks/useCategories";
 
 interface InviteTeacherModalProps {

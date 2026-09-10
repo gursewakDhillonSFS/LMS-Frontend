@@ -39,69 +39,71 @@ export const MyCoursesCard: FC<MyCourseCardProp> = ({
   const courseImageUrl = getImageUrl(course_image_url);
   const teacherImageUrl = getImageUrl(instructor_url);
   return (
-    <div className="p-4 rounded-[15px] bg-white">
-      <div className="flex items-center gap-3">
-        <div className="relative w-20 h-20">
+    <div className="p-4 rounded-[10px] bg-white border border-[var(--border)] shadow-xs flex flex-col gap-4 hover:border-[var(--border-strong)] transition-all duration-150">
+      <div className="flex items-center gap-3.5">
+        <div className="relative w-16 h-16 shrink-0 rounded-[8px] overflow-hidden bg-[var(--surface-subtle)] border border-[var(--border)]">
           <Image
-            className=" rounded-xl"
+            className="object-cover"
             src={courseImageUrl && !imgError ? courseImageUrl : Fallback}
-            alt="image"
+            alt={course_name}
             unoptimized
             fill
             onError={() => setImgError(true)}
           />
         </div>
-        <div className="flex flex-col">
-          <div className={`font-[700] text-[18px] leading-[150%] text-black`}>
+        <div className="flex flex-col min-w-0 flex-1">
+          <h3 className="font-semibold text-[15px] text-[var(--text-primary)] truncate">
             {course_name}
-          </div>
+          </h3>
 
-          <div className="flex items-center gap-[4px]">
-            <div className="relative w-[24px] h-[24px]">
+          <div className="flex items-center gap-1.5 mt-1">
+            <div className="relative w-5 h-5 shrink-0 rounded-full overflow-hidden">
               <Image
                 src={
                   teacherImageUrl && !teacherImgError
                     ? teacherImageUrl
                     : Fallback
                 }
-                alt={"avtar"}
+                alt={name}
                 unoptimized
                 fill
                 onError={() => setTeacherImgError(true)}
-                className="rounded-[12px] object-cover"
+                className="object-cover"
               />
             </div>
-            <p className="text-[12px] leading-[150%]">by {name}</p>
+            <p className="text-xs text-[var(--text-secondary)] truncate">by {name}</p>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-4 pt-1 border-t border-[var(--border)]">
         {demoClass ? (
-          <div className="flex items-center text-sm text-[#7B7B7B]  gap-1">
+          <div className="flex items-center text-xs text-[var(--text-secondary)] gap-1.5">
             <ClockWheelIcon />
-            {"6:00 PM - 6:45 PM"}
+            <span>6:00 PM - 6:45 PM</span>
           </div>
         ) : (
-          <div className="w-[60%] flex items-center justify-center gap-1">
+          <div className="flex-1 flex items-center gap-2 max-w-[60%]">
             <Progress
-              strokeColor="var(--secondary)"
+              strokeColor="var(--primary)"
               percent={progress}
               showInfo={false}
-            />{" "}
-            <span className="text-[#2D2D2D] font-poppins whitespace-nowrap">
-              {Number(progress)}% complete
+              size="small"
+              className="!m-0"
+            />
+            <span className="text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap">
+              {Number(progress)}%
             </span>
           </div>
         )}
         <CommonButton
-          text={demoClass ? "Demo Class" : "Start Now"}
+          text={demoClass ? "Demo Class" : "Continue"}
           onClick={
             demoClass
               ? () => {}
               : () => route.push(`${RoutePaths?.MyCourses}/course-details?course_id=${course_id}${batch_id ? `&batch_id=${batch_id}` : ''}`)
           }
-          className="w-[130px]"
+          className="!w-auto !px-4 !h-8 !text-xs !rounded-[6px]"
         />
       </div>
     </div>

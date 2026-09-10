@@ -9,7 +9,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   title,
   subtitle,
   children,
-  centered = false,
+  centered = true,
 }) => {
   return (
     <Modal
@@ -24,14 +24,17 @@ const AuthModal: React.FC<AuthModalProps> = ({
     >
       <button
         onClick={onClose}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-[#002333] rounded-full text-white flex items-center justify-center -top-[10px] -right-[10px] text-sm"
+        className="cursor-pointer absolute w-8 h-8 bg-[var(--surface-subtle)] hover:bg-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-full flex items-center justify-center top-4 right-4 transition-colors duration-150 z-10"
+        aria-label="Close"
       >
         <CloseIcon />
       </button>
-      <div className="flex flex-col items-center gap-[12px] justify-center text-center">
-        <h2 className="text-[32px] font-[700] leading-[120%]">{title}</h2>
+      <div className="flex flex-col items-center gap-2 justify-center text-center pt-2 pb-4">
+        <h2 className="text-[24px] md:text-[26px] font-bold text-[var(--text-primary)] tracking-tight">
+          {title}
+        </h2>
         {subtitle && (
-          <p className="text-[16px] font-[400] leading-[150%] text-[#9A9A9A]">
+          <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed max-w-sm">
             {subtitle}
           </p>
         )}

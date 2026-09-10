@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Image, Upload, Spin } from "antd";
 import { EditOutlined, LoadingOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 import { RootState } from "@/redux/store";
 import { updateUser } from "@/redux/slices/UserDataSlice";

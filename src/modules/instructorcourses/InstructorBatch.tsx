@@ -7,7 +7,7 @@ import NoDataFound from "@/components/NoDataFound";
 import { DataNotFound } from "@/utils/images";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { CloseIcon } from "@/utils/icons";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import useInstructor from "@/hooks/useInstructor";
 import { createBatchApi, updateBatchApi, deleteBatchApi } from "@/services/collections";
 import { CourseInfoDataProp } from "@/utils/interface";

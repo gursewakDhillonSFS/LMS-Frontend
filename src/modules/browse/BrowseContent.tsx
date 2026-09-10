@@ -65,34 +65,35 @@ const BrowseContent = () => {
   }, [activeCategory, fetchCourseData]);
 
   return (
-    <div className="flex flex-col gap-[40px] w-[80%]">
-      <div className="flex flex-col gap-[32px]">
+    <div className="flex flex-col gap-10 flex-1 min-w-0">
+      <div className="flex flex-col gap-8">
         {activeCategory === CategoryEnum?.ALL_Classes && (
-          <div className="relative">
+          <div className="relative rounded-[12px] overflow-hidden shadow-xs">
             <Image
               alt="Online classes"
               src={OnlineClasses}
               unoptimized
-              className="rounded-[12px] w-full"
+              className="w-full h-[220px] md:h-[260px] object-cover"
             />
-            <div className="text-white absolute top-[19px] left-[30px] flex flex-col items-start gap-[35px]">
-              <div className="flex flex-col gap-[17px]">
-                <span className="text-[30px] lg:text-[40px] font-[700] leading-[120%]">
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent flex flex-col justify-center px-6 md:px-12 gap-5">
+              <div className="flex flex-col gap-2 max-w-lg">
+                <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                   Online Classes
-                </span>
-                <span className="text-[14px] lg:text-[18px] leading-[120%]">
-                  Find what fascinates you as you explore these online classes.
-                </span>
+                </h1>
+                <p className="text-sm md:text-base text-slate-200 leading-relaxed">
+                  Find what fascinates you as you explore world-class online courses led by industry experts.
+                </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 <CommonButton
-                  text={"Sign Up for Free"}
+                  text="Sign Up for Free"
                   onClick={handleSignup}
+                  className="!h-9 !text-sm !px-5"
                 />
 
                 <CommonButton
-                  text={"Start 7-day Free Trial"}
-                  className="!bg-secondary !text-white"
+                  text="Start Free Trial"
+                  className="!bg-white !text-[var(--primary)] hover:!bg-slate-100 !border-none !h-9 !text-sm !px-5 shadow-xs"
                   onClick={() => router.push(RoutePaths?.Subscription)}
                 />
               </div>
@@ -101,26 +102,22 @@ const BrowseContent = () => {
         )}
 
         {activeCategory === CategoryEnum?.ALL_Classes && (
-          <div className="flex flex-col gap-[12px]">
-            <h1 className="!text-[24px] !font-[700] leading-[120%]">
-              Feature Classes
-            </h1>
+          <div className="flex flex-col gap-4">
+            <h2 className="text-[20px] font-bold text-[var(--text-primary)] tracking-tight">
+              Featured Classes
+            </h2>
             {loading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[12px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[1, 2, 3].map((index) => (
                   <CourseCardSkeleton key={index} />
                 ))}
               </div>
             ) : courses?.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-[12px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {courses.map((course) => (
                   <CourseCard
                     key={course?.course_id}
                     data={course}
-                    bgColor="#ffffff"
-                    instructorColor="#0E0E0E"
-                    titleColor="#000"
-                    footerColor="var(--secondary)"
                     onClick={courseRedirect}
                   />
                 ))}
@@ -133,28 +130,22 @@ const BrowseContent = () => {
 
         <CategoryCourses />
       </div>
-      <div className="flex flex-col gap-[26px]">
-        <h1 className="!text-[24px] !font-[700] !leading-[120%]">
+
+      <div className="flex flex-col gap-4 border-t border-[var(--border)] pt-8">
+        <h2 className="text-[20px] font-bold text-[var(--text-primary)] tracking-tight">
           Explore Your Creativity
-        </h1>
-        <p className="text-[#002333] text-[16px] leading-[150%]">
-          Unlock your potential with Learning+ classes designed to inspire and
-          empower. Whether you&apos;re just starting out or refining your craft,
-          explore a wide range of creative topics—from photography and graphic
-          design to drawing, animation, and more.
-        </p>
-        <p className="text-[#002333] text-[16px] leading-[150%]">
-          Learn industry-leading tools like Photoshop, Procreate, and After
-          Effects, or dive into hands-on techniques in painting, hand lettering,
-          and illustration. Whether you&apos;re making a film, redesigning your
-          space, or launching a freelance business, Learning+ offers the
-          guidance and community to help you grow.
-        </p>
-        <p className="text-[#002333] text-[16px] leading-[150%]">
-          With every class, you’ll gain practical experience by creating and
-          sharing your own projects—because creativity is best learned by doing.
-          Start exploring today
-        </p>
+        </h2>
+        <div className="flex flex-col gap-3 text-sm md:text-[15px] text-[var(--text-secondary)] leading-relaxed">
+          <p>
+            Unlock your potential with courses designed to inspire and empower. Whether you&apos;re just starting out or refining your craft, explore a wide range of creative topics—from photography and design to engineering, artificial intelligence, and leadership.
+          </p>
+          <p>
+            Learn industry-standard tools and techniques with practical, project-based coursework. Build real-world portfolio artifacts that demonstrate your skills to employers and collaborators.
+          </p>
+          <p>
+            With every course, gain actionable experience by creating and sharing your own projects—because true mastery is achieved through hands-on practice.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const authOptions = [
   {

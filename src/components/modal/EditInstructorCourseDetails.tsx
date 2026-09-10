@@ -21,7 +21,7 @@ import {
   updateCourseStep4,
   updateCourseStep5,
 } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 export interface EditInstructorCourseDetailsProps {
   visible: boolean;

@@ -143,37 +143,37 @@ const Testimonial = () => {
 
   return (
     (testimonials?.length ?? 0) > 0 && (
-      <div className="flex flex-col bg-[#ffffff] py-[40px] lg:py-[80px] gap-[70px]">
-        <div className="flex flex-col items-center gap-[20px]">
-          <div className={`text-[36px] lg:text-[56px] fjalla-one-regular `}>
-            Why Students Love Learning+
-          </div>
-          <div className="text-[12px] lg:text-[16px] text-center leading-[150%]">
-            Whether it&apos;s a first brush on canvas or the last frame in an
-            animation, Learning+ is here to support <br /> you on every step of
-            your creative journey.
-          </div>
+      <section className="flex flex-col bg-[var(--surface)] border-t border-[var(--border)] py-16 gap-12">
+        <div className="flex flex-col items-center text-center gap-3 px-6 max-w-3xl mx-auto">
+          <h2 className="text-[28px] md:text-[40px] font-bold text-[var(--text-primary)] tracking-tight">
+            Why Learners Choose Us
+          </h2>
+          <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] leading-relaxed">
+            Hear from students and professionals around the world who accelerated their careers and unlocked new possibilities with our platform.
+          </p>
         </div>
         <Carousel
           arrows
           ref={carouselRef}
           prefixCls="custom-carousal"
           {...settings}
-          className="!pb-15"
+          className="!pb-12"
         >
           {testimonials?.map((testimonial, index) => (
             <Card data={testimonial} key={index} />
           ))}
         </Carousel>
 
-        <Image
-          src={TestimonialImage}
-          alt="Testimonial Background"
-          fill
-          unoptimized
-          className="!relative px-[40px] xl:px-[250px] pt-10"
-        />
-      </div>
+        <div className="relative px-6 xl:px-48 pt-4">
+          <Image
+            src={TestimonialImage}
+            alt="Testimonial Background"
+            fill
+            unoptimized
+            className="!relative rounded-[12px] opacity-90"
+          />
+        </div>
+      </section>
     )
   );
 };
@@ -181,25 +181,24 @@ const Testimonial = () => {
 export default Testimonial;
 
 const Card: React.FC<{ data: TestimonialProps }> = ({ data }) => (
-  <div className="rounded-[20px] bg-[#eae8e8] relative p-6 gap-8 flex mx-[15px]">
-    <div className="absolute right-4 top-4">
-      <QuoteIcon />
+  <div className="rounded-[12px] bg-white border border-[var(--border)] shadow-xs relative p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 mx-3">
+    <div className="relative shrink-0">
+      <Image
+        src={data.image}
+        alt={data.name}
+        width={100}
+        height={100}
+        className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full border-2 border-[var(--border)]"
+        unoptimized
+      />
     </div>
-    <Image
-      src={data.image}
-      alt="im"
-      width={10}
-      height={10}
-      className="w-[200px] h-[200px] lg:w-[300px] lg:h-[300px] object-cover rounded-[10px]"
-      unoptimized
-    />
-    <div className="flex-1 flex flex-col gap-[18px] mt-[30px]">
-      <p className="leading-[150%] text-[16px] text-[#3D3D3D]">
-        {data.feedback}
+    <div className="flex-1 flex flex-col justify-between gap-4 text-center md:text-left">
+      <p className="leading-relaxed text-[15px] md:text-[16px] text-[var(--text-primary)] italic">
+        &ldquo;{data.feedback}&rdquo;
       </p>
-      <div className="flex flex-col items-start">
-        <span className="font-[700]">{data.name}</span>
-        <span className="text-sm">{data.role}</span>
+      <div className="flex flex-col">
+        <span className="font-semibold text-[15px] text-[var(--text-primary)]">{data.name}</span>
+        <span className="text-[13px] text-[var(--text-secondary)]">{data.role}</span>
       </div>
     </div>
   </div>

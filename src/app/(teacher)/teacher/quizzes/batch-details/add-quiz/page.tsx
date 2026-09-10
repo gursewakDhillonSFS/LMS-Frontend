@@ -11,7 +11,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import {
   createQuizApi,
   getQuizDetailsApi,

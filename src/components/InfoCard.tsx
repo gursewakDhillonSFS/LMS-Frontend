@@ -9,15 +9,17 @@ export interface InfoCardProps {
 
 const InfoCard = ({ image, text, count, bg = "#f0f0f0" }: InfoCardProps) => {
   return (
-    <div className="flex flex-col !border-none gap-[12px] bg-white rounded-[12px] p-5">
-      <div
-        className="w-[48px] h-[48px] flex justify-center items-center rounded-full"
-        style={{ backgroundColor: bg }}
-      >
-        {image}
+    <div className="flex flex-col gap-3 bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs hover:border-[var(--border-strong)] transition-all duration-150">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-[var(--text-secondary)]">{text}</span>
+        <div
+          className="w-10 h-10 flex justify-center items-center rounded-lg"
+          style={{ backgroundColor: bg }}
+        >
+          {image}
+        </div>
       </div>
-      <p className="text-[16px] text-[#9A9A9A] leading-[150%]">{text}</p>
-      <h3 className="text-[32px] plus-jakarta-sans font-bold">{count}</h3>
+      <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">{count}</h3>
     </div>
   );
 };

@@ -15,7 +15,7 @@ import {
   getAssignmentsByBatchApi,
   deleteAssignmentApi,
 } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 interface AssignmentRow {
   assignment_id: string;

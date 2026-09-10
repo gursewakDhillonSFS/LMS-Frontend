@@ -7,7 +7,7 @@ import { LeftOutlined, RightOutlined, EditOutlined, DeleteOutlined, VideoCameraO
 import { CalendarIcon, ClockWheelIcon } from "@/utils/icons";
 import { getSchedulesApi, deleteScheduleApi, getAllCoursesApi } from "@/services/collections";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import ConfirmationModal from "./modal/ConfirmationModal";
 import ScheduleModalForm from "./modal/ScheduleModalForm";
 

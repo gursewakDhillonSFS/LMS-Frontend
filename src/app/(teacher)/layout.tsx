@@ -70,32 +70,33 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
   }, [pathname, dispatch]);
 
   return (
-    <Layout className="!min-h-screen">
-      <div className={`bg-navcolor lg:px-[16px] `}>
+    <Layout className="!min-h-screen !bg-[var(--bg)]">
+      <div className="bg-white border-r border-[var(--border)]">
         <Sider
           trigger={null}
-          width={200}
+          width={240}
           collapsible
           collapsed={collapsed}
           breakpoint="xl"
           onBreakpoint={(broken) => {
             setCollapsed(broken);
           }}
-          className="!sticky !top-0 !max-h-screen scrollbar-hide !overflow-y-auto"
+          className="!sticky !top-0 !max-h-screen scrollbar-hide !overflow-y-auto !bg-white"
+          style={{ background: "#FFFFFF" }}
         >
           <div
             onClick={() => setCollapsed((prev) => !prev)}
-            className="bg-navcolor cursor-pointer flex items-center justify-center py-[10px] border-b-1 border-[#818B9A] border-dashed !pb-[20px] sticky top-0 z-50"
+            className="bg-white cursor-pointer flex items-center justify-center py-[16px] px-[16px] border-b border-[var(--border)] sticky top-0 z-50"
           >
             {collapsed ? (
               <HeaderSmallLogo />
             ) : (
-              <HeaderLogoIcon textColor="white" />
+              <HeaderLogoIcon textColor="var(--text-primary)" />
             )}
           </div>
           <Menu
             prefixCls="custom-sidebar-menu"
-            className="!bg-navcolor !pt-[15px] !flex !flex-col !items-center lg:gap-[10px]"
+            className="!bg-white !pt-[12px] !px-[8px] !flex !flex-col !items-stretch"
             theme="dark"
             mode="inline"
             selectedKeys={[activeTab]}
@@ -158,11 +159,11 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
           />
         </Sider>
       </div>
-      <Layout>
-        <Header className="!p-0 !flex !bg-white !sticky !top-0 !z-50">
+      <Layout className="!bg-[var(--bg)]">
+        <Header className="!p-0 !flex !bg-white !sticky !top-0 !z-50 !h-[64px] !border-b !border-[var(--border)]" style={{ lineHeight: 'normal' }}>
           <InstructorHeader />
         </Header>
-        <Content className="!p-4 !overflow-y-auto">{children}</Content>
+        <Content className="!p-4 lg:!p-6 !overflow-y-auto">{children}</Content>
       </Layout>
     </Layout>
   );

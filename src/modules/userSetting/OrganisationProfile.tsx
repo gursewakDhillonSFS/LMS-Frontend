@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Col, Form, Row, Select, Input, Image, Spin } from "antd";
 import { Rule } from "antd/es/form";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { useSelector, useDispatch } from "react-redux";
 import { UserProfileIcon } from "@/utils/icons";
 import CommonButton from "@/components/CommonButton";

@@ -34,9 +34,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { toast } from "react-toastify";
-
-
+import { toast } from "@/utils/toast";
 
 interface EventProp {
   date: Dayjs;
@@ -49,60 +47,6 @@ const events: EventProp[] = [
     date: dayjs("2025-06-05"),
     formatDate: "5 June, 2025",
     title: "Site Inspection",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-06"),
-    formatDate: "6 June, 2025",
-    title: "Concrete Pouring",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-10"),
-    formatDate: "10 June, 2025",
-    title: "Concrete Pouring",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-20"),
-    formatDate: "20 June, 2025",
-    title: "Formwork Removal",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-06"),
-    formatDate: "6 June, 2025",
-    title: "Concrete Pouring",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-10"),
-    formatDate: "10 June, 2025",
-    title: "Concrete Pouring",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-20"),
-    formatDate: "20 June, 2025",
-    title: "Formwork Removal",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-06"),
-    formatDate: "6 June, 2025",
-    title: "Concrete Pouring",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-10"),
-    formatDate: "10 June, 2025",
-    title: "Concrete Pouring",
-    time: "6:00 PM - 6:45 PM",
-  },
-  {
-    date: dayjs("2025-06-20"),
-    formatDate: "20 June, 2025",
-    title: "Formwork Removal",
     time: "6:00 PM - 6:45 PM",
   },
   {
@@ -163,7 +107,7 @@ const UserDashboard = () => {
         setTotal(response?.data?.total_courses);
       }
     } catch (err) {
-      console.log(err || "Failed to fetch Project Condition");
+      console.log(err || "Failed to fetch courses");
     } finally {
       setLoading(false);
     }
@@ -177,8 +121,8 @@ const UserDashboard = () => {
   const getUserCourseData = async () => {
     setCourseLoading(true);
     const param = new URLSearchParams();
-    param.append("page", 1 + "");
-    param.append("limit", 3 + "");
+    param.append("page", "1");
+    param.append("limit", "3");
     try {
       const response = await userCourseList(param);
       if (response.status) {
@@ -196,12 +140,10 @@ const UserDashboard = () => {
              setAnnouncements(annRes.data.announcements);
           }
         }
-      } else {
-        setCourseLoading(false);
       }
     } catch (error) {
       console.log(error);
-      toast.warning("Something went wrong");
+      toast.warning("Could not load your courses");
     } finally {
       setCourseLoading(false);
     }
@@ -316,44 +258,48 @@ const UserDashboard = () => {
     fetchCourseData();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page, fetchCourseData]);
+
   return courseLoading ? (
-    <div className="flex items-center justify-center w-full h-screen">
-      <LoadingOutlined spin className="!text-2xl" />
+    <div className="flex items-center justify-center w-full h-96">
+      <LoadingOutlined spin className="!text-2xl text-[var(--primary)]" />
     </div>
   ) : (
-    <div className="flex flex-col gap-[24px]">
+    <div className="flex flex-col gap-8 pb-12">
       {!allCourses && (
-        <div className="flex flex-col gap-[24px]">
-          <div className="flex flex-col gap-[24px]">
-            <h1 className="text-[32px] font-[700] leading-[120%]">Dashboard</h1>
-            <div className="flex items-center justify-between w-full p-[12px] rounded-[12px] bg-[#FFDEE6]">
-              <div className="flex items-center gap-[12px]">
-                <Image alt="live" src={Live} />
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+              Dashboard
+            </h1>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full p-4 rounded-[10px] bg-red-50/70 border border-red-200 shadow-2xs">
+              <div className="flex items-center gap-3">
+                <Image alt="live" src={Live} className="w-8 h-8 shrink-0" />
                 <div>
-                  <h1 className="text-[18px] font-[600] leading-[120%]">
-                    Create Machine Learning Models in Microsoft Azure (Live
-                    Class)
-                  </h1>
-                  <span className="text-[14px] font-[500] text-[#9A9A9A] leading-[150%]">
-                    Start at: 17:50
+                  <h3 className="text-[15px] font-semibold text-red-950">
+                    Create Machine Learning Models in Microsoft Azure (Live Class)
+                  </h3>
+                  <span className="text-xs font-medium text-red-700">
+                    Starts at 17:50 Today
                   </span>
                 </div>
               </div>
               <CommonButton
-                text={"Join Live Class"}
-                className="!bg-[#FB4A49] text-white"
+                text="Join Live Class"
+                className="!bg-[var(--error)] hover:!bg-red-700 !text-white !h-9 !text-xs !px-4 !rounded-[6px] shrink-0 shadow-xs"
               />
             </div>
           </div>
-          <div className="flex flex-col xl:flex-row w-full gap-[20px] h-full">
-            <div className="w-full xl:w-2/3 h-full">
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2 flex flex-col gap-6">
               <div className="flex flex-col gap-3">
-                <div className="flex justify-between">
-                  <p className="text-[24px] font-[700] leading-[120%]">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-[18px] font-bold text-[var(--text-primary)] tracking-tight">
                     My Courses
-                  </p>
+                  </h2>
                   <CommonLink
                     text="See All"
+                    className="text-xs font-medium text-[var(--primary)] hover:underline"
                     onClick={() => router.push(RoutePaths?.MyCourses)}
                   />
                 </div>
@@ -374,143 +320,158 @@ const UserDashboard = () => {
                 ) : (
                   <NoDataFound icon={DataNotFound} />
                 )}
+              </div>
 
-                <div className="flex flex-col gap-[12px]">
-                  <p className="text-[24px] font-[700] leading-[120%]">
-                    Schedule
-                  </p>
+              <div className="flex flex-col gap-3">
+                <h2 className="text-[18px] font-bold text-[var(--text-primary)] tracking-tight">
+                  Schedule
+                </h2>
 
-                  <div className="flex shadow-sm rounded-[20px]">
-                    <div className="w-1/2 p-6 bg-white rounded-l-[20px]">
-                      <Calendar
-                        onChange={(value) => {
-                          setSelectedDate(value);
-                        }}
-                        prefixCls="custom-calendar"
-                        fullscreen={false}
-                        headerRender={({ value, onChange }) => {
-                          const current = value.clone();
+                <div className="flex flex-col md:flex-row border border-[var(--border)] rounded-[10px] bg-white overflow-hidden shadow-xs">
+                  <div className="w-full md:w-1/2 p-5 border-b md:border-b-0 md:border-r border-[var(--border)]">
+                    <Calendar
+                      onChange={(value) => {
+                        setSelectedDate(value);
+                      }}
+                      prefixCls="custom-calendar"
+                      fullscreen={false}
+                      headerRender={({ value, onChange }) => {
+                        const current = value.clone();
 
-                          const prevMonth = () => {
-                            const newValue = current.subtract(1, "month");
-                            onChange(newValue);
-                          };
+                        const prevMonth = () => {
+                          const newValue = current.subtract(1, "month");
+                          onChange(newValue);
+                        };
 
-                          const nextMonth = () => {
-                            const newValue = current.add(1, "month");
-                            onChange(newValue);
-                          };
+                        const nextMonth = () => {
+                          const newValue = current.add(1, "month");
+                          onChange(newValue);
+                        };
 
-                          return (
-                            <div className="flex justify-between items-center pb-2">
-                              <div className="text-[16px] font-[500] font-poppins leading-[150%]">
-                                {current.format("MMMM YYYY")}
-                              </div>
-                              <div className="flex gap-2">
-                                <div
-                                  onClick={prevMonth}
-                                  className="cursor-pointer text-center w-[22px] h-[22px] rounded-full bg-[#D9D9D9]"
-                                >
-                                  <LeftOutlined className="!text-white" />
-                                </div>
-                                <div
-                                  onClick={nextMonth}
-                                  className="cursor-pointer text-center w-[22px] h-[22px] rounded-full bg-secondary"
-                                >
-                                  <RightOutlined className="!text-white" />
-                                </div>
-                              </div>
+                        return (
+                          <div className="flex justify-between items-center pb-3">
+                            <span className="text-sm font-semibold text-[var(--text-primary)]">
+                              {current.format("MMMM YYYY")}
+                            </span>
+                            <div className="flex gap-1.5">
+                              <button
+                                onClick={prevMonth}
+                                className="w-7 h-7 flex items-center justify-center rounded-md border border-[var(--border)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer text-xs"
+                                aria-label="Previous month"
+                              >
+                                <LeftOutlined className="text-xs text-[var(--text-secondary)]" />
+                              </button>
+                              <button
+                                onClick={nextMonth}
+                                className="w-7 h-7 flex items-center justify-center rounded-md border border-[var(--border)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer text-xs"
+                                aria-label="Next month"
+                              >
+                                <RightOutlined className="text-xs text-[var(--text-secondary)]" />
+                              </button>
                             </div>
-                          );
-                        }}
-                        cellRender={(date) => {
-                          const isEvent = events.find((event) =>
-                            event.date.isSame(date, "day")
-                          );
-                          return (
-                            <div className="relative h-full w-full">
-                              {isEvent && (
-                                <div className="absolute -bottom-6 -left-[10px] w-1 h-1 rounded-full bg-secondary" />
-                              )}
-                            </div>
-                          );
-                        }}
-                      />
+                          </div>
+                        );
+                      }}
+                      cellRender={(date) => {
+                        const isEvent = events.find((event) =>
+                          event.date.isSame(date, "day")
+                        );
+                        return (
+                          <div className="relative h-full w-full">
+                            {isEvent && (
+                              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--primary)]" />
+                            )}
+                          </div>
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className="w-full md:w-1/2 p-5 flex flex-col gap-4 bg-[var(--surface-subtle)]">
+                    <div className="text-sm font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+                      {selectedDate
+                        ? dayjs(selectedDate).format("dddd, DD MMMM YYYY")
+                        : "Events"}
                     </div>
-                    <div className="w-1/2 max-h-screen px-5 py-[24px] flex flex-col gap-[20px] bg-[#F7F7FC] rounded-r-[20px]">
-                      <div className="text-[18px] font-[700] leading-[120%]">
-                        {selectedDate
-                          ? dayjs(selectedDate).format("DD MMM, YYYY")
-                          : ""}
-                      </div>
-                      <div className="h-full">
-                        {filtered?.length ? (
-                          filtered?.map((group, index) => (
-                            <div key={index}>
-                              <div className="bg-white cursor-pointer rounded-lg px-4 py-3 flex justify-between items-center mb-2">
-                                <div className="flex flex-col gap-1">
-                                  <p className="font-[700] text-[16px] leading-[150%]">
-                                    {group.title}
-                                  </p>
-                                  <div className="flex items-center text-sm text-[#7B7B7B]  gap-1">
-                                    <ClockWheelIcon />
-                                    {group.time}
-                                  </div>
-                                </div>
-                                <RightOutlined className="text-[#7B7B7B] w-5 h-5" />
+                    <div className="flex flex-col gap-2.5 flex-1 overflow-y-auto max-h-[260px]">
+                      {filtered?.length ? (
+                        filtered?.map((group, index) => (
+                          <div
+                            key={index}
+                            className="bg-white border border-[var(--border)] rounded-[8px] p-3 flex justify-between items-center shadow-2xs hover:border-[var(--primary)] transition-colors cursor-pointer"
+                          >
+                            <div className="flex flex-col gap-0.5">
+                              <p className="font-semibold text-sm text-[var(--text-primary)]">
+                                {group.title}
+                              </p>
+                              <div className="flex items-center text-xs text-[var(--text-secondary)] gap-1">
+                                <ClockWheelIcon />
+                                <span>{group.time}</span>
                               </div>
                             </div>
-                          ))
-                        ) : (
-                          <NoDataFound icon={DataNotFound} />
-                        )}
-                        <CommonLink
-                          text={"See All"}
-                          className="text-right w-full"
-                        />
-                      </div>
+                            <RightOutlined className="text-[var(--text-muted)] text-xs" />
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-8 text-center text-xs text-[var(--text-muted)]">
+                          No scheduled events for this date
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="w-full xl:w-1/3 h-full p-6 bg-navcolor rounded-[12px]">
-              <h1 className="text-[20px] text-white font-[700] leading-[120%] pb-[12px] border-b border-[#4C4C4C]">
-                Announcement
-              </h1>
 
-              <div className="flex flex-col gap-[12px] my-[12px]">
-                {announcements.length > 0 ? announcements.map((note, index) => (
-                  <div key={note._id || index} className="flex flex-col gap-[12px]">
+            <div className="xl:col-span-1 bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs flex flex-col gap-4 h-fit">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                <h2 className="text-[16px] font-bold text-[var(--text-primary)] tracking-tight">
+                  Announcements
+                </h2>
+                {announcements.length > 0 && (
+                  <span className="text-xs bg-blue-50 text-[var(--primary)] px-2 py-0.5 rounded-full font-medium">
+                    {announcements.length}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-3 max-h-[460px] overflow-y-auto">
+                {announcements.length > 0 ? (
+                  announcements.map((note, index) => (
                     <div
-                      className="flex gap-[10px] p-[6px] rounded-[6px]"
-                      style={{ background: "rgba(255, 255, 255, 0.05)" }}
+                      key={note._id || index}
+                      className="bg-[var(--surface-subtle)] border border-[var(--border)] rounded-[8px] p-3 flex flex-col gap-2 shadow-2xs"
                     >
-                      <div className="bg-primary min-w-[44px] h-[44px] rounded-full flex items-center justify-center">
-                        <EarPhoneIcon />
-                      </div>
-                      <div className="flex flex-col gap-[6px] w-full">
-                        <div className="flex justify-between w-full">
-                          <div className="flex flex-col">
-                            <p className="font-[600] text-[16px] leading-[150%] text-white">
-                              {note.courseName}
-                            </p>
-                            <p className="text-[12px] leading-[140%] text-[#255BFF]">
-                              {note.title}
-                            </p>
-                          </div>
-                          <p className="text-[14px] text-[#A9A9A9] leading-[150%]">
-                            {dayjs(note.publishedAt).format('DD MMM')}
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                          <EarPhoneIcon />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-xs text-[var(--text-primary)] truncate">
+                            {note.courseName}
+                          </p>
+                          <p className="text-xs text-[var(--primary)] font-medium truncate">
+                            {note.title}
                           </p>
                         </div>
-                        <div className="text-[14px] font-poppins leading-[150%] text-white">
-                          <span dangerouslySetInnerHTML={{ __html: note.message.slice(0, 50) + (note.message.length > 50 ? '...' : '') }}></span>
-                        </div>
+                        <span className="text-[11px] text-[var(--text-muted)] shrink-0">
+                          {dayjs(note.publishedAt).format("DD MMM")}
+                        </span>
+                      </div>
+                      <div className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              note.message.slice(0, 70) +
+                              (note.message.length > 70 ? "..." : ""),
+                          }}
+                        ></span>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="py-12 text-center text-xs text-[var(--text-muted)]">
+                    No announcements yet.
                   </div>
-                )) : (
-                  <p className="text-white text-sm">No announcements available.</p>
                 )}
               </div>
             </div>
@@ -518,31 +479,29 @@ const UserDashboard = () => {
         </div>
       )}
 
-      <div className="flex flex-col items-center gap-[12px]">
-        <div className="flex items-center justify-between w-full">
-          <h1
-            className={`${
-              allCourses ? "text-[32px]" : "text-[24px]"
-            } font-[700] leading-[120%]`}
-          >
-            {allCourses ? "Course for You" : "Explore More Courses"}
-          </h1>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] tracking-tight">
+            {allCourses ? "Recommended Courses" : "Explore More Courses"}
+          </h2>
           <CommonLink
-            text={allCourses ? "Change Selected Topic" : "Explore More"}
+            text={allCourses ? "Browse All" : "View More"}
+            className="text-xs font-semibold text-[var(--primary)] hover:underline"
             onClick={
-              allCourses ? () => {} : () => router.push(RoutePaths?.MyExplore)
+              allCourses ? () => router.push(RoutePaths?.Browse) : () => router.push(RoutePaths?.MyExplore)
             }
           />
         </div>
+
         {loading || courses?.length > 0 ? (
           loading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[12px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {[1, 2, 3, 4].map((index) => (
                 <CourseCardSkeleton key={index} />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[12px] w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
               {(allCourses ? courses : courses.slice(0, 4)).map((course) => (
                 <DashboardCourseCard
                   key={course.course_id}
@@ -559,13 +518,16 @@ const UserDashboard = () => {
         ) : (
           <NoDataFound icon={DataNotFound} />
         )}
+
         {allCourses && total > limit && (
-          <Pagination
-            page={page}
-            limit={limit}
-            setPage={setPage}
-            total={total}
-          />
+          <div className="pt-4 flex justify-center">
+            <Pagination
+              page={page}
+              limit={limit}
+              setPage={setPage}
+              total={total}
+            />
+          </div>
         )}
       </div>
     </div>

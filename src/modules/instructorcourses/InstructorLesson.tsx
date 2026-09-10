@@ -12,7 +12,7 @@ import { ClockWheelIcon, EditIcon, FileIcon } from "@/utils/icons";
 import { Collapse, UploadFile, UploadProps } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { LessonDetails } from "../createCourseSteps/step4";
 import { LoadingOutlined, RightOutlined } from "@ant-design/icons";
 import LessonSublessonModal from "@/components/modal/LessonSublessonModal";

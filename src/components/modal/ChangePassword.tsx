@@ -7,7 +7,7 @@ import CommonButton from "../CommonButton";
 import { useForm } from "antd/es/form/Form";
 import CommonInput from "../CommonInput";
 import { changePassword } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { useDispatch } from "react-redux";
 import { resetAllSlices } from "@/redux/resetSlice";
 import { useRouter } from "next/navigation";

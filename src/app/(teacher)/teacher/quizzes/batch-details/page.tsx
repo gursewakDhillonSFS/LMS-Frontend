@@ -14,7 +14,7 @@ import QuillEditor from "@/components/QuillEditor";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { getQuizzesByBatchApi, deleteQuizApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 interface QuizRow {
   quiz_id: string;

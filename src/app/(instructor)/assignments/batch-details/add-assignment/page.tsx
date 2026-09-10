@@ -17,7 +17,7 @@ import {
 } from "@/services/collections";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const headings: { title: string; description?: string }[] = [
   {

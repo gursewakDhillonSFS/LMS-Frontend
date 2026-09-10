@@ -25,38 +25,74 @@ const AdminPanel = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 p-6">
-      <h1 className="text-3xl font-bold">Admin Panel</h1>
+    <div className="flex flex-col gap-6 p-6 max-w-7xl mx-auto w-full pb-12">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          Admin Administration Panel
+        </h1>
+        <span className="text-xs bg-slate-100 text-[var(--text-secondary)] px-3 py-1 rounded-full font-medium border border-[var(--border)]">
+          System Overview
+        </span>
+      </div>
+
       {overview ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.entries(overview).map(([k, v]) => (
-            <div key={k} className="bg-white rounded-xl p-4">
-              <p className="text-xs text-slate-500 uppercase">{k}</p>
-              <p className="text-2xl font-bold">{v as number}</p>
+            <div key={k} className="bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs">
+              <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+                {k.replace(/_/g, " ")}
+              </p>
+              <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mt-2">
+                {v as number}
+              </p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-slate-500">
-          Unable to load overview. Ensure you are logged in as admin.
-        </p>
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-[10px] text-sm">
+          Overview data unavailable. Ensure your account has administrative privileges.
+        </div>
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl p-4">
-          <h2 className="font-bold mb-2">Recent Users</h2>
-          <ul className="text-sm space-y-1 max-h-80 overflow-auto">
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs flex flex-col gap-4">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <h2 className="text-base font-bold text-[var(--text-primary)] tracking-tight">
+              Recent Users
+            </h2>
+            <span className="text-xs text-[var(--text-muted)]">Showing up to 20</span>
+          </div>
+
+          <div className="overflow-y-auto max-h-96 divide-y divide-[var(--border)]">
             {(users as { email?: string; role?: string; firstName?: string }[]).map(
               (u, i) => (
-                <li key={i} className="border-b py-1">
-                  {u.firstName || "User"} — {u.email} ({u.role})
-                </li>
+                <div key={i} className="py-2.5 flex items-center justify-between gap-3 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-[var(--text-primary)] truncate">
+                      {u.firstName || "User"}
+                    </p>
+                    <p className="text-xs text-[var(--text-secondary)] truncate">
+                      {u.email}
+                    </p>
+                  </div>
+                  <span className="text-xs bg-blue-50 text-[var(--primary)] px-2.5 py-0.5 rounded-full font-medium capitalize shrink-0">
+                    {u.role || "student"}
+                  </span>
+                </div>
               ),
             )}
-          </ul>
+          </div>
         </div>
-        <div className="bg-white rounded-xl p-4">
-          <h2 className="font-bold mb-2">Courses</h2>
-          <ul className="text-sm space-y-1 max-h-80 overflow-auto">
+
+        <div className="bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs flex flex-col gap-4">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <h2 className="text-base font-bold text-[var(--text-primary)] tracking-tight">
+              Platform Courses
+            </h2>
+            <span className="text-xs text-[var(--text-muted)]">Showing up to 20</span>
+          </div>
+
+          <div className="overflow-y-auto max-h-96 divide-y divide-[var(--border)]">
             {(
               courses as {
                 course_name?: string;
@@ -64,12 +100,25 @@ const AdminPanel = () => {
                 enrolled_user_count?: number;
               }[]
             ).map((c, i) => (
-              <li key={i} className="border-b py-1">
-                {c.course_name} — {c.course_status} (
-                {c.enrolled_user_count || 0} enrolled)
-              </li>
+              <div key={i} className="py-2.5 flex items-center justify-between gap-3 text-sm">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-[var(--text-primary)] truncate">
+                    {c.course_name}
+                  </p>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    {c.enrolled_user_count || 0} students enrolled
+                  </p>
+                </div>
+                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium capitalize shrink-0 ${
+                  c.course_status === "published" || c.course_status === "active"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-slate-100 text-slate-700"
+                }`}>
+                  {c.course_status || "draft"}
+                </span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import PostAnnouncementModal from "@/components/modal/PostAnnouncementModal";
 import { createAnnouncementApi, updateAnnouncementApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const TeacherAnnouncements = () => {
   const [announcements, setAnnouncements] = useState<AnnouncementPayload[]>([]);

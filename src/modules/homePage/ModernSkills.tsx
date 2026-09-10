@@ -11,99 +11,96 @@ const ModernSkills = () => {
       para1:
         "On-Demand Learning gives you the flexibility to study on your own schedule, with access to a wide variety of learning materials anytime, anywhere.",
       para2:
-        "This approach ensures that you are not bound by rigid class times or locations. With our intuitive learning platform, you can track your progress, revisit challenging topics.",
-      bg: "#E3FFF1",
-      icon: <SkillIcon />,
+        "This approach ensures that you are not bound by rigid class times or locations. Track your progress and revisit challenging topics at your own pace.",
+      bg: "#EEF2FF",
+      icon: <SkillIcon color="#315CFF" />,
     },
     {
-      title: "Expert Trainers",
+      title: "Expert Instructors",
       para1:
-        "On-Demand Learning gives you the flexibility to study on your own schedule, with access to a wide variety of learning materials anytime, anywhere.",
+        "Learn directly from vetted industry professionals who bring real-world experience, current industry standards, and practical frameworks to every module.",
       para2:
-        "They stay up-to-date with the latest trends and tools, ensuring that what you learn is always relevant. This expert-led approach builds confidence and bridges the gap between learning and application.",
-      bg: "#DBD7FF",
-      icon: <SkillIcon color="var(--secondary)" />,
+        "Stay up-to-date with emerging tools and trends. Our expert-led approach builds real confidence and bridges the gap between learning and workplace application.",
+      bg: "#ECFDF5",
+      icon: <SkillIcon color="#059669" />,
     },
     {
-      title: "Professional Services",
+      title: "Career Advancement",
       para1:
-        "On-Demand Learning gives you the flexibility to study on your own schedule, with access to a wide variety of learning materials anytime, anywhere.",
+        "Structured curriculum designed to build demonstrable skills, portfolio-ready projects, and recognized certificates valued by hiring managers.",
       para2:
-        "Our experienced consultants ensure smooth execution, high engagement, and strong knowledge retention. With our support, your team stays ahead in a fast-changing digital landscape.",
-      bg: "#FFF4D9",
-      icon: <SkillIcon color="#FFC023" />,
+        "Our comprehensive learning paths provide deep domain knowledge and interview readiness, empowering you to achieve meaningful milestones.",
+      bg: "#EFF6FF",
+      icon: <SkillIcon color="#2563EB" />,
     },
   ];
 
   return (
-    <div className="bg-black text-white px-[40px] py-[25px] xl:py-[50px] xl:px-[120px]">
-      <div className="flex flex-col gap-[32px]">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-[16px]">
-          <div
-            className={`fjalla-one-regular  text-[36px] xl:text-[56px] leading-[120%] text-white whitespace-nowrap`}
-          >
-            Modern skills need a <br /> modern learning approach
-          </div>
-          <p className="text-[11px] lg:text-[14px] xl:text-[16px]">
-            Learning solutions shouldn&apos;t be one-size-fits-all. For
-            effective <br />
-            training, you need the right skills and the right modalities.
-            <br /> That’s where we come in.
+    <section className="bg-[var(--surface)] border-y border-[var(--border)] px-6 md:px-12 xl:px-24 py-16">
+      <div className="max-w-7xl mx-auto flex flex-col gap-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <h2 className="text-[28px] md:text-[40px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.2]">
+            Modern skills need a <br className="hidden sm:inline" /> modern learning approach
+          </h2>
+          <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] max-w-md leading-relaxed">
+            Learning solutions shouldn&apos;t be one-size-fits-all. We combine flexible pacing with hands-on practice and mentorship.
           </p>
         </div>
 
-        <div>
+        <div className="border border-[var(--border)] rounded-[12px] overflow-hidden bg-white shadow-xs">
           <Image
             src={ModernSkillImage}
             alt="Student Learning"
             unoptimized
-            className="w-full rounded-t-[12px] h-[220px] lg:h-[276px] object-cover"
+            className="w-full h-[220px] lg:h-[280px] object-cover"
           />
-          <div className="bg-white text-black rounded-b-[12px] p-[24px] grid grid-col-1 lg:grid-cols-3 gap-[24px] lg:gap-[32px]">
+          <div className="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
             {learningData.map((item, index) => (
-              <div key={item?.bg} className="flex lg:gap-[32px]">
-                <div className="flex flex-col lg:py-[24px] !border-none gap-[16px]">
+              <div key={item.title} className="flex lg:gap-8">
+                <div className="flex flex-col gap-4">
                   <div
-                    className="w-[69px] h-[69px] flex justify-center items-center rounded-full"
-                    style={{ backgroundColor: item?.bg }}
+                    className="w-12 h-12 flex justify-center items-center rounded-xl"
+                    style={{ backgroundColor: item.bg }}
                   >
-                    {item?.icon}
+                    {item.icon}
                   </div>
-                  <h3 className="text-lg font-semibold">{item?.title}</h3>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {item?.para1}
+                  <h3 className="text-[18px] font-semibold text-[var(--text-primary)]">
+                    {item.title}
+                  </h3>
+                  <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed">
+                    {item.para1}
                   </p>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {item?.para2}
+                  <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed">
+                    {item.para2}
                   </p>
                 </div>
-                {index !== learningData?.length - 1 && (
-                  <div className="w-[1px] bg-[#D9D9D9] hidden lg:block"></div>
+                {index !== learningData.length - 1 && (
+                  <div className="w-[1px] bg-[var(--border)] hidden lg:block self-stretch"></div>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-[12px] xl:gap-0 py-[40px] xl:px-[8px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 py-8 border-t border-[var(--border)]">
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center ${
-                index !== stats?.length - 1 && "border-r-1"
-              } border-[#6B6B6B]`}
+              className={`flex flex-col items-center text-center ${
+                index !== stats.length - 1 ? "sm:border-r border-[var(--border)]" : ""
+              }`}
             >
-              <div className="text-green-400 text-4xl font-bold">
+              <div className="text-[var(--primary)] text-3xl md:text-4xl font-extrabold tracking-tight">
                 {stat.value}
               </div>
-              <div className="text-gray-300 mt-2 text-center text-sm">
+              <div className="text-[var(--text-secondary)] mt-2 text-sm font-medium">
                 {stat.label}
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useCallback, useState } from "react";
 import { Modal, Spin } from "antd";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { markMaterialCompleteApi } from "@/services/collections";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";

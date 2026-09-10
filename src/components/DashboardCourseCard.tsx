@@ -11,10 +11,10 @@ import { getImageUrl, isValidUrl } from "@/utils/comman";
 import { HeartFilled } from "@ant-design/icons";
 
 const DashboardCourseCard: FC<CourseCardProps> = ({
-  bgColor = "#ffffff",
-  footerColor = "var(--secondary)",
-  titleColor = "black",
-  instructorColor = "black",
+  bgColor = "#FFFFFF",
+  footerColor = "var(--text-secondary)",
+  titleColor = "var(--text-primary)",
+  instructorColor = "var(--text-secondary)",
   className = "",
   courseData,
   handleRedirect,
@@ -35,12 +35,11 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
     <div
       style={{
         backgroundColor: bgColor,
-        boxShadow: "0px 4px 35px rgba(0, 0, 0, 0.08)",
       }}
-      className={`cursor-pointer flex flex-col justify-between rounded-[15px] p-[16px] gap-[30px] min-w-full text-white ${className}`}
+      className={`cursor-pointer flex flex-col justify-between rounded-[10px] border border-[var(--border)] gap-[16px] min-w-full overflow-hidden transition-all duration-[200ms] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-strong)] ${className}`}
     >
       <div className="flex flex-col gap-[12px]">
-        <div className="w-full h-[250px] relative">
+        <div className="w-full h-[200px] relative bg-[var(--surface-subtle)]">
           <Image
             src={
               isValidUrl(courseImageUrl) && !imgError
@@ -51,7 +50,7 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
             fill
             unoptimized
             onError={() => setImgError(true)}
-            className="rounded-[12px]"
+            className="object-cover"
           />
           <button
             onClick={() => {
@@ -62,20 +61,20 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
                   handleRemoveFavorite?.(courseData?.course_id);
               }
             }}
-            className="absolute top-2 right-2"
+            className="absolute top-[12px] right-[12px] w-[32px] h-[32px] rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-[var(--shadow-xs)] hover:bg-white transition-all duration-[150ms]"
           >
             <HeartFilled
-              className={`!text-2xl ${
-                courseData?.favorite ? "!text-[#FB4A49]" : ""
+              className={`!text-[16px] ${
+                courseData?.favorite ? "!text-[var(--error)]" : "!text-[var(--text-muted)]"
               }`}
             />
           </button>
         </div>
-        <div className="flex flex-col gap-[6px]">
+        <div className="flex flex-col gap-[8px] px-[16px]">
           <div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-[4px]">
-                <div className="w-[24px] h-[24px] relative">
+              <div className="flex items-center gap-[6px]">
+                <div className="w-[20px] h-[20px] relative flex-shrink-0">
                   <Image
                     src={
                       isValidUrl(teacherImageUrl) && !teacherImgError
@@ -86,23 +85,23 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
                     unoptimized
                     fill
                     onError={() => setTeacherImgError(true)}
-                    className="rounded-[12px] object-cover"
+                    className="rounded-full object-cover"
                   />
                 </div>
-                <div className="text-[14px]" style={{ color: instructorColor }}>
-                  by {courseData?.head_teacher_name}
+                <div className="text-[13px]" style={{ color: instructorColor }}>
+                  {courseData?.head_teacher_name}
                 </div>
               </div>
               <span
-                className={`flex items-center gap-1 text-[12px] font-[500]`}
+                className="flex items-center gap-[4px] text-[12px] font-[500]"
                 style={{ color: footerColor }}
               >
-                <StarIcon color={footerColor} />
+                <StarIcon color="var(--warning)" />
                 {courseData?.average_rating}
               </span>
             </div>
             <p
-              className={`text-[12px] font-[500]`}
+              className="text-[12px] font-[500] mt-[2px]"
               style={{ color: footerColor }}
             >
               {courseData?.enrolled_user_count} students
@@ -110,7 +109,7 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
           </div>
 
           <div
-            className={`font-[700] text-[18px]`}
+            className="font-[600] text-[16px] leading-[140%] line-clamp-2"
             style={{ color: titleColor }}
           >
             <Tooltip placement="bottom" title={courseData?.course_name}>
@@ -120,18 +119,18 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-[6px]">
-        <div className="flex items-center justify-between w-full gap-[6px]">
+      <div className="flex flex-col gap-[8px] px-[16px] pb-[16px]">
+        <div className="flex items-center justify-between w-full gap-[8px]">
           {courseData?.enrolled_status ? (
             <CommonButton
-              text={`Start Course`}
-              className="!w-[60%] !bg-[#FB4A49] !text-white border-none"
+              text="Start Course"
+              className="!w-[60%] !h-[36px] !text-[13px]"
               onClick={() => courseData && veiwDetail?.(courseData)}
             />
           ) : !courseData?.cart_status ? (
             <CommonButton
-              text={`Add to cart`}
-              className="!w-[60%]"
+              text="Add to cart"
+              className="!w-[60%] !h-[36px] !text-[13px]"
               onClick={() => {
                 if (courseData?.course_id)
                   handleAddCart?.(courseData?.course_id);
@@ -139,8 +138,8 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
             />
           ) : (
             <CommonButton
-              text={`Remove`}
-              className="!w-[60%] !bg-[#FB4A49] !text-white"
+              text="Remove"
+              className="!w-[60%] !h-[36px] !text-[13px] !bg-[var(--error)] !text-white"
               onClick={() => {
                 if (courseData?.course_id)
                   handleRemoveCart?.(courseData?.course_id);
@@ -150,11 +149,11 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
           <CommonButton
             text="View Details"
             onClick={() => courseData && veiwDetail?.(courseData)}
-            className="!w-[40%] border !bg-transparent border-secondary !text-secondary"
+            className="!w-[40%] !h-[36px] !text-[13px] border !border-[var(--border)] !bg-white !text-[var(--text-primary)] hover:!border-[var(--border-strong)]"
           />
         </div>
-        <div>
-          <span className="text-black">Include with </span>
+        <div className="text-[12px]">
+          <span className="text-[var(--text-secondary)]">Include with </span>
           <CommonLink text="Learning+ Pro" />
         </div>
       </div>

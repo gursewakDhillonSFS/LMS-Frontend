@@ -40,43 +40,43 @@ const TeacherDashboard = () => {
   const infoCardsData: InfoCardProps[] = [
     {
       image: (
-        <div className="text-secondary">
+        <div className="text-[var(--primary)]">
           <CourseIcon />
         </div>
       ),
       text: "Assigned Courses",
       count: "4",
-      bg: "#D9D4FF",
+      bg: "#EEF2FF",
     },
     {
       image: (
-        <div className="text-[#5EB85C]">
+        <div className="text-[var(--success)]">
           <StudentIcon />
         </div>
       ),
       text: "Your Students",
       count: "84",
-      bg: "#EAFFDE",
+      bg: "#ECFDF5",
     },
     {
       image: (
-        <div className="text-[#FB4A49]">
+        <div className="text-[var(--error)]">
           <LiveIcon />
         </div>
       ),
       text: "Upcoming Live Classes",
       count: "01",
-      bg: "#FFDEE6",
+      bg: "#FEF2F2",
     },
     {
       image: (
-        <div className="text-[#FFC023]">
+        <div className="text-[var(--warning)]">
           <AssignmentIcon />
         </div>
       ),
       text: "Pending Gradings",
       count: "8",
-      bg: "#FFF3DB",
+      bg: "#FFFBEB",
     },
   ];
   
@@ -85,66 +85,82 @@ const TeacherDashboard = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-[12px]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-[32px] font-bold">Teacher Dashboard</h1>
-        <div className="flex gap-[12px] items-center justify-center">
+    <div className="flex flex-col gap-6 pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          Teacher Dashboard
+        </h1>
+        <div className="flex flex-wrap gap-2.5 items-center">
           <CommonButton
-            text={"Schedule Live Class"}
+            text="Schedule Live Class"
+            className="!bg-white !border !border-[var(--border)] !text-[var(--text-primary)] hover:!border-[var(--primary)] hover:!text-[var(--primary)] !h-9 !text-xs !px-3 shadow-2xs"
             onClick={() => route.push("/teacher/live-classes")}
           />
           <CommonButton
-            text={"View My Schedule"}
+            text="View My Schedule"
             onClick={() => route.push("/teacher/schedule")}
-            className="!bg-secondary text-white"
+            className="!h-9 !text-xs !px-4 shadow-xs"
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-[12px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {infoCardsData.map((card, index) => (
           <InfoCard key={index} {...card} />
         ))}
       </div>
       <InstructorStatistics />
 
-      {/* Announcements Section - Identical to User Dashboard */}
-      <div className="w-full xl:w-1/3 h-[352px] p-6 bg-navcolor rounded-[12px] overflow-y-auto">
-        <h1 className="text-[20px] text-white font-[700] leading-[120%] pb-[12px] border-b border-[#4C4C4C]">
-          Announcement
-        </h1>
+      {/* Announcements Section */}
+      <div className="w-full xl:w-1/2 bg-white border border-[var(--border)] rounded-[10px] p-5 shadow-xs flex flex-col gap-4">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+          <h2 className="text-[16px] font-bold text-[var(--text-primary)] tracking-tight">
+            Announcements
+          </h2>
+          {announcements.length > 0 && (
+            <span className="text-xs bg-blue-50 text-[var(--primary)] px-2 py-0.5 rounded-full font-medium">
+              {announcements.length}
+            </span>
+          )}
+        </div>
 
-        <div className="flex flex-col gap-[12px] my-[12px]">
-          {announcements.length > 0 ? announcements.map((note, index) => (
-            <div key={note._id || index} className="flex flex-col gap-[12px]">
+        <div className="flex flex-col gap-3 max-h-[360px] overflow-y-auto">
+          {announcements.length > 0 ? (
+            announcements.map((note, index) => (
               <div
-                className="flex gap-[10px] p-[6px] rounded-[6px]"
-                style={{ background: "rgba(255, 255, 255, 0.05)" }}
+                key={note._id || index}
+                className="bg-[var(--surface-subtle)] border border-[var(--border)] rounded-[8px] p-3 flex flex-col gap-2 shadow-2xs"
               >
-                <div className="bg-primary min-w-[44px] h-[44px] rounded-full flex items-center justify-center">
-                  <EarPhoneIcon />
-                </div>
-                <div className="flex flex-col gap-[6px] w-full">
-                  <div className="flex justify-between w-full">
-                    <div className="flex flex-col">
-                      <p className="font-[600] text-[16px] leading-[150%] text-white">
-                        {note.courseName}
-                      </p>
-                      <p className="text-[12px] leading-[140%] text-[#255BFF]">
-                        {note.title}
-                      </p>
-                    </div>
-                    <p className="text-[14px] text-[#A9A9A9] leading-[150%] flex-shrink-0">
-                      {dayjs(note.publishedAt).format('DD MMM')}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 text-[var(--primary)]">
+                    <EarPhoneIcon />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-xs text-[var(--text-primary)] truncate">
+                      {note.courseName}
+                    </p>
+                    <p className="text-xs text-[var(--primary)] font-medium truncate">
+                      {note.title}
                     </p>
                   </div>
-                  <div className="text-[14px] font-poppins leading-[150%] text-white">
-                    <span dangerouslySetInnerHTML={{ __html: note.message.slice(0, 50) + (note.message.length > 50 ? '...' : '') }}></span>
-                  </div>
+                  <span className="text-[11px] text-[var(--text-muted)] shrink-0">
+                    {dayjs(note.publishedAt).format("DD MMM")}
+                  </span>
+                </div>
+                <div className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        note.message.slice(0, 70) +
+                        (note.message.length > 70 ? "..." : ""),
+                    }}
+                  ></span>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="py-8 text-center text-xs text-[var(--text-muted)]">
+              No announcements available.
             </div>
-          )) : (
-            <p className="text-white text-sm">No announcements available.</p>
           )}
         </div>
       </div>

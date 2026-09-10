@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Collapse, Divider } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { RootState } from "@/redux/store";
 import { updateUser } from "@/redux/slices/UserDataSlice";
 import { updateUserProfileApi, changePassword } from "@/services/collections";

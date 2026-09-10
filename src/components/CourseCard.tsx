@@ -10,10 +10,10 @@ import { FC, useState } from "react";
 const CourseCard: FC<CourseCardProps> = ({
   certificate,
   data,
-  bgColor = "#0E0E0E",
-  footerColor = "var(--primary)",
-  titleColor = "#ffffff",
-  instructorColor = "#ffffff",
+  bgColor = "#FFFFFF",
+  footerColor = "var(--text-secondary)",
+  titleColor = "var(--text-primary)",
+  instructorColor = "var(--text-secondary)",
   className = "",
   onClick,
 }) => {
@@ -27,12 +27,11 @@ const CourseCard: FC<CourseCardProps> = ({
       onClick={() => onClick?.(data)}
       style={{
         backgroundColor: bgColor,
-        boxShadow: "0px 4px 35px rgba(0, 0, 0, 0.08)",
       }}
-      className={`cursor-pointer flex flex-col justify-between rounded-[15px] h-[355px] p-[16px] gap-[12px] w-full text-white ${className}`}
+      className={`cursor-pointer flex flex-col justify-between rounded-[10px] border border-[var(--border)] h-[355px] p-0 w-full overflow-hidden transition-all duration-[200ms] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-strong)] ${className}`}
     >
-      <div className="flex flex-col gap-[12px]">
-        <div className="w-full h-[180px] relative">
+      <div className="flex flex-col">
+        <div className="w-full h-[180px] relative bg-[var(--surface-subtle)]">
           <Image
             src={
               isValidUrl(courseImageUrl) && !imgError
@@ -43,12 +42,12 @@ const CourseCard: FC<CourseCardProps> = ({
             unoptimized
             fill
             onError={() => setImgError(true)}
-            className="rounded-[12px] object-cover"
+            className="object-cover"
           />
         </div>
-        <div className="flex flex-col gap-[6px]">
-          <div className="flex items-center gap-[4px]">
-            <div className="w-[24px] h-[24px] relative">
+        <div className="flex flex-col gap-[8px] p-[16px]">
+          <div className="flex items-center gap-[6px]">
+            <div className="w-[20px] h-[20px] relative flex-shrink-0">
               <Image
                 src={
                   isValidUrl(teacherImageUrl) && !teacherImgError
@@ -59,15 +58,15 @@ const CourseCard: FC<CourseCardProps> = ({
                 unoptimized
                 fill
                 onError={() => setTeacherImgError(true)}
-                className="rounded-[12px] object-cover"
+                className="rounded-full object-cover"
               />
             </div>
-            <div className="text-[14px]" style={{ color: instructorColor }}>
-              by {data?.instructor_name ?? data?.head_teacher_name}
+            <div className="text-[13px] truncate" style={{ color: instructorColor }}>
+              {data?.instructor_name ?? data?.head_teacher_name}
             </div>
           </div>
           <div
-            className={`font-[700] text-[18px] truncate`}
+            className="font-[600] text-[16px] leading-[140%] line-clamp-2"
             style={{ color: titleColor }}
           >
             <Tooltip placement="bottom" title={data?.course_name}>
@@ -77,30 +76,32 @@ const CourseCard: FC<CourseCardProps> = ({
         </div>
       </div>
 
-      {certificate ? (
-        <p
-          className={`flex items-center gap-1 text-[12px] font-[500]`}
-          style={{ color: footerColor }}
-        >
-          Professional Certificate | {data?.enrolled_user_count} students
-        </p>
-      ) : (
-        <div className="flex items-center justify-between">
+      <div className="px-[16px] pb-[16px]">
+        {certificate ? (
           <p
-            className={`text-[12px] font-[500]`}
+            className="flex items-center gap-1 text-[12px] font-[500]"
             style={{ color: footerColor }}
           >
-            {data?.enrolled_user_count} students
+            Professional Certificate · {data?.enrolled_user_count} students
           </p>
-          <span
-            className={`flex items-center gap-1 text-[12px] font-[500]`}
-            style={{ color: footerColor }}
-          >
-            <StarIcon color={footerColor} />
-            {data?.average_rating}
-          </span>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center justify-between">
+            <p
+              className="text-[12px] font-[500]"
+              style={{ color: footerColor }}
+            >
+              {data?.enrolled_user_count} students
+            </p>
+            <span
+              className="flex items-center gap-[4px] text-[12px] font-[500]"
+              style={{ color: footerColor }}
+            >
+              <StarIcon color="var(--warning)" />
+              {data?.average_rating}
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

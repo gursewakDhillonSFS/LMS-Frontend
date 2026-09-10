@@ -11,7 +11,7 @@ import {
   setuserId,
 } from "@/redux/slices/AuthModalSlice";
 import { forgetPasswordApi, verifyOtpApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { RootState } from "@/redux/store";
 
 interface OtpVerificationProps {
@@ -61,13 +61,12 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
       form.setFields([
         {
           name: "otp",
-          errors: ["Please enter a valid OTP."],
+          errors: ["Please enter the complete 6-digit code."],
         },
       ]);
       return;
     }
     const finalOtp = otp.join("");
-    console.log("OTP:", finalOtp);
     try {
       setLoading(true);
       const response = await verifyOtpApi({
@@ -79,10 +78,11 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
         dispatch(setOtpVerify(false));
         dispatch(setChangePass(true));
       } else {
-        toast.warning(response?.message ?? "Something Went Wrong");
+        toast.warning(response?.message ?? "Invalid verification code");
       }
     } catch (err) {
-      console.error("Failed to fetch categories:", err);
+      console.error("Failed to verify OTP:", err);
+      toast.error("Verification failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -97,15 +97,16 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
           email,
         });
         if (response?.status) {
-          toast.success(response?.message ?? "Something Went Wrong");
+          toast.success(response?.message ?? "A new code has been sent");
           setTimer(60);
           setResendDisabled(true);
         } else {
-          toast.warning(response?.message ?? "Something Went Wrong");
+          toast.warning(response?.message ?? "Could not resend code");
         }
       }
     } catch (err) {
-      console.error("Failed to fetch categories:", err);
+      console.error("Failed to resend code:", err);
+      toast.error("Resend failed. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -128,75 +129,76 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
 
   return (
     <div>
-      <CommonLink
-        text={email ?? "debbie.baker@example.com"}
-        className="text-center w-full text-[16px] underline"
-      />
-      <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-6">
-        <div className="flex flex-col gap-[6px]">
-          <div className="flex flex-col gap-4">
-            <Form.Item
-              name="otp"
-              className="!mb-0"
-              rules={[
-                {
-                  validator: () =>
-                    otp.some((digit) => digit === "")
-                      ? Promise.reject("Please enter the complete OTP.")
-                      : Promise.resolve(),
-                },
-              ]}
-            >
-              <Row gutter={10} justify="center">
-                {otp.map((digit, index) => (
-                  <Col key={index} span={4} className="flex gap-2">
-                    <Input
-                      maxLength={1}
-                      inputMode="numeric"
-                      pattern="\d*"
-                      value={digit}
-                      className="w-[50px] h-[50px] text-center rounded-md text-lg font-semibold border border-[#ccc]"
-                      onChange={(e) => handleChange(index, e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(index, e)}
-                      ref={(el) => {
-                        if (el) inputRefs.current[index] = el;
-                      }}
-                    />
-                  </Col>
-                ))}
-              </Row>
-            </Form.Item>
-          </div>
+      <div className="text-center mb-4">
+        <span className="text-sm text-[var(--text-secondary)]">Sent to </span>
+        <span className="text-sm font-semibold text-[var(--text-primary)]">
+          {email ?? "your email"}
+        </span>
+      </div>
+      <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-2">
+        <div className="flex flex-col gap-4">
+          <Form.Item
+            name="otp"
+            className="!mb-0"
+            rules={[
+              {
+                validator: () =>
+                  otp.some((digit) => digit === "")
+                    ? Promise.reject("Please enter all 6 digits.")
+                    : Promise.resolve(),
+              },
+            ]}
+          >
+            <div className="flex justify-center gap-2">
+              {otp.map((digit, index) => (
+                <Input
+                  key={index}
+                  maxLength={1}
+                  inputMode="numeric"
+                  pattern="\d*"
+                  value={digit}
+                  className="!w-11 !h-12 text-center !rounded-[8px] text-lg font-bold !border !border-[var(--border)] focus:!border-[var(--primary)]"
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  ref={(el) => {
+                    if (el) inputRefs.current[index] = el;
+                  }}
+                />
+              ))}
+            </div>
+          </Form.Item>
 
-          <div className="flex justify-between text-sm mt-2 font-medium">
-            <span className="text-[#F53131] text-[] font-medium">
-              {formatTime(timer)}
+          <div className="flex justify-between items-center text-xs font-medium px-1">
+            <span className="text-[var(--error)]">
+              Expires in {formatTime(timer)}
             </span>
             <button
               type="button"
               onClick={onResendFinish}
               disabled={resendDisabled}
-              className={`font-semibold text-secondary ${
-                resendDisabled ? "opacity-40" : "hover:underline cursor-pointer"
+              className={`font-medium ${
+                resendDisabled
+                  ? "text-[var(--text-muted)] cursor-not-allowed"
+                  : "text-[var(--primary)] hover:underline cursor-pointer"
               }`}
             >
-              Resend
+              Resend Code
             </button>
           </div>
         </div>
 
-        <Form.Item className="!mb-0 ">
+        <Form.Item className="!mb-0 !mt-5">
           <CommonButton
-            text={"Reset Password"}
+            text="Verify Code"
             loading={loading}
-            className="w-full h-[56px] text-[16px] text-md my-5"
+            className="w-full !h-[44px] !text-[15px] font-medium !rounded-[8px]"
           />
         </Form.Item>
       </Form>
 
-      <div className="text-center border-t-1 border-[#E0E0E0] pt-3 text-[14px] text-[#2D2D2D] mt-3">
+      <div className="text-center border-t border-[var(--border)] pt-4 text-sm text-[var(--text-secondary)] mt-5">
         Back to{" "}
-        <CommonLink text={"Login"} className="underline" onClick={onSignin} />
+        <CommonLink text="Login" className="font-semibold text-[var(--primary)] hover:underline" onClick={onSignin} />
       </div>
     </div>
   );

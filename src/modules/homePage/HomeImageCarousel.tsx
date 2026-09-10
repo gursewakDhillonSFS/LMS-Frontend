@@ -72,16 +72,17 @@ const HomeImageCarousel = () => {
         ]}
       >
         {categories.map((category, index) => (
-          <div key={index}>
-            <div className="relative w-full h-[284px] lg:h-[384px]">
+          <div key={index} className="px-2 pb-2">
+            <div className="relative w-full h-[260px] lg:h-[340px] rounded-[10px] overflow-hidden group cursor-pointer shadow-xs">
               <Image
                 src={category.image}
                 alt={category.title}
                 fill
                 unoptimized
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <div className="w-full h-[388px] absolute bg-black opacity-42"></div>
-              <div className="absolute top-[22px] left-[20px] text-white text-[24px] font-[700] leading-[120%]">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute bottom-4 left-4 right-4 text-white text-[18px] lg:text-[20px] font-bold leading-tight">
                 {category.title}
               </div>
             </div>

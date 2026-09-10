@@ -16,7 +16,7 @@ import { Button, Collapse, Form, Input, UploadFile, UploadProps } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import QuillEditor from "@/components/QuillEditor";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 export interface SubLesson {
   sublesson_id: string;

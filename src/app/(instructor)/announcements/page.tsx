@@ -22,7 +22,7 @@ import {
   getAllCoursesApi,
 } from "@/services/collections";
 import { useAnnouncementSocket, AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import dayjs from "dayjs";
 
 interface CourseListItem {

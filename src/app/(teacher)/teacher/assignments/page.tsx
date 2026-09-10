@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { getAllCoursesApi } from "@/services/collections";
 import { getAssignmentsByCourseApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 interface CourseRow {
   course_id: string;

@@ -17,7 +17,7 @@ import { LiveClass, RecordedClass } from "@/utils/interface";
 import { Badge, DatePicker } from "antd";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const LiveClasses = () => {
   const [activeTab, setActiveTab] = useState<string>(ClassTabEnum.UPCOMING);

@@ -4,7 +4,7 @@ import ChatUi from "@/components/ChatUi";
 import { chatRoom, getChatMessagesApi } from "@/services/collections";
 import { ChatConversation } from "@/utils/interface";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import Cookies from "js-cookie";
 import { io, Socket } from "socket.io-client";
 import { useSelector } from "react-redux";

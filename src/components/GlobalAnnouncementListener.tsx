@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import {
   setUnreadCount,
   incrementUnreadCount,

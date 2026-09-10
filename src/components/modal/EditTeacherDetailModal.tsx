@@ -6,7 +6,7 @@ import { Form, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import CommonButton from "../CommonButton";
 import { updateInstructor } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import useCategories from "@/hooks/useCategories";
 import dayjs from "dayjs";
 import Image from "next/image";

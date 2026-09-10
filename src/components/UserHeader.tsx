@@ -41,7 +41,7 @@ const UserHeader = () => {
       label: (
         <div
           onClick={() => setChangePassword(true)}
-          className="flex items-center gap-[6px] text-[14px] font-[400] p-[12px] rounded-[8px] hover:bg-primary hover:text-white transition-all"
+          className="flex items-center gap-[8px] text-[14px] font-[400] px-[12px] py-[8px] rounded-[8px] text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
         >
           <span>Change Password</span>
         </div>
@@ -50,7 +50,7 @@ const UserHeader = () => {
     {
       key: "logout",
       label: (
-        <div className="flex items-center gap-[6px] text-[14px] font-[400] text-[#FF4D4F] p-[12px] rounded-[8px] hover:bg-[#FF4D4F] hover:text-white transition-all">
+        <div className="flex items-center gap-[8px] text-[14px] font-[400] text-[var(--error)] px-[12px] py-[8px] rounded-[8px] hover:bg-[var(--error-light)] transition-all duration-[150ms]">
           <span>Log Out</span>
         </div>
       ),
@@ -91,7 +91,7 @@ const UserHeader = () => {
     }
   };
   return (
-    <div className="w-full flex items-center justify-between px-[20px] py-[16px]">
+    <div className="w-full flex items-center justify-between px-[16px] lg:px-[24px] py-[12px]">
       {logoutModal && (
         <ConfirmationModal
           open={logoutModal}
@@ -139,11 +139,12 @@ const UserHeader = () => {
       <SearchInput
         search={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="!max-w-[200px] xl:!max-w-[472px]"
+        className="!max-w-[180px] xl:!max-w-[400px]"
+        placeholder="Search..."
       />
 
-      <div className="flex items-center gap-[12px] cursor-pointer">
-        <div
+      <div className="flex items-center gap-[8px] lg:gap-[12px]">
+        <button
           onClick={() => {
             setAnnouncementDrawer(true);
             if (unreadAnnouncementCount > 0) {
@@ -151,6 +152,7 @@ const UserHeader = () => {
               markAnnouncementsAsReadApi().catch(console.error);
             }
           }}
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
         >
           <Badge
             count={unreadAnnouncementCount}
@@ -160,53 +162,56 @@ const UserHeader = () => {
           >
             <EarPhoneIcon />
           </Badge>
-        </div>
-        <div className="h-[23px] border-l-1 border-[#C8C8C8] "></div>
-        <div onClick={() => setNotificationDrawer(true)}>
+        </button>
+        <button
+          onClick={() => setNotificationDrawer(true)}
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
+        >
           <NotificationIcon />
-        </div>
-        <div className="h-[23px] border-l-1 border-[#C8C8C8] "></div>
-        <div onClick={() => route.push("/chat")}>
+        </button>
+        <button
+          onClick={() => route.push("/chat")}
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
+        >
           <ChatIcon />
-        </div>
-        <div className="h-[23px] border-l-1 border-[#C8C8C8] "></div>
+        </button>
         <Badge
           count={cartCount}
           onClick={() => route.push(RoutePaths?.Checkout)}
         >
-          <CartIcon />
+          <button className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]">
+            <CartIcon />
+          </button>
         </Badge>
-        <div className="h-[23px] border-l-1 border-[#C8C8C8] "></div>
-        <div className="flex items-center gap-[3px] justify-between">
-          <GlobeIcon /> <span className="text-[14px] font-[500]">EN</span>
+        <div className="hidden sm:flex items-center gap-[4px] px-[4px]">
+          <GlobeIcon /> <span className="text-[13px] font-[500] text-[var(--text-secondary)]">EN</span>
         </div>
+        <div className="w-[1px] h-[24px] bg-[var(--border)]"></div>
         <Dropdown
           prefixCls="custom-dropdown-header"
           menu={{ items: menuItems }}
           trigger={["click"]}
           placement="bottomRight"
         >
-          <button className="flex items-center p-1 gap-[4px] h-[44px] justify-between rounded-[40px] bg-[#F7F7FA] cursor-pointer">
-            <div className="flex items-center justify-center gap-[8px]">
-              <Avatar
-                key={profile_img || "avatar"}
-                size={36}
-                src={
-                  profile_img || "https://ui-avatars.com/api/?name=" + full_name
-                }
-              />
-
-              <div className="flex flex-col items-start justify-center">
-                <div className="text-[12px] font-[500] whitespace-nowrap text-[#242424] leading-[140%]">
-                  {full_name}
-                </div>
-                <div className="capitalize text-[10px] bg-secondary text-white font-poppins px-[6px] rounded-[26px] leading-[14px]">
-                  {role}
-                </div>
+          <button className="flex items-center p-[4px] gap-[8px] h-[40px] rounded-[10px] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] cursor-pointer transition-all duration-[150ms]">
+            <Avatar
+              key={profile_img || "avatar"}
+              size={32}
+              src={
+                profile_img || "https://ui-avatars.com/api/?name=" + full_name
+              }
+              className="!flex-shrink-0"
+            />
+            <div className="hidden sm:flex flex-col items-start justify-center pr-[4px]">
+              <div className="text-[13px] font-[500] whitespace-nowrap text-[var(--text-primary)] leading-[140%]">
+                {full_name}
+              </div>
+              <div className="capitalize text-[10px] font-[500] text-[var(--primary)] leading-[14px]">
+                {role}
               </div>
             </div>
-            <span className="hidden xs:block p-[10px]">
-              <DownArrowIcon color="#7B7F91" />
+            <span className="hidden sm:block pr-[8px]">
+              <DownArrowIcon color="var(--text-muted)" />
             </span>
           </button>
         </Dropdown>

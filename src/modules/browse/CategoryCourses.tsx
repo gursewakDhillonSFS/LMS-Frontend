@@ -96,26 +96,26 @@ const CategoryCourses = () => {
   }, [activeCategory]);
 
   return (
-    <div className="flex flex-col gap-[12px]">
-      <div className="flex justify-between items-center">
-        <h1 className="!text-[24px] !font-[700] !leading-[120%]">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center gap-4 flex-wrap">
+        <h2 className="text-[20px] font-bold text-[var(--text-primary)] tracking-tight">
           {getCategoryName(categories, activeCategory) ||
             getCategoryName(categories, categories?.[0]?.category_id)}
-        </h1>
+        </h2>
         <div>
           {activeCategory === CategoryEnum?.ALL_Classes ? (
             <CommonButton
-              text={"View All"}
+              text="View All"
               bgColor="transparent"
-              className="border border-[#002333]"
+              className="!border !border-[var(--border)] !text-[var(--text-primary)] hover:!border-[var(--primary)] hover:!text-[var(--primary)] !h-9 !text-sm !px-4"
               onClick={handleCategoryChange}
             />
           ) : (
-            <div className="flex items-center gap-[12px]">
+            <div className="flex items-center gap-3">
               <SearchInput
                 search={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="!max-w-[150px] lg:!max-w-[372px]"
+                className="!max-w-[180px] lg:!max-w-[320px]"
               />
               <SortButton
                 sortField={sortField}
@@ -130,21 +130,17 @@ const CategoryCourses = () => {
         </div>
       </div>
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[12px]">
-          {[1, 2, 3].map((index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[1, 2, 3, 4, 5, 6].map((index) => (
             <CourseCardSkeleton key={index} />
           ))}
         </div>
       ) : courses?.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-[12px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {courses.map((course) => (
             <CourseCard
               key={course?.course_id}
               data={course}
-              bgColor="#ffffff"
-              instructorColor="#0E0E0E"
-              titleColor="#000"
-              footerColor="var(--secondary)"
               onClick={courseRedirect}
             />
           ))}

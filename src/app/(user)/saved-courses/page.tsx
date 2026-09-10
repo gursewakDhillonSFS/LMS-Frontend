@@ -16,7 +16,7 @@ import { courseData } from "@/utils/interface";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const SavedCourses = () => {
   const [loading, setLoading] = useState(false);

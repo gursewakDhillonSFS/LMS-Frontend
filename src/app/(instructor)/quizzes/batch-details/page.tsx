@@ -11,7 +11,7 @@ import { Avatar, Breadcrumb, Skeleton, Tooltip } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { getQuizzesByBatchApi, deleteQuizApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import QuillEditor from "@/components/QuillEditor";
 
 interface QuizRow {

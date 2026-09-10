@@ -29,14 +29,22 @@ const CommonInput: React.FC<CommonInputProps> = ({
     inputRef.current?.focus();
   };
 
+  const isActive = focused || !!value;
+
   return (
     <div
-      className={`relative flex flex-col justify-center items-start gap-[50px] rounded-[10px] border border-[#A9A9A9] p-[8px] w-full transition-all ${className}`}
+      className={`relative flex flex-col justify-center items-start rounded-[8px] border p-[10px] pt-[14px] w-full transition-all duration-[150ms] ${
+        focused
+          ? "border-[var(--primary)] shadow-[0_0_0_2px_rgba(49,92,255,0.1)]"
+          : "border-[var(--border)] hover:border-[var(--border-strong)]"
+      } ${className}`}
       onClick={handleWrapperClick}
     >
       <div
-        className={`absolute leading-[100%] text-[#9F9F9F] transition-all duration-200 z-50 ${
-          focused ? "text-[10px] top-2 " : "text-[16px]"
+        className={`absolute leading-[100%] transition-all duration-[150ms] z-[5] pointer-events-none ${
+          isActive
+            ? "text-[11px] top-[6px] text-[var(--text-muted)]"
+            : "text-[14px] text-[var(--text-muted)]"
         }`}
       >
         {label}
@@ -50,13 +58,14 @@ const CommonInput: React.FC<CommonInputProps> = ({
             onChange(e);
             setFocused(true);
           }}
+          onFocus={() => setFocused(true)}
           onBlur={() => {
             if (!value) setFocused(false);
           }}
           iconRender={(visible) =>
             visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
           }
-          className={`!border-none !shadow-none !text-[16px] !px-0 bg-transparent !mt-1`}
+          className="!border-none !shadow-none !text-[14px] !px-0 bg-transparent !mt-1 !text-[var(--text-primary)]"
         />
       ) : (
         <Input
@@ -68,10 +77,11 @@ const CommonInput: React.FC<CommonInputProps> = ({
             onChange(e);
             setFocused(true);
           }}
+          onFocus={() => setFocused(true)}
           onBlur={() => {
             if (!value) setFocused(false);
           }}
-          className={`!border-none !shadow-none !text-[16px] !px-0 bg-transparent !mt-1`}
+          className="!border-none !shadow-none !text-[14px] !px-0 bg-transparent !mt-1 !text-[var(--text-primary)]"
         />
       )}
     </div>

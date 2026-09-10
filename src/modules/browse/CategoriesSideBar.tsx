@@ -19,37 +19,42 @@ const CategoriesSideBar = () => {
   }, [activeCategory]);
 
   return (
-    <div className="sticky top-[122px] flex flex-col gap-[20px] w-[20%]">
-      <h2 className="!text-[24px] !font-[700] !leading-[120%]">Categories</h2>
-      <ul className="flex !flex-col !gap-[10px]">
+    <div className="sticky top-[84px] flex flex-col gap-4 w-[220px] shrink-0">
+      <h2 className="text-[18px] font-bold text-[var(--text-primary)] tracking-tight">
+        Categories
+      </h2>
+      <ul className="flex flex-col gap-1">
         <li>
           <button
             onClick={() =>
               dispatch(setActiveCategory(CategoryEnum?.ALL_Classes))
             }
-            className={`cursor-pointer transition-all duration-300 ease-in-out text-[14px] w-[200px] lg:text-[18px] lg:w-[230px] !text-left ${
+            className={`w-full text-left px-3.5 py-2 text-sm rounded-[8px] cursor-pointer transition-all duration-150 ${
               activeCategory === CategoryEnum?.ALL_Classes
-                ? "!bg-[#002c3f] !text-white !font-[700] !p-[12px] !rounded-[6px]"
-                : "!text-[#002c3f]"
+                ? "bg-[var(--surface-subtle)] text-[var(--primary)] font-semibold border-l-2 border-[var(--primary)]"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] font-medium"
             }`}
           >
             All Classes
           </button>
         </li>
-        {categories?.map((category) => (
-          <li key={category?.category_id}>
-            <button
-              onClick={() => dispatch(setActiveCategory(category?.category_id))}
-              className={`cursor-pointer transition-all duration-300 ease-in-out text-[14px] w-[200px] lg:text-[18px] lg:w-[230px] !text-left ${
-                activeCategory === category?.category_id
-                  ? "!bg-[#002c3f] !text-white !font-[700] !p-[12px] !rounded-[6px]"
-                  : "!text-[#002c3f]"
-              }`}
-            >
-              {category?.category_name}
-            </button>
-          </li>
-        ))}
+        {categories?.map((category) => {
+          const isActive = activeCategory === category?.category_id;
+          return (
+            <li key={category?.category_id}>
+              <button
+                onClick={() => dispatch(setActiveCategory(category?.category_id))}
+                className={`w-full text-left px-3.5 py-2 text-sm rounded-[8px] cursor-pointer transition-all duration-150 ${
+                  isActive
+                    ? "bg-[var(--surface-subtle)] text-[var(--primary)] font-semibold border-l-2 border-[var(--primary)]"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] font-medium"
+                }`}
+              >
+                {category?.category_name}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

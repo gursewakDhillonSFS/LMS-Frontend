@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { updateUser } from "@/redux/slices/UserDataSlice";
 import { updateUserProfileApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const TeacherSettings = () => {
   const [activeTab, setActiveTab] = useState<string>(

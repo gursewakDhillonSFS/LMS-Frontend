@@ -26,7 +26,7 @@ import { InstructorSkeletonCard } from "@/components/InstructorSkeletonCard";
 import NoDataFound from "@/components/NoDataFound";
 import { RootState } from "@/redux/store";
 import { EditOutlined, DeleteOutlined, DeleteFilled } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import ConfirmationModal from "@/components/modal/ConfirmationModal";
 
 const scheduleData: RequestedDemoProp[] = [

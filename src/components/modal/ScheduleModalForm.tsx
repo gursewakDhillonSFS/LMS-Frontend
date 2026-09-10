@@ -5,7 +5,7 @@ import { DatePicker, Form, Input, Modal, TimePicker, Select } from "antd";
 import CommonButton from "../CommonButton";
 import { useForm } from "antd/es/form/Form";
 import { getAllCoursesApi, createScheduleApi, updateScheduleApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import dayjs from "dayjs";
 
 const { TextArea } = Input;

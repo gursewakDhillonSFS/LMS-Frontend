@@ -4,7 +4,7 @@ import { confirmCheckoutSessionApi } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 function CheckoutSuccessInner() {
   const router = useRouter();

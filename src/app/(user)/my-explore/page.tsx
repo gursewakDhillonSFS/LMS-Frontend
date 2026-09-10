@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const MyExplore = () => {
   const [search, setSearch] = useState("");

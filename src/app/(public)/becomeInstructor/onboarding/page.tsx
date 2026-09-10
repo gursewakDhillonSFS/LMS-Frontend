@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Col, Form, Row, Select, Input, Image } from "antd";
 import { Rule } from "antd/es/form";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { HeaderLogoIcon, UserProfileIcon } from "@/utils/icons";
 import Link from "next/link";
 import CommonLink from "@/components/CommonLink";

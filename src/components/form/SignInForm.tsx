@@ -9,7 +9,7 @@ import { Role, RoutePaths } from "@/utils/enums";
 import { cartList, loginApi, socialAuth } from "@/services/collections";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/slices/UserDataSlice";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useFacebookSdk } from "@/hooks/useFacebookSdk";
 import { setCartCount } from "@/redux/slices/CourseDataSlice";
@@ -68,11 +68,12 @@ const SignInForm: React.FC<SignInFormProps> = ({
           router.push(RoutePaths?.TeacherDashboard);
         }
       } else {
-        toast.warning(response?.message ?? "Something Went Wrong");
+        toast.warning(response?.message ?? "Invalid email or password");
         setLoading(false);
       }
     } catch (err) {
-      console.error("Failed to fetch categories:", err);
+      console.error("Failed to login:", err);
+      toast.error("An error occurred during login");
       setLoading(false);
     }
   };
@@ -82,15 +83,11 @@ const SignInForm: React.FC<SignInFormProps> = ({
 
     window.FB.login(
       (response: Facebook.LoginStatusResponse) => {
-        console.log("FB login response", response);
-
         const token = response?.authResponse?.accessToken;
-
         if (!token) {
           console.error("No access token received from Facebook.");
           return;
         }
-
         handleSocialAuth(token);
       },
       { scope: "email,public_profile" }
@@ -116,7 +113,6 @@ const SignInForm: React.FC<SignInFormProps> = ({
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        console.log(tokenResponse);
         const payload = {
           provider: "google",
           token: tokenResponse?.access_token,
@@ -134,103 +130,92 @@ const SignInForm: React.FC<SignInFormProps> = ({
   });
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-6">
-      <div className="flex flex-col gap-[5px]">
-        <div className="flex flex-col gap-4">
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: "Please enter your email" },
-              {
-                type: "email",
-                message: "Please enter a valid email address",
-              },
-            ]}
-            className="!mb-0"
-          >
-            <CommonInput
-              label="Email Address"
-              type="email"
-              value={form.getFieldValue("email") || ""}
-              onChange={(e) => form.setFieldsValue({ email: e.target.value })}
-            />
-          </Form.Item>
+    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-4">
+      <div className="flex flex-col gap-4">
+        <Form.Item
+          name="email"
+          rules={[
+            { required: true, message: "Please enter your email" },
+            {
+              type: "email",
+              message: "Please enter a valid email address",
+            },
+          ]}
+          className="!mb-0"
+        >
+          <CommonInput
+            label="Email Address"
+            type="email"
+            value={form.getFieldValue("email") || ""}
+            onChange={(e) => form.setFieldsValue({ email: e.target.value })}
+          />
+        </Form.Item>
 
-          <Form.Item
-            name="password"
-            rules={[
-              { required: true, message: "Please enter your password" },
-              {
-                min: 8,
-                message: "Password must be at least 8 characters",
-              },
-              {
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
-                message:
-                  "Password must include uppercase, lowercase, number, and special character",
-              },
-            ]}
-            className="!mb-0"
-          >
-            <CommonInput
-              label="Password"
-              isPassword
-              value={form.getFieldValue("password") || ""}
-              onChange={(e) =>
-                form.setFieldsValue({ password: e.target.value })
-              }
-            />
-          </Form.Item>
-        </div>
+        <Form.Item
+          name="password"
+          rules={[
+            { required: true, message: "Please enter your password" },
+            {
+              min: 8,
+              message: "Password must be at least 8 characters",
+            },
+          ]}
+          className="!mb-0"
+        >
+          <CommonInput
+            label="Password"
+            isPassword
+            value={form.getFieldValue("password") || ""}
+            onChange={(e) =>
+              form.setFieldsValue({ password: e.target.value })
+            }
+          />
+        </Form.Item>
 
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end -mt-1">
           <CommonLink
             text="Forgot Password?"
-            className="w-fit"
+            className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--primary)]"
             onClick={onForgotPassword}
           />
         </div>
       </div>
 
-      <Form.Item className="!mb-0 ">
+      <Form.Item className="!mb-0 !mt-5">
         <CommonButton
-          text={"Login"}
+          text="Sign In"
           loading={loading}
-          className="w-full h-[56px] text-[16px] text-md my-5"
+          className="w-full !h-[44px] !text-[15px] font-medium !rounded-[8px]"
         />
       </Form.Item>
 
-      <div className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col items-center justify-center gap-4 my-5">
         <div className="flex items-center w-full">
-          <div className="border-b-1 border-[#E0E0E0] w-[50%]"></div>
-          <div className="w-[48px] text-center text-[14px] text-[500]">Or</div>
-          <div className="border-b-1 border-[#E0E0E0] w-[50%]"></div>
+          <div className="border-b border-[var(--border)] flex-1"></div>
+          <span className="px-3 text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider">or</span>
+          <div className="border-b border-[var(--border)] flex-1"></div>
         </div>
 
-        <div className="w-full grid grid-cols-3 gap-[9px]">
-          {authOptions.map(({ key, icon }) => {
-            return (
-              <Button
-                key={key}
-                type="text"
-                size="large"
-                onClick={() => {
-                  if (key === "google") googleLogin();
-                  // Facebook OAuth disabled until backend support is implemented
-                }}
-                className="!bg-[#FAFAFA] relative !border !border-[#EEEEEE] hover:shadow !h-[48px] !rounded-2 !flex !items-center !justify-center "
-              >
-                {icon}
-              </Button>
-            );
-          })}
+        <div className="w-full grid grid-cols-2 gap-3">
+          {authOptions.map(({ key, icon }) => (
+            <Button
+              key={key}
+              type="text"
+              onClick={() => {
+                if (key === "google") googleLogin();
+              }}
+              className="!bg-white !border !border-[var(--border)] hover:!bg-[var(--surface-subtle)] !h-[42px] !rounded-[8px] !flex !items-center !justify-center shadow-2xs transition-colors"
+            >
+              {icon}
+            </Button>
+          ))}
         </div>
       </div>
 
       {!pathname.includes(RoutePaths?.BecomeInstructor) && (
-        <p className="text-center text-[14px] text-[#2D2D2D] mt-5">
-          New to Learning+? <CommonLink text={"Sign Up"} onClick={onSignUp} />
+        <p className="text-center text-sm text-[var(--text-secondary)]">
+          New to Learning+?{" "}
+          <CommonLink text="Sign Up" className="font-semibold text-[var(--primary)] hover:underline" onClick={onSignUp} />
         </p>
       )}
     </Form>

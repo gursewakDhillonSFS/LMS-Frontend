@@ -33,9 +33,9 @@ const MyCertificate = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-[32px] font-[700] text-[#0E0E0E]">
-        Certificate & Badges
+    <div className="flex flex-col gap-6 pb-12">
+      <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+        Certificates & Badges
       </h1>
       <TabSwitcher
         activeKey={activeTab}
@@ -43,14 +43,16 @@ const MyCertificate = () => {
         tabs={CertificateTabSwitcher}
       />
       {CertificateTabEnum?.CERTIFICATES === activeTab && (
-        <div className="flex flex-col gap-3">
-          <h1 className="text-[24px] font-[700] text-[#0E0E0E]">Certificate</h1>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-[18px] font-bold text-[var(--text-primary)] tracking-tight">
+            Earned Certificates
+          </h2>
           {certs.length === 0 ? (
-            <p className="text-slate-500">
-              No certificates yet. Complete a course to earn one.
-            </p>
+            <div className="bg-white border border-[var(--border)] rounded-[10px] p-8 text-center text-sm text-[var(--text-muted)] shadow-xs">
+              No certificates yet. Complete all lessons and assignments in a course to earn your verified certificate.
+            </div>
           ) : (
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {certs.map((item) => (
                 <CertificateCard
                   key={item.certificate_id}
@@ -63,21 +65,25 @@ const MyCertificate = () => {
         </div>
       )}
       {CertificateTabEnum?.BADGES === activeTab && (
-        <div className="flex flex-col gap-3">
-          <h1 className="text-[24px] font-[700] text-[#0E0E0E]">
-            My Achievements
-          </h1>
-          <p className="text-[#0E0E0E]">
-            Unlock badges as you complete courses and milestones.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="text-[18px] font-bold text-[var(--text-primary)] tracking-tight">
+              Milestone Badges
+            </h2>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              Unlock prestigious badges as you complete courses, score on quizzes, and reach learning milestones.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {badgeSections.map((section) => (
               <div
                 key={section.title}
-                className="bg-white rounded-xl p-4 flex flex-col items-center gap-2"
+                className="bg-white border border-[var(--border)] rounded-[10px] p-5 flex flex-col items-center gap-3 shadow-2xs hover:border-[var(--primary)] transition-colors text-center"
               >
-                <Image src={LockImage} alt="locked" width={48} height={48} />
-                <p className="font-semibold text-sm text-center">
+                <div className="w-12 h-12 rounded-full bg-[var(--surface-subtle)] flex items-center justify-center">
+                  <Image src={LockImage} alt="locked" width={28} height={28} />
+                </div>
+                <p className="font-semibold text-xs text-[var(--text-primary)]">
                   {section.title.replace(/^[^A-Za-z0-9]+/, "")}
                 </p>
               </div>

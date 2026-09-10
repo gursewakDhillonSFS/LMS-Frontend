@@ -19,7 +19,7 @@ import {
   getQuizSubmissionsApi,
   gradeQuizSubmissionApi,
 } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { QuizQuestionProp } from "@/modules/addQuizSteps/AddQuestionModal";
 import { RightOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 

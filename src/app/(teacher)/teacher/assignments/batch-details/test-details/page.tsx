@@ -27,7 +27,7 @@ import {
   getAssignmentDetailsApi,
   getAssignmentSubmissionsApi,
 } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 interface SubmissionRow {
   submission_id: string | null;

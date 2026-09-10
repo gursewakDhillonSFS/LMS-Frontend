@@ -4,7 +4,7 @@ import { Form, Modal, Select, Input, Checkbox, DatePicker } from "antd";
 import { useForm } from "antd/es/form/Form";
 import CommonButton from "../CommonButton";
 import { getAllCoursesApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import dayjs from "dayjs";
 import { AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
 import { useSelector } from "react-redux";

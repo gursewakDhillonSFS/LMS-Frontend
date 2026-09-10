@@ -70,35 +70,35 @@ const Footer: React.FC = () => {
     dispatch(setSignup(true));
   };
   return (
-    <footer className="flex flex-col gap-[49px] xl:gap-[89px] justify-between bg-black text-white px-[40px] xl:px-[170px] pt-[40px] xl:pt-[80px] pb-[50px]">
-      <div className="flex flex-col items-center justify-center gap-[32px]">
-        <h2 className="text-[36px] lg:text-[40px] font-[700] text-center leading-[120%]">
-          What will learning do for your <br /> Personal Life?
+    <footer className="flex flex-col gap-[48px] xl:gap-[64px] justify-between bg-[var(--text-primary)] text-white px-[24px] xl:px-[80px] 2xl:px-[120px] pt-[48px] xl:pt-[64px] pb-[40px]">
+      <div className="flex flex-col items-center justify-center gap-[24px]">
+        <h2 className="text-[28px] lg:text-[32px] font-[600] text-center leading-[130%]">
+          What will learning do for your <br />personal life?
         </h2>
         <div className="flex gap-3">
           <CommonButton
             text={"Sign Up for Free"}
-            bgColor="#ffffff"
-            className="!text-black px-[19px]"
+            bgColor="#FFFFFF"
+            className="!text-[var(--text-primary)] !h-[40px] !text-[14px] hover:!opacity-90"
             onClick={handleSignup}
           />
           <CommonButton
             text={"Start 7-day Free Trial"}
-            className="!bg-secondary !text-white"
+            className="!bg-[var(--primary)] !text-white !h-[40px] !text-[14px]"
             onClick={() => router.push(RoutePaths?.Subscription)}
           />
         </div>
       </div>
 
-      <div className="flex flex-col gap-[62px]">
-        <div className="grid grid-cols-2 gap-[20px] lg:gap-0 lg:grid-cols-4 justify-center items-center">
-          <div className="flex flex-col gap-[20px] col-span-2">
-            <h4 className="font-[600] text-[18px] ">Categories</h4>
-            <div className="grid grid-cols-2 gap-[20px]">
+      <div className="flex flex-col gap-[48px]">
+        <div className="grid grid-cols-2 gap-[24px] lg:gap-[40px] lg:grid-cols-4">
+          <div className="flex flex-col gap-[16px] col-span-2">
+            <h4 className="font-[600] text-[15px] text-white/60 uppercase tracking-[0.05em]">Categories</h4>
+            <div className="grid grid-cols-2 gap-[12px]">
               {categories?.map((item) => (
                 <span
                   key={item?.category_id}
-                  className="text-sm hover:underline cursor-pointer"
+                  className="text-[14px] text-white/80 hover:text-white cursor-pointer transition-colors duration-[150ms]"
                   onClick={() => handleClick(item?.category_id)}
                 >
                   {item?.category_name}
@@ -107,13 +107,13 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-[20px]">
-            <h4 className="font-[600] text-[18px]">{helpfulLinks.title}</h4>
-            <ul className="flex flex-col gap-[20px]">
+          <div className="flex flex-col gap-[16px]">
+            <h4 className="font-[600] text-[15px] text-white/60 uppercase tracking-[0.05em]">{helpfulLinks.title}</h4>
+            <ul className="flex flex-col gap-[12px]">
               {helpfulLinks.items.map((item) => (
                 <li
                   key={item?.text}
-                  className="text-sm hover:underline cursor-pointer"
+                  className="text-[14px] text-white/80 hover:text-white cursor-pointer transition-colors duration-[150ms]"
                   onClick={() => {
                     if (item?.link) router.push(item?.link);
                   }}
@@ -124,15 +124,15 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="flex flex-col gap-[20px]">
-            <h4 className="font-[600] text-[18px]">Contact Info</h4>
-            <ul className="flex flex-col gap-[20px]">
+          <div className="flex flex-col gap-[16px]">
+            <h4 className="font-[600] text-[15px] text-white/60 uppercase tracking-[0.05em]">Contact Info</h4>
+            <ul className="flex flex-col gap-[12px]">
               {contactInfo.map((contact) => (
                 <li
                   key={contact?.text}
-                  className="flex items-start gap-2 text-sm"
+                  className="flex items-start gap-[8px] text-[14px] text-white/80"
                 >
-                  <span>{contact.icon}</span>
+                  <span className="mt-[2px] opacity-60">{contact.icon}</span>
                   <span>{contact.text}</span>
                 </li>
               ))}
@@ -140,19 +140,19 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-white/10 pt-[24px] flex flex-col md:flex-row justify-between items-center gap-[16px]">
           <HeaderLogoIcon textColor="#ffffff" />
-          <div className="text-[14px] leading-[150%]">
+          <div className="text-[13px] text-white/50">
             © 2025 Learning+. All Rights Reserved.
           </div>
-          <div className="flex gap-4 mt-2 md:mt-0 text-xl">
-            <span className="w-[39px] h-[39px] flex items-center justify-center rounded-full border border-[#ffffff] opacity-[80%] cursor-pointer">
+          <div className="flex gap-[12px]">
+            <span className="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 cursor-pointer transition-colors duration-[150ms]">
               <FaceBookIcon />
             </span>
-            <span className="w-[39px] h-[39px] flex items-center justify-center rounded-full border border-[#ffffff] opacity-[80%] cursor-pointer">
+            <span className="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 cursor-pointer transition-colors duration-[150ms]">
               <LinkdinIcon />
             </span>
-            <span className="w-[39px] h-[39px] flex items-center justify-center rounded-full border border-[#ffffff] opacity-[80%] cursor-pointer">
+            <span className="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 cursor-pointer transition-colors duration-[150ms]">
               <TwitterIcon />
             </span>
           </div>

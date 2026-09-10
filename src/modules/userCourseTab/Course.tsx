@@ -18,7 +18,7 @@ import {
 import { CheckCircleFilled, RightOutlined, StarOutlined } from "@ant-design/icons";
 import { Collapse, Input, Modal, Rate, Spin } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { postApi } from "@/services/methods";
 
 // ─── Type definitions ────────────────────────────────────────────────────────

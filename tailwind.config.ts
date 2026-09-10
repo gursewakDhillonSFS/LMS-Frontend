@@ -9,9 +9,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        navcolor: "var(--navcolor)",
-        secondary: "var(--secondary)",
+        /* Design System Colors */
         primary: "var(--primary)",
+        "primary-hover": "var(--primary-hover)",
+        "primary-light": "var(--primary-light)",
+        secondary: "var(--secondary)",
+        navcolor: "var(--navcolor)",
+        success: "var(--success)",
+        warning: "var(--warning)",
+        error: "var(--error)",
+        surface: "var(--surface)",
+        "surface-subtle": "var(--surface-subtle)",
+        "surface-hover": "var(--surface-hover)",
+        bg: "var(--bg)",
+        border: "var(--border)",
+        "border-strong": "var(--border-strong)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-muted": "var(--text-muted)",
+      },
+      borderRadius: {
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
+      },
+      boxShadow: {
+        xs: "var(--shadow-xs)",
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
       },
       screens: {
         xs: "480px",
@@ -33,6 +61,7 @@ export default {
       },
     },
     fontFamily: {
+      sans: ["var(--font-geist-sans)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
       poppins: "var(--font-poppins)",
     },
   },

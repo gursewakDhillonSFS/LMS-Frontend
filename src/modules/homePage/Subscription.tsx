@@ -9,32 +9,36 @@ import { useDispatch } from "react-redux";
 const Subscription = () => {
   const dispatch = useDispatch();
   return (
-    <div className="bg-secondary flex flex-col items-center justify-center py-[80px] gap-6">
-      <div className="flex items-center justify-center gap-[9px]">
+    <section className="bg-gradient-to-r from-[#1E293B] to-[#0F172A] text-white flex flex-col items-center justify-center py-20 px-6 text-center gap-5">
+      <div className="flex items-center justify-center gap-2.5">
         <HeaderLogoIcon iconColor="white" textColor="white" />
-        <span className="py-1 px-2 bg-white text-secondary font-bold">Pro</span>
+        <span className="py-0.5 px-2 bg-[var(--primary)] text-white text-xs font-bold rounded-md uppercase tracking-wider">
+          Pro
+        </span>
       </div>
-      <p className="text-white font-[500] text-xl">
+      <h2 className="text-2xl md:text-3xl font-bold tracking-tight max-w-2xl">
         Advance your career with world-class courses and certificate programs
+      </h2>
+      <p className="text-slate-300 text-sm md:text-base max-w-xl">
+        Get unlimited access to top courses, guided projects, and recognized credentials taught by industry leaders.
       </p>
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 pt-2">
         <CommonButton
-          text={"View Details"}
+          text="View Details"
           onClick={() => {
             dispatch(setSignin(true));
           }}
-          className="!bg-transparent !text-white !border !w-[186px] !border-white"
+          className="!bg-transparent !text-white !border !border-slate-600 hover:!border-white !w-[180px]"
         />
         <CommonButton
-          text={"Start 7-day Free Trial"}
-          className="!bg-white !text-secondary !w-[186px]"
+          text="Start Free Trial"
+          className="!bg-[var(--primary)] !text-white hover:!bg-[var(--primary-hover)] !border-none !w-[180px] shadow-xs"
         />
       </div>
-      <CommonLink
-        text={"$15/month, cancel anytime"}
-        className="text-white font-[500] "
-      />
-    </div>
+      <span className="text-xs text-slate-400 font-medium">
+        $15/month billed annually • Cancel anytime
+      </span>
+    </section>
   );
 };
 

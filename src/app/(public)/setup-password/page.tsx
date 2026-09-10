@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Form, Input, Button } from "antd";
 import { resetPasswordApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { LockOutlined } from "@ant-design/icons";
 import { RoutePaths } from "@/utils/enums";
 import Cookies from "js-cookie";

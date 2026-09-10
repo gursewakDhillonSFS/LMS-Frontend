@@ -4,7 +4,7 @@ import { Form, Radio } from "antd";
 import Cookies from "js-cookie";
 import CommonButton from "@/components/CommonButton";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import {
   onboardingStep1,
   onboardingStep2,

@@ -7,10 +7,10 @@ const SearchInput: React.FC<CommonSearchProp> = ({
   onChange,
   className,
   search,
-  borderRadius = "12px",
+  borderRadius = "8px",
   suffix = true,
   icon,
-  placeholder = "Search classes...."
+  placeholder = "Search..."
 }) => {
   return (
       <Input
@@ -19,7 +19,7 @@ const SearchInput: React.FC<CommonSearchProp> = ({
         placeholder={placeholder}
         suffix={suffix && (icon ?? <SearchIcon />)}
         prefix={!suffix && <SearchIcon />}
-        className={`!h-[40px] !py-[10px] px-[16px]  border !border-[#9A9A9A] !rounded-[${borderRadius}] !shadow-none ${className}`}
+        className={`!h-[40px] !py-[8px] !px-[12px] !border !border-[var(--border)] hover:!border-[var(--border-strong)] focus-within:!border-[var(--primary)] !rounded-[${borderRadius}] !shadow-none !text-[14px] !text-[var(--text-primary)] ${className}`}
       />
   );
 };

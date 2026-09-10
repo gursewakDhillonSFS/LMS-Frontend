@@ -16,45 +16,65 @@ const HeroSection: FC = () => {
     dispatch(setSignup(true));
   };
   return (
-    <section className="flex flex-row justify-between items-center px-[40px] py-[25px] xl:px-[120px] xl:py-[50px] w-full">
-      <div className="flex flex-col justify-around items-start gap-[16px] lg:gap-[32px]">
-        <div className="flex items-center gap-[8px] lg:gap-[12px] xl:gap-[16px] justify-center">
-          <div className="bg-navcolor w-[35px] h-[35px] lg:w-[40px] lg:h-[40px] xl:w-[50px] xl:h-[50px] flex justify-center items-center">
+    <section className="flex flex-col lg:flex-row justify-between items-center px-[24px] py-[32px] xl:px-[80px] 2xl:px-[120px] xl:py-[48px] w-full gap-[40px]">
+      <div className="flex flex-col justify-around items-start gap-[24px] lg:gap-[32px] max-w-[560px]">
+        <div className="flex items-center gap-[10px]">
+          <div className="bg-[var(--primary-light)] w-[40px] h-[40px] rounded-[10px] flex justify-center items-center">
             <BulbIcon />
           </div>
-          <div className="text-[13px] xl:text-[16px] text-[#2D2D2D]">
-            Biggest Online <br /> Learning Platform
+          <div className="text-[13px] text-[var(--text-secondary)] font-[500]">
+            Online Learning Platform
           </div>
         </div>
 
-        <div className="flex flex-col items-start justify-between w-[330px] xl:w-[500px] gap-[12px]">
-          <h1
-            className={`text-[50px] lg:text-[60px] xl:text-[80px] leading-[120%] fjalla-one-regular `}
-          >
-            Learn without <br /> limits
+        <div className="flex flex-col items-start gap-[16px]">
+          <h1 className="text-[40px] lg:text-[48px] xl:text-[56px] leading-[110%] font-[700] text-[var(--text-primary)] tracking-[-0.02em]">
+            Learn without{" "}
+            <span className="text-[var(--primary)]">limits</span>
           </h1>
 
-          <div className="text-[10px] lg:text-[11px]  xl:text-[16px] text-justify text-[#0E0E0E] leading-[150%]">
-            Start, switch, or advance your career with more than 10,000 <br />{" "}
-            courses, Professional Certificates, and degrees from world-class{" "}
-            <br /> universities and companies.
-          </div>
+          <p className="text-[15px] xl:text-[16px] text-[var(--text-secondary)] leading-[160%] max-w-[480px]">
+            Start, switch, or advance your career with more than 10,000
+            courses, Professional Certificates, and degrees from world-class
+            universities and companies.
+          </p>
         </div>
 
-        <div className="flex gap-3">
-          <CommonButton text={"Sign Up for Free"} onClick={handleSignup} />
+        <div className="flex gap-[12px]">
+          <CommonButton
+            text={"Sign Up for Free"}
+            onClick={handleSignup}
+            className="!h-[44px] !px-[24px] !text-[14px]"
+          />
           <CommonButton
             text={"Start 7-day Free Trial"}
             onClick={() => route.push(RoutePaths?.Subscription)}
-            className="!bg-secondary !text-white"
+            className="!h-[44px] !px-[24px] !text-[14px] !bg-white !text-[var(--text-primary)] !border !border-[var(--border)] hover:!border-[var(--border-strong)]"
           />
         </div>
+
+        <div className="flex items-center gap-[24px] text-[13px] text-[var(--text-muted)]">
+          <span className="flex items-center gap-[6px]">
+            <span className="w-[6px] h-[6px] rounded-full bg-[var(--success)]"></span>
+            10,000+ Courses
+          </span>
+          <span className="flex items-center gap-[6px]">
+            <span className="w-[6px] h-[6px] rounded-full bg-[var(--primary)]"></span>
+            Expert Instructors
+          </span>
+          <span className="flex items-center gap-[6px]">
+            <span className="w-[6px] h-[6px] rounded-full bg-[var(--warning)]"></span>
+            Certificates
+          </span>
+        </div>
       </div>
-      <Image
-        src={HeroImage}
-        alt="Instructor"
-        className="lg:w-[438px] lg:h-[410px] xl:w-[538px] xl:h-[510px] w-[338px] h-[310px]"
-      />
+      <div className="relative">
+        <Image
+          src={HeroImage}
+          alt="Professional learning"
+          className="lg:w-[380px] lg:h-[360px] xl:w-[460px] xl:h-[440px] w-[320px] h-[300px] object-contain"
+        />
+      </div>
     </section>
   );
 };

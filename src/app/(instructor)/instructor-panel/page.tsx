@@ -45,68 +45,71 @@ const InstructorPanel = () => {
   const infoCardsData: InfoCardProps[] = [
     {
       image: (
-        <div className="text-secondary">
+        <div className="text-[var(--primary)]">
           <CourseIcon />
         </div>
       ),
-      text: "Your Courses",
+      text: "Total Courses",
       count: String(stats.courseCount),
-      bg: "#D9D4FF",
+      bg: "#EEF2FF",
     },
     {
       image: (
-        <div className="text-[#5EB85C]">
+        <div className="text-[var(--success)]">
           <StudentIcon />
         </div>
       ),
-      text: "Students",
+      text: "Enrolled Students",
       count: String(stats.studentCount),
-      bg: "#EAFFDE",
+      bg: "#ECFDF5",
     },
     {
       image: (
-        <div className="text-[#FB4A49]">
+        <div className="text-[var(--error)]">
           <LiveIcon />
         </div>
       ),
       text: "Upcoming Live Classes",
       count: String(stats.upcomingLiveClasses),
-      bg: "#FFDEE6",
+      bg: "#FEF2F2",
     },
     {
       image: (
-        <div className="text-[#FFC023]">
+        <div className="text-[var(--warning)]">
           <AssignmentIcon />
         </div>
       ),
-      text: "Pending Assignments to Grade",
+      text: "Pending to Grade",
       count: String(stats.pendingAssignmentsToGrade),
-      bg: "#FFF3DB",
+      bg: "#FFFBEB",
     },
   ];
 
   return (
-    <div className="flex flex-col gap-[12px]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-[32px] font-bold">Dashboard</h1>
-        <div className="flex gap-[12px] items-center justify-center">
+    <div className="flex flex-col gap-6 pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          Instructor Dashboard
+        </h1>
+        <div className="flex flex-wrap gap-2.5 items-center">
           <CommonButton
-            text={"Post Announcement"}
-            className="border !bg-transparent"
+            text="Post Announcement"
+            className="!bg-white !border !border-[var(--border)] !text-[var(--text-primary)] hover:!border-[var(--primary)] hover:!text-[var(--primary)] !h-9 !text-xs !px-3 shadow-2xs"
             onClick={() => route.push(RoutePaths.Announcements)}
           />
           <CommonButton
-            text={"Schedule Live Class"}
+            text="Schedule Live Class"
+            className="!bg-white !border !border-[var(--border)] !text-[var(--text-primary)] hover:!border-[var(--primary)] hover:!text-[var(--primary)] !h-9 !text-xs !px-3 shadow-2xs"
             onClick={() => route.push(RoutePaths.LiveClasses)}
           />
           <CommonButton
-            text={"+ Create Course"}
+            text="+ Create Course"
             onClick={() => route.push(`${RoutePaths.Courses}/create-course`)}
-            className="!bg-secondary text-white"
+            className="!h-9 !text-xs !px-4 shadow-xs"
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-[12px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {infoCardsData.map((card, index) => (
           <InfoCard key={index} {...card} />
         ))}

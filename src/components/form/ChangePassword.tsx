@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { RoutePaths } from "@/utils/enums";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordApi } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { setSignin } from "@/redux/slices/AuthModalSlice";
 import { RootState } from "@/redux/store";
 
@@ -27,7 +27,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onSignin }) => {
     new_password: string;
     re_enter_new_password: string;
   }) => {
-    // const value = form.getFieldsValue();
     try {
       if (user_id && token) {
         setLoading(true);
@@ -39,88 +38,86 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onSignin }) => {
         const response = await resetPasswordApi(payload);
         if (response?.status) {
           dispatch(setSignin(true));
-          toast.success(response?.message);
+          toast.success(response?.message ?? "Password updated successfully");
         } else {
-          toast.warning(response?.message ?? "Something Went Wrong");
+          toast.warning(response?.message ?? "Failed to update password");
         }
       }
     } catch (err) {
-      console.error("Failed to fetch categories:", err);
+      console.error("Failed to reset password:", err);
+      toast.error("An error occurred while resetting password");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-6">
-      <div className="flex flex-col gap-[5px]">
-        <div className="flex flex-col gap-4">
-          <Form.Item
-            name="new_password"
-            rules={[
-              { required: true, message: "Please enter your password" },
-              {
-                min: 8,
-                message: "Password must be at least 8 characters",
+    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-4">
+      <div className="flex flex-col gap-4">
+        <Form.Item
+          name="new_password"
+          rules={[
+            { required: true, message: "Please enter new password" },
+            {
+              min: 8,
+              message: "Password must be at least 8 characters",
+            },
+            {
+              pattern:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+              message:
+                "Include uppercase, lowercase, number, and special character",
+            },
+          ]}
+          className="!mb-0"
+        >
+          <CommonInput
+            label="New Password"
+            isPassword
+            value={form.getFieldValue("new_password") || ""}
+            onChange={(e) =>
+              form.setFieldsValue({ new_password: e.target.value })
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          name="re_enter_new_password"
+          dependencies={["new_password"]}
+          rules={[
+            { required: true, message: "Please confirm your password" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("new_password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Passwords do not match"));
               },
-              {
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
-                message:
-                  "Password must include uppercase, lowercase, number, and special character",
-              },
-            ]}
-            className="!mb-0"
-          >
-            <CommonInput
-              label="Enter Password"
-              isPassword
-              value={form.getFieldValue("password") || ""}
-              onChange={(e) =>
-                form.setFieldsValue({ password: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            name="re_enter_new_password"
-            rules={[
-              { required: true, message: "Please re-enter your password" },
-              {
-                min: 8,
-                message: "Password must be at least 8 characters",
-              },
-              {
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
-                message:
-                  "Password must include uppercase, lowercase, number, and special character",
-              },
-            ]}
-            className="!mb-0"
-          >
-            <CommonInput
-              label="Re-enter Password"
-              isPassword
-              value={form.getFieldValue("re_enter_password") || ""}
-              onChange={(e) =>
-                form.setFieldsValue({ re_enter_password: e.target.value })
-              }
-            />
-          </Form.Item>
-        </div>
+            }),
+          ]}
+          className="!mb-0"
+        >
+          <CommonInput
+            label="Confirm New Password"
+            isPassword
+            value={form.getFieldValue("re_enter_new_password") || ""}
+            onChange={(e) =>
+              form.setFieldsValue({ re_enter_new_password: e.target.value })
+            }
+          />
+        </Form.Item>
       </div>
 
-      <Form.Item className="!mb-0">
+      <Form.Item className="!mb-0 !mt-5">
         <CommonButton
-          text={"Submit"}
+          text="Update Password"
           loading={loading}
-          className="w-full h-[56px] text-[16px] text-md my-5"
+          className="w-full !h-[44px] !text-[15px] font-medium !rounded-[8px]"
         />
       </Form.Item>
 
       {!pathname.includes(RoutePaths?.BecomeInstructor) && (
-        <p className="text-center text-[14px] text-[#2D2D2D] ">
-          Back to <CommonLink text={"Login"} onClick={onSignin} />
+        <p className="text-center text-sm text-[var(--text-secondary)] mt-4">
+          Back to <CommonLink text="Login" className="font-semibold text-[var(--primary)] hover:underline" onClick={onSignin} />
         </p>
       )}
     </Form>

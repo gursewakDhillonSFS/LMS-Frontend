@@ -22,7 +22,7 @@ import { Badge, Table } from "antd";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const Teachers = () => {
   const [search, setSearch] = useState("");

@@ -4,7 +4,7 @@ import CommonButton from "@/components/CommonButton";
 import { CloseIcon, DeleteIcon, SixDotIcon } from "@/utils/icons";
 import { Button, Form, Input, Modal, Select } from "antd";
 import React, { useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 export interface QuizQuestionProp {
   _id?: string;

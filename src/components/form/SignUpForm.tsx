@@ -10,7 +10,7 @@ import { setSignup } from "@/redux/slices/AuthModalSlice";
 import { createUserApi, socialAuth } from "@/services/collections";
 import { setUser } from "@/redux/slices/UserDataSlice";
 import { Role, RoutePaths } from "@/utils/enums";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useFacebookSdk } from "@/hooks/useFacebookSdk";
 
@@ -44,14 +44,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
     email: string;
     password_hash: string;
   }) => {
-    // const values = form.getFieldsValue();
     try {
       setLoading(true);
       const response = await createUserApi({
         ...values,
         signup_type: "student",
       });
-      console.log(response);
       if (response?.status) {
         dispatch(
           setUser({
@@ -60,10 +58,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
         );
         router.push(RoutePaths?.Onboarding);
       } else {
-        toast.warning(response?.message ?? "Something Went Wrong");
+        toast.warning(response?.message ?? "Registration failed. Please try again.");
       }
     } catch (err) {
-      console.error("Failed to fetch categories:", err);
+      console.error("Failed to sign up:", err);
+      toast.error("Registration error. Please check your details.");
     } finally {
       setLoading(false);
     }
@@ -74,15 +73,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
 
     window.FB.login(
       (response: Facebook.LoginStatusResponse) => {
-        console.log("FB login response", response);
-
         const token = response?.authResponse?.accessToken;
-
         if (!token) {
           console.error("No access token received from Facebook.");
           return;
         }
-
         handleSocialAuth(token);
       },
       { scope: "email,public_profile" }
@@ -109,7 +104,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        console.log(tokenResponse);
         const payload = {
           provider: "google",
           token: tokenResponse?.access_token,
@@ -128,14 +122,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
   });
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-6">
-      <div className="flex flex-col gap-[6px]">
-        <div className="flex flex-col gap-4">
+    <Form form={form} layout="vertical" onFinish={onFinish} className="!mt-4">
+      <div className="flex flex-col gap-3.5">
+        <div className="grid grid-cols-2 gap-3">
           <Form.Item
             name="first_name"
             rules={[
-              { required: true, message: "Please enter your first name" },
-              { min: 2, message: "First name must be at least 2 characters" },
+              { required: true, message: "Please enter first name" },
+              { min: 2, message: "At least 2 characters" },
             ]}
             className="!mb-0"
           >
@@ -149,8 +143,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
           <Form.Item
             name="last_name"
             rules={[
-              { required: true, message: "Please enter your last name" },
-              { min: 2, message: "Last name must be at least 2 characters" },
+              { required: true, message: "Please enter last name" },
+              { min: 2, message: "At least 2 characters" },
             ]}
             className="!mb-0"
           >
@@ -161,98 +155,94 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
               onChange={(e) => form.setFieldsValue({ lname: e.target.value })}
             />
           </Form.Item>
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: "Please enter your email" },
-              {
-                type: "email",
-                message: "Please enter a valid email address",
-              },
-            ]}
-            className="!mb-0"
-          >
-            <CommonInput
-              label="Email Address"
-              type="email"
-              value={form.getFieldValue("email") || ""}
-              onChange={(e) => form.setFieldsValue({ email: e.target.value })}
-            />
-          </Form.Item>
-          <Form.Item
-            name="password_hash"
-            rules={[
-              { required: true, message: "Please enter your password" },
-              {
-                min: 8,
-                message: "Password must be at least 8 characters",
-              },
-              {
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
-                message:
-                  "Password must include uppercase, lowercase, number, and special character",
-              },
-            ]}
-            className="!mb-0"
-          >
-            <CommonInput
-              label="Password"
-              isPassword
-              value={form.getFieldValue("password") || ""}
-              onChange={(e) =>
-                form.setFieldsValue({ password: e.target.value })
-              }
-            />
-          </Form.Item>
         </div>
+        <Form.Item
+          name="email"
+          rules={[
+            { required: true, message: "Please enter your email" },
+            {
+              type: "email",
+              message: "Please enter a valid email address",
+            },
+          ]}
+          className="!mb-0"
+        >
+          <CommonInput
+            label="Email Address"
+            type="email"
+            value={form.getFieldValue("email") || ""}
+            onChange={(e) => form.setFieldsValue({ email: e.target.value })}
+          />
+        </Form.Item>
+        <Form.Item
+          name="password_hash"
+          rules={[
+            { required: true, message: "Please enter your password" },
+            {
+              min: 8,
+              message: "Password must be at least 8 characters",
+            },
+            {
+              pattern:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+              message:
+                "Include upper, lower, number, and special character",
+            },
+          ]}
+          className="!mb-0"
+        >
+          <CommonInput
+            label="Password"
+            isPassword
+            value={form.getFieldValue("password") || ""}
+            onChange={(e) =>
+              form.setFieldsValue({ password: e.target.value })
+            }
+          />
+        </Form.Item>
       </div>
 
-      <Form.Item className="!mb-0 ">
+      <Form.Item className="!mb-0 !mt-5">
         <CommonButton
-          text={"Sign Up"}
-          className="w-full h-[56px] text-[16px] text-md my-5"
+          text="Create Account"
+          className="w-full !h-[44px] !text-[15px] font-medium !rounded-[8px]"
           loading={loading}
         />
       </Form.Item>
 
-      <div className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col items-center justify-center gap-4 my-5">
         <div className="flex items-center w-full">
-          <div className="border-b-1 border-[#E0E0E0] w-[50%]"></div>
-          <div className="w-[48px] text-center text-[14px] text-[500]">Or</div>
-          <div className="border-b-1 border-[#E0E0E0] w-[50%]"></div>
+          <div className="border-b border-[var(--border)] flex-1"></div>
+          <span className="px-3 text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider">or</span>
+          <div className="border-b border-[var(--border)] flex-1"></div>
         </div>
 
-        <div className="w-full grid grid-cols-3 gap-[9px]">
-          {authOptions.map(({ key, icon }) => {
-            return (
-              <Button
-                key={key}
-                type="text"
-                size="large"
-                onClick={() => {
-                  if (key === "google") googleLogin();
-                  // Facebook OAuth disabled until backend support is implemented
-                }}
-                className="!bg-[#FAFAFA] relative !border !border-[#EEEEEE] hover:shadow !h-[48px] !rounded-2 !flex !items-center !justify-center "
-              >
-                {icon}
-              </Button>
-            );
-          })}
+        <div className="w-full grid grid-cols-2 gap-3">
+          {authOptions.map(({ key, icon }) => (
+            <Button
+              key={key}
+              type="text"
+              onClick={() => {
+                if (key === "google") googleLogin();
+              }}
+              className="!bg-white !border !border-[var(--border)] hover:!bg-[var(--surface-subtle)] !h-[42px] !rounded-[8px] !flex !items-center !justify-center shadow-2xs transition-colors"
+            >
+              {icon}
+            </Button>
+          ))}
         </div>
       </div>
 
-      <div className="text-center text-[14px] text-[#2D2D2D] mt-5">
-        Already on Learning+?{" "}
-        <CommonLink text={"Login"} className="underline" onClick={onSignin} />
+      <div className="text-center text-sm text-[var(--text-secondary)]">
+        Already have an account?{" "}
+        <CommonLink text="Sign In" className="font-semibold text-[var(--primary)] hover:underline" onClick={onSignin} />
       </div>
 
-      <div className="text-center border-t-1 border-[#E0E0E0] pt-3 text-[14px] text-[#2D2D2D] mt-3">
-        Sign Up as{" "}
+      <div className="text-center border-t border-[var(--border)] pt-3 text-sm text-[var(--text-secondary)] mt-3">
+        Want to teach?{" "}
         <CommonLink
-          text={"Instructor"}
-          className="underline"
+          text="Become an Instructor"
+          className="font-medium text-[var(--primary)] hover:underline"
           onClick={() => {
             router.push(RoutePaths?.BecomeInstructor);
             dispatch(setSignup(false));

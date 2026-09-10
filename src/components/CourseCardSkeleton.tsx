@@ -1,35 +1,34 @@
 "use client";
 import { Card, Skeleton } from "antd";
-import { StarFilled } from "@ant-design/icons";
 
 export default function CourseCardSkeleton() {
   return (
-    <div className="max-w-sm mx-auto">
+    <div className="w-full">
       <Card
-        className="overflow-hidden shadow-lg custom-card"
+        className="overflow-hidden custom-card !border !border-[var(--border)] !rounded-[10px]"
+        styles={{ body: { padding: 0 } }}
         cover={
-          <div className="relative">
-            <Skeleton.Image active className="!w-full !h-48 rounded-t-lg" />
+          <div className="relative bg-[var(--surface-subtle)]">
+            <Skeleton.Image active className="!w-full !h-[180px]" />
           </div>
         }
       >
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-3">
           <div className="flex items-center space-x-2">
-            <Skeleton.Avatar active size="small" />
-            <Skeleton.Input active size="small" className="!w-32 !h-4" />
-            <div className="ml-auto flex items-center space-x-1">
-              <StarFilled className="!text-gray-400 text-sm" />
-              <Skeleton.Input active size="small" className="!w-8 !h-4" />
-            </div>
+            <Skeleton.Avatar active size="small" shape="circle" />
+            <Skeleton.Input active size="small" className="!w-24 !h-3" />
           </div>
 
-          <Skeleton.Input active size="small" className="!w-24 !h-4" />
+          <Skeleton.Input active className="!w-full !h-5" />
 
-          <Skeleton.Input active className="!w-full !h-6" />
+          <div className="flex items-center justify-between">
+            <Skeleton.Input active size="small" className="!w-20 !h-3" />
+            <Skeleton.Input active size="small" className="!w-16 !h-3" />
+          </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <Skeleton.Button active className="!w-32 !h-8 !rounded-md" />
-            <Skeleton.Button active className="!w-32 !h-8 !rounded-md" />
+          <div className="flex items-center gap-3 pt-1">
+            <Skeleton.Button active className="!w-full !h-9 !rounded-[8px]" />
+            <Skeleton.Button active className="!w-full !h-9 !rounded-[8px]" />
           </div>
         </div>
       </Card>

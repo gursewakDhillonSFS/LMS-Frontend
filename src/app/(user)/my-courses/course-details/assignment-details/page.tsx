@@ -7,7 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { getAssignmentDetailsApi, submitAssignmentApi } from "@/services/collections";
 import QuillEditor from "@/components/QuillEditor";
 import CommonButton from "@/components/CommonButton";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const AssignmentDetailsContent = () => {
   const searchParams = useSearchParams();

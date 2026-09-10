@@ -1,5 +1,6 @@
 "use client";
 import CourseCard from "@/components/CourseCard";
+import CourseCardSkeleton from "@/components/CourseCardSkeleton";
 import { setCourseData } from "@/redux/slices/CourseDataSlice";
 import { getAllCoursesApi } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
@@ -48,32 +49,35 @@ const NewCourses = () => {
     fetchCourseData();
   }, []);
   return (
-    <div className="flex flex-col bg-[#ffffff] pt-[40px] px-[40px] xl:px-[120px] lg:pt-[80px] gap-[70px]">
-      <div className="flex flex-col items-center gap-[20px]">
-        <div className={`text-[36px] lg:text-[56px] fjalla-one-regular `}>
+    <section className="flex flex-col bg-[var(--surface-subtle)] py-[60px] px-6 md:px-12 xl:px-24 gap-10">
+      <div className="flex flex-col items-center text-center gap-3 max-w-3xl mx-auto">
+        <h2 className="text-[28px] md:text-[36px] font-bold text-[var(--text-primary)] tracking-tight">
           New Courses
-        </div>
-        <div className="text-[12px] lg:text-[16px] text-center leading-[150%]">
-          Whether it&apos;s a first brush on canvas or the last frame in an
-          animation, Learning+ is here to support
-          <br /> you on every step of your creative journey.
-        </div>
+        </h2>
+        <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] leading-relaxed">
+          Explore the latest additions taught by industry experts to help you master modern skills and accelerate your career.
+        </p>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4">
-        {course?.map((course) => (
-          <div key={course?.course_id} className="pl-3">
-            <CourseCard
-              data={course}
-              bgColor="#ffffff"
-              instructorColor="#0E0E0E"
-              titleColor="#000"
-              footerColor="var(--secondary)"
-              onClick={courseRedirect}
-            />
+      <div className="max-w-7xl mx-auto w-full">
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <CourseCardSkeleton key={i} />
+            ))}
           </div>
-        ))}
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {course?.map((item) => (
+              <CourseCard
+                key={item?.course_id}
+                data={item}
+                onClick={courseRedirect}
+              />
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 

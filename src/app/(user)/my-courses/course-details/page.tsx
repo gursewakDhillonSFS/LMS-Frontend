@@ -24,7 +24,7 @@ import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
 import { userCourseList, getAnnouncementsByCourseApi, getCourseInfoApi } from "@/services/collections";
 import { useAnnouncementSocket, AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
 import AnnouncementInfoModal from "@/components/modal/AnnouncementInfoModal";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 

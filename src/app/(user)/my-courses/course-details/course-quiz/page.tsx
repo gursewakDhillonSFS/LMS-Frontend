@@ -6,7 +6,7 @@ import { Breadcrumb, Radio, Input, Alert, Spin } from "antd";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getQuizDetailsApi, submitQuizApi } from "@/services/collections";
 import CommonButton from "@/components/CommonButton";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const CourseQuizContent = () => {
   const searchParams = useSearchParams();

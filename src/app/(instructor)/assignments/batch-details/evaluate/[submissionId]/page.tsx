@@ -10,7 +10,7 @@ import {
   getSubmissionDetailsApi,
   gradeSubmissionApi,
 } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import UserAvatarDisplay from "@/components/UserAvatarDisplay";
 
 const EvaluateSubmission = () => {

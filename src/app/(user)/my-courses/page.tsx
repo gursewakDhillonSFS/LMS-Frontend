@@ -18,7 +18,7 @@ import { EnrolledCourseProp } from "@/utils/interface";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const liveLessons = [
   {
@@ -54,7 +54,7 @@ const MyCourses = () => {
   const [activeTab, setActiveTab] = useState(activeKey);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit] = useState(3);
+  const [limit] = useState(6);
   const [sortOrder, setSortOrder] = useState<string | null>("");
   const dispatch = useDispatch();
   const [courseLoading, setCourseLoading] = useState(false);
@@ -67,17 +67,16 @@ const MyCourses = () => {
     try {
       const response = await userCourseList(param);
       if (response.status) {
-        console.log(response);
         if (response?.data?.courses?.length > 0) {
           setEnrolledCourse(response?.data?.courses);
           setTotal(response?.data?.total_count);
         }
       } else {
-        toast.warning(response.message || "Something Went Wrong");
+        toast.warning(response.message || "Failed to load courses");
       }
     } catch (error) {
       console.log(error);
-      toast.warning("Something went wrong");
+      toast.warning("Could not load your courses");
     } finally {
       setCourseLoading(false);
     }
@@ -90,17 +89,20 @@ const MyCourses = () => {
   useEffect(() => {
     dispatch(setCourseTab(activeTab));
   }, [activeTab, dispatch]);
+
   return (
-    <div className="w-full h-full flex flex-col gap-[12px]">
-      <div className="flex items-center justify-between w-full">
-        <h1 className="text-[32px] font-[700] text-[#0E0E0E]">My Courses</h1>
-        <div className="flex items-center gap-[12px]">
+    <div className="w-full h-full flex flex-col gap-6 pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          My Learning
+        </h1>
+        <div className="flex flex-wrap items-center gap-3">
           <SearchInput
             search={search}
             onChange={(e) => setSearch(e.target.value)}
             suffix={false}
-            borderRadius="6px"
-            className="!border !border-[#E2E1E4]"
+            borderRadius="8px"
+            className="!border !border-[var(--border)] !h-9"
           />
           <SortButton
             sortField={sortField}
@@ -109,18 +111,18 @@ const MyCourses = () => {
             sortOrder={sortOrder}
             setSortField={setSortField}
             allowClear={true}
-            className="!border !border-[#E2E1E4]"
+            className="!border !border-[var(--border)] !h-9"
           />
           <CommonButton
-            text={"Filter"}
+            text="Filter"
             icon={<FilterIcon />}
-            className="!bg-transparent border border-[#E2E1E4] !flex-row-reverse"
+            className="!bg-white !border !border-[var(--border)] !text-[var(--text-primary)] hover:!border-[var(--primary)] hover:!text-[var(--primary)] !flex-row-reverse !h-9 !text-xs !px-3 shadow-2xs"
           />
         </div>
       </div>
 
-      <div className="w-full flex flex-col lg:flex-row gap-[20px]">
-        <div className="lg:w-2/3 flex flex-col gap-[12px]">
+      <div className="w-full flex flex-col lg:flex-row gap-6">
+        <div className="lg:w-2/3 flex flex-col gap-4">
           <TabSwitcher
             activeKey={activeTab}
             onChange={setActiveTab}
@@ -135,10 +137,7 @@ const MyCourses = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {(enrolledCourse.length > 3
-                  ? enrolledCourse?.slice(0, 3)
-                  : enrolledCourse
-                )?.map((item) => (
+                {enrolledCourse?.map((item) => (
                   <MyCoursesCard {...item} key={item?.course_id} />
                 ))}
               </div>
@@ -147,59 +146,55 @@ const MyCourses = () => {
             <NoDataFound icon={DataNotFound} />
           )}
           {total > limit && (
-            <Pagination
-              page={page}
-              setPage={setPage}
-              limit={limit}
-              total={total}
-            />
+            <div className="pt-2 flex justify-center">
+              <Pagination
+                page={page}
+                setPage={setPage}
+                limit={limit}
+                total={total}
+              />
+            </div>
           )}
         </div>
-        <div className="lg:w-1/3 p-4 rounded-[12px] bg-white">
-          <h1 className="py-[6px] text-[20px] font-[700] border-b border-[#E7E7E7] flex items-center gap-[10px]">
-            <Image alt="live" src={Live} width={32} height={32} />
-            Live Class
-          </h1>
 
-          <div className="flex flex-col">
+        <div className="lg:w-1/3 p-5 rounded-[10px] bg-white border border-[var(--border)] shadow-xs h-fit flex flex-col gap-4">
+          <h2 className="text-[16px] font-bold text-[var(--text-primary)] border-b border-[var(--border)] pb-3 flex items-center gap-2 tracking-tight">
+            <Image alt="live" src={Live} width={20} height={20} className="shrink-0" />
+            Live Classes
+          </h2>
+
+          <div className="flex flex-col divide-y divide-[var(--border)]">
             {liveLessons.map((lesson, index) => (
               <div
                 key={index}
-                className="flex border-b border-[#E7E7E7] py-[12px]"
+                className="py-3 flex justify-between items-start gap-2"
               >
-                <div className="flex justify-between items-start w-full">
-                  <div className="w-[80%]">
-                    <h3 className="text-[14px] font-[600] text-[#0E0E0E]">
-                      {lesson.title}
-                    </h3>
-                    {lesson.isLiveNow && (
-                      <p className="text-[12px] text-[#7B7B7B] flex items-center gap-1">
-                        <Image alt="live" src={Live} width={16} height={16} />
-                        Start at: {lesson.startAt}
-                      </p>
-                    )}
-
-                    {!lesson.isLiveNow && (
-                      <div className="flex items-center justify-between">
-                        <div className="mt-2 flex items-center justify-center gap-1 text-[12px] text-[#7B7B7B]">
-                          <ClockWheelIcon />
-                          <span>{lesson.date}</span>
-                        </div>
-
-                        <div className="flex items-center justify-center gap-1 text-[12px] text-[#7B7B7B]">
-                          <ClockWheelIcon />
-                          <span>{lesson.time}</span>
-                        </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">
+                    {lesson.title}
+                  </h3>
+                  {lesson.isLiveNow ? (
+                    <p className="text-xs text-red-600 font-medium flex items-center gap-1 mt-1">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block"></span>
+                      Starts at {lesson.startAt}
+                    </p>
+                  ) : (
+                    <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-1">
+                        <ClockWheelIcon />
+                        <span>{lesson.date}</span>
                       </div>
-                    )}
-                  </div>
-                  {lesson.isLiveNow && (
-                    <CommonButton
-                      text="Join"
-                      className="!bg-red-500 !text-white w-[20%] "
-                    />
+                      <span>•</span>
+                      <span>{lesson.time}</span>
+                    </div>
                   )}
                 </div>
+                {lesson.isLiveNow && (
+                  <CommonButton
+                    text="Join"
+                    className="!bg-[var(--error)] hover:!bg-red-700 !text-white !h-7 !text-xs !px-3 !rounded-[6px] shrink-0"
+                  />
+                )}
               </div>
             ))}
           </div>

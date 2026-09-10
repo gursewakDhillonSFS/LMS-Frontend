@@ -8,7 +8,7 @@ import CustomTabSwitcher from "@/components/CustomTabSwitcher";
 import { AssignmentTab } from "@/utils/constant";
 import { Alert, Modal, Radio, Spin, Input } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 
 interface QuizQuestion {

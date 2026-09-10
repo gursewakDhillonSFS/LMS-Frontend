@@ -59,32 +59,33 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   }, [pathname, dispatch]);
 
   return (
-    <Layout className="!min-h-screen">
-      <div className={`bg-navcolor lg:px-[12px] `}>
+    <Layout className="!min-h-screen !bg-[var(--bg)]">
+      <div className="bg-white border-r border-[var(--border)]">
         <Sider
           trigger={null}
-          width={200}
+          width={240}
           collapsible
           collapsed={collapsed}
           breakpoint="lg"
           onBreakpoint={(broken) => {
             setCollapsed(broken);
           }}
-          className="!sticky !top-0"
+          className="!sticky !top-0 !bg-white !max-h-screen"
+          style={{ background: "#FFFFFF" }}
         >
           <div
             onClick={() => setCollapsed((prev) => !prev)}
-            className="bg-navcolor cursor-pointer flex items-center justify-center py-[10px] border-b-1 border-[#818B9A] border-dashed !pb-[20px]"
+            className="bg-white cursor-pointer flex items-center justify-center py-[16px] px-[16px] border-b border-[var(--border)]"
           >
             {collapsed ? (
               <HeaderSmallLogo />
             ) : (
-              <HeaderLogoIcon textColor="white" />
+              <HeaderLogoIcon textColor="var(--text-primary)" />
             )}
           </div>
           <Menu
             prefixCls="custom-sidebar-menu"
-            className="!bg-navcolor !pt-[15px] !flex !flex-col !items-center lg:gap-[10px]"
+            className="!bg-white !pt-[12px] !px-[8px] !flex !flex-col !items-stretch"
             theme="dark"
             mode="inline"
             selectedKeys={[activeTab]}
@@ -135,11 +136,11 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           />
         </Sider>
       </div>
-      <Layout>
-        <Header className="!p-0 !flex !bg-white !sticky !top-0 !z-50">
+      <Layout className="!bg-[var(--bg)]">
+        <Header className="!p-0 !flex !bg-white !sticky !top-0 !z-50 !h-[64px] !border-b !border-[var(--border)]" style={{ lineHeight: 'normal' }}>
           <UserHeader />
         </Header>
-        <Content className="!p-2 lg:!p-4">{children}</Content>
+        <Content className="!p-3 lg:!p-6">{children}</Content>
       </Layout>
     </Layout>
   );

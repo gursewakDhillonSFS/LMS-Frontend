@@ -62,58 +62,65 @@ export default function ExploreSkill() {
     }
   }, [selectedTag, data]);
   return (
-    <div className="bg-black text-white flex flex-col items-center px-[40px] xl:px-[120px] pb-[25px] xl:pb-[80px] gap-[25px] xl:gap-[40px]">
-      <div className="flex flex-col items-center xl:px-[135px] gap-[25px] xl:gap-[40px]">
-        <h1
-          className={`text-[36px] lg:text-[56px] text-center fjalla-one-regular `}
-        >
+    <section className="bg-[var(--background)] py-16 px-6 md:px-12 xl:px-24 flex flex-col items-center gap-10">
+      <div className="flex flex-col items-center gap-3 text-center max-w-3xl">
+        <h2 className="text-[28px] md:text-[40px] font-bold text-[var(--text-primary)] tracking-tight">
           Explore Inspiring Online Courses
-        </h1>
-        <div className="flex flex-wrap justify-center gap-3">
-          {data.map((category, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedTag(category?.category_id)}
-              className={`px-[24px] h-[40px] cursor-pointer rounded-[24px] transition-all duration-300 ease-in-out border ${
-                category?.category_id === selectedTag
-                  ? "bg-green-500 text-black"
-                  : "border-gray-600 hover:bg-gray-200 hover:!text-black"
-              }`}
-            >
-              {category?.category_name}
-            </button>
-          ))}
+        </h2>
+        <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] leading-relaxed">
+          Choose from thousands of curated courses across technology, design, business, and creative disciplines.
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-2 pt-4">
+          {data?.map((category) => {
+            const isSelected = category?.category_id === selectedTag;
+            return (
+              <button
+                key={category?.category_id}
+                onClick={() => setSelectedTag(category?.category_id)}
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-150 cursor-pointer border ${
+                  isSelected
+                    ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-xs"
+                    : "bg-white text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                {category?.category_name}
+              </button>
+            );
+          })}
         </div>
       </div>
-      {loading || courses?.length > 0 ? (
-        loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[12px]">
-            {[1, 2, 3].map((index) => (
-              <CourseCardSkeleton key={index} />
-            ))}
-          </div>
+
+      <div className="w-full max-w-7xl">
+        {loading || courses?.length > 0 ? (
+          loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((index) => (
+                <CourseCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {courses.map((course) => (
+                <CourseCard
+                  key={course?.course_id}
+                  data={course}
+                  onClick={courseRedirect}
+                />
+              ))}
+            </div>
+          )
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[12px]">
-            {courses.map((course) => (
-              <CourseCard
-                key={course?.course_id}
-                data={course}
-                onClick={courseRedirect}
-              />
-            ))}
-          </div>
-        )
-      ) : (
-        <NoDataFound height={"200px"} />
-      )}
+          <NoDataFound height="240px" />
+        )}
+      </div>
 
       <CommonButton
         onClick={() => router.push(`${RoutePaths?.Browse}`)}
-        text={"See More"}
-        bgColor="black"
-        className="border-1 border-[#FFFFFF] text-white px-[32px] py-[10px]"
+        text="View All Courses"
+        className="!bg-white !text-[var(--text-primary)] !border !border-[var(--border)] hover:!border-[var(--primary)] hover:!text-[var(--primary)] px-8 py-2.5 font-medium shadow-xs"
       />
-    </div>
+    </section>
   );
 }
 

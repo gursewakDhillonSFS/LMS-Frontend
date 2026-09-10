@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Switch } from "antd";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 
 const steps = [
   { key: "All", value: "Receive All Notifications", desc: "Get all educational content and platform updates." },

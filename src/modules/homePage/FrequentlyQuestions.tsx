@@ -53,27 +53,46 @@ const faqData: FAQItem[] = [
 ];
 
 const renderExpandIcon = (panelProps: { isActive?: boolean }) => (
-  <PlusOutlined rotate={panelProps.isActive ? 45 : 0} className="text-white" />
+  <PlusOutlined
+    rotate={panelProps.isActive ? 45 : 0}
+    className="text-[var(--text-secondary)] text-[14px] transition-transform duration-200"
+  />
 );
 
 export default function FAQSection() {
   return (
-    <div className="bg-black flex flex-col gap-[40px] px-[50px] xl:px-[250px] text-white pt-[40px] xl:pt-[80px]">
-      <h2 className="text-[36px] lg:text-[56px] font-bold text-center">
-        Frequently Asked Questions
-      </h2>
-      <Collapse
-        prefixCls="custom-collapse"
-        accordion
-        expandIconPosition="end"
-        expandIcon={renderExpandIcon}
-        ghost
-        items={faqData.map((item, index) => ({
-          key: index.toString(),
-          label: <span className="text-[20px]">{item.question}</span>,
-          children: <p className="text-[16px] text-white">{item.answer}</p>,
-        }))}
-      />
-    </div>
+    <section className="bg-[var(--surface-subtle)] border-t border-[var(--border)] py-16 px-6 md:px-16 xl:px-48 flex flex-col gap-10">
+      <div className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto">
+        <h2 className="text-[28px] md:text-[40px] font-bold text-[var(--text-primary)] tracking-tight">
+          Frequently Asked Questions
+        </h2>
+        <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] leading-relaxed">
+          Everything you need to know about our courses, subscriptions, certification, and platform features.
+        </p>
+      </div>
+
+      <div className="max-w-4xl mx-auto w-full bg-white border border-[var(--border)] rounded-[12px] p-2 shadow-xs">
+        <Collapse
+          prefixCls="custom-collapse"
+          accordion
+          expandIconPosition="end"
+          expandIcon={renderExpandIcon}
+          ghost
+          items={faqData.map((item, index) => ({
+            key: index.toString(),
+            label: (
+              <span className="text-[15px] md:text-[17px] font-medium text-[var(--text-primary)]">
+                {item.question}
+              </span>
+            ),
+            children: (
+              <p className="text-[14px] md:text-[15px] text-[var(--text-secondary)] leading-relaxed pb-2">
+                {item.answer}
+              </p>
+            ),
+          }))}
+        />
+      </div>
+    </section>
   );
 }

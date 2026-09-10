@@ -19,7 +19,7 @@ import { RootState } from "@/redux/store";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
 import { CourseInfoDataProp } from "@/utils/interface";
 import { getCourseInfoApi, updateCourseStatus } from "@/services/collections";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast";
 import { setInstructorCourseTab } from "@/redux/tabslice/InstructorCourseTabSlice";
 
 const CourseDetails = () => {
