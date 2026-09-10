@@ -75,5 +75,24 @@
     "free": "Free",
     "all": "All",
     "popular": "Popular"
+  },
+  "notFound": {
+    "badge": "404 ERROR — PAGE NOT FOUND",
+    "title": "Lost in Your Learning Pathway?",
+    "description": "The page or course you are looking for might have been moved, renamed, or is temporarily unavailable. Let's get you back on track to achieving your goals.",
+    "backHome": "Back to Home",
+    "exploreCourses": "Explore Courses",
+    "goBack": "Go Back",
+    "searchPlaceholder": "Search for courses, skills, or topics...",
+    "searchButton": "Search",
+    "quickLinksTitle": "Helpful destinations to continue learning:",
+    "allCourses": "Browse All Courses",
+    "allCoursesDesc": "Explore 1,000+ top-rated courses in tech, business, & design",
+    "trending": "Trending Programs",
+    "trendingDesc": "Discover what students and professionals are mastering this week",
+    "help": "Help & Support",
+    "helpDesc": "Find quick answers or get in touch with our student support team",
+    "becomeInstructor": "Teach on Skillora",
+    "becomeInstructorDesc": "Share your expertise and inspire learners across the globe"
   }
 }

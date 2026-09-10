@@ -75,5 +75,24 @@
     "free": "Gratuit",
     "all": "Tous",
     "popular": "Populaire"
+  },
+  "notFound": {
+    "badge": "ERREUR 404 — PAGE INTROUVABLE",
+    "title": "Perdu dans votre parcours d'apprentissage ?",
+    "description": "La page ou le cours que vous recherchez a peut-être été déplacé, renommé ou est temporairement indisponible. Reprenons la route ensemble pour atteindre vos objectifs.",
+    "backHome": "Retour à l'accueil",
+    "exploreCourses": "Explorer les cours",
+    "goBack": "Page précédente",
+    "searchPlaceholder": "Rechercher des cours, compétences ou sujets...",
+    "searchButton": "Rechercher",
+    "quickLinksTitle": "Destinations recommandées pour continuer :",
+    "allCourses": "Tous les cours",
+    "allCoursesDesc": "Explorez plus de 1 000 formations en tech, business et design",
+    "trending": "Programmes populaires",
+    "trendingDesc": "Découvrez ce que les professionnels apprennent cette semaine",
+    "help": "Centre d'aide",
+    "helpDesc": "Trouvez des réponses rapides ou contactez notre équipe support",
+    "becomeInstructor": "Enseigner sur Skillora",
+    "becomeInstructorDesc": "Partagez votre expertise et inspirez des apprenants du monde entier"
   }
 }
