@@ -47,7 +47,7 @@ Api.interceptors.response.use(
     if (error.response?.status === 401) {
       clearAuthCookies();
       if (typeof window !== "undefined") {
-        window.location.href = "/homepage";
+        window.location.href = "/";
       }
     }
     return Promise.reject(error);

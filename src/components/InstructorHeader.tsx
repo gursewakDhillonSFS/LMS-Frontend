@@ -78,12 +78,12 @@ const InstructorHeader = () => {
       Cookies.remove("profileStatus");
       dispatch(resetAllSlices());
       if (typeof window !== "undefined") {
-        window.location.href = "/homepage";
+        window.location.href = "/";
       }
     } catch (error) {
       console.log(error);
       if (typeof window !== "undefined") {
-        window.location.href = "/homepage";
+        window.location.href = "/";
       }
     }
   };

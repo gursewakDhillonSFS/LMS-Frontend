@@ -15,6 +15,7 @@ export function middleware(request: NextRequest) {
   }
 
   const publicRoutes = [
+    "/",
     "/becomeInstructor",
     "/browse",
     "/homepage",
@@ -52,11 +53,17 @@ export function middleware(request: NextRequest) {
   const teacherRoutes = ["/teacher"];
   const adminRoutes = ["/admin"];
 
-  if (pathname === "/" || pathname === "/becomeInstructor") {
-    return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
+  if (pathname === "/homepage") {
+    return NextResponse.redirect(new URL("/", request.url), 308);
   }
 
-  const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
+  if (pathname === "/becomeInstructor") {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  const isPublic =
+    pathname === "/" ||
+    publicRoutes.some((route) => route !== "/" && pathname.startsWith(route));
   const isUser = userRoutes.some((route) => pathname.startsWith(route));
   const isInstructor = instructorRoutes.some((route) =>
     pathname.startsWith(route)
@@ -96,7 +103,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (!token && (isUser || isInstructor || isTeacher || isAdmin)) {
-    return NextResponse.redirect(new URL(RoutePaths?.Homepage, request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (token && role) {

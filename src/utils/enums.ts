@@ -77,7 +77,7 @@ export enum RoutePaths {
   // Public Routes
   BecomeInstructor = "/becomeInstructor",
   Browse = "/browse",
-  Homepage = "/homepage",
+  Homepage = "/",
   Onboarding = "/onboarding",
   Subscription = "/subscription",
 

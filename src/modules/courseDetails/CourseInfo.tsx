@@ -326,11 +326,6 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     onError={() => setImgError(true)}
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-slate-950/25 flex items-center justify-center">
-                    <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#4F46E5] shadow-xl group-hover:scale-110 transition-transform cursor-pointer">
-                      <PlayCircleFilled className="text-3xl text-[#4F46E5]" />
-                    </div>
-                  </div>
                 </div>
 
                 {/* Floating Badge */}

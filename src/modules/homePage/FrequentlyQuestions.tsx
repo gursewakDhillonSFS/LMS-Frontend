@@ -82,14 +82,6 @@ export default function FrequentlyQuestions() {
               Find quick answers to common questions about our courses, platform, and more.
             </p>
           </div>
-
-          <Link
-            href="/faq"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors group"
-          >
-            <span>View All FAQs</span>
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </Link>
         </div>
 
         {/* 2-Column FAQ Layout */}
