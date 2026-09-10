@@ -1,7 +1,6 @@
 import HeroImage from "../assets/HeroImage.png";
 import ModernSkillImage from "../assets/ModernSkillImage.png";
 import CardImage from "../assets/CardImage.png";
-import TestimonialImage from "../assets/Testimonial.png";
 import OnlineClasses from "../assets/OnlineClasses.png";
 import CourseDetail from "../assets/CourseDetail.png";
 import Avtar from "../assets/Avtar.png";
@@ -29,7 +28,6 @@ export {
   HeroImage,
   ModernSkillImage,
   CardImage,
-  TestimonialImage,
   OnlineClasses,
   CourseDetail,
   Avtar,

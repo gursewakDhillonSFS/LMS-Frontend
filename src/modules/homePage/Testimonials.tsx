@@ -2,8 +2,7 @@
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { Carousel } from "antd";
-import { CarouselRef } from "antd/es/carousel";
-import { TestimonialImage } from "@/utils/images";
+import type { CarouselRef } from "antd/es/carousel";
 import { LeftIcon, QuoteIcon, RightIcon } from "@/utils/icons";
 
 interface TestimonialProps {
@@ -163,16 +162,6 @@ const Testimonial = () => {
             <Card data={testimonial} key={index} />
           ))}
         </Carousel>
-
-        <div className="relative px-6 xl:px-48 pt-4">
-          <Image
-            src={TestimonialImage}
-            alt="Testimonial Background"
-            fill
-            unoptimized
-            className="!relative rounded-[12px] opacity-90"
-          />
-        </div>
       </section>
     )
   );
