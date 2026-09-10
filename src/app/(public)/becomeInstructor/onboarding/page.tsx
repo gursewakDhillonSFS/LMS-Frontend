@@ -343,7 +343,7 @@ const ProfileSetup = () => {
       if (organisation?.photo_url) {
         const fullImageUrl = organisation.photo_url.startsWith("http")
           ? organisation.photo_url
-          : `${process.env.NEXT_PUBLIC_BASE_URL}${organisation.photo_url}`;
+          : `${process.env.NEXT_PUBLIC_BASE_URL}/${organisation.photo_url}`;
         setProfilePhoto(fullImageUrl);
       }
     }

@@ -3,7 +3,7 @@ import React from "react";
 import type { Metadata } from "next";
 import JsonLd, { getBreadcrumbSchema } from "@/components/JsonLd";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://skillora.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillora.com";
 
 export const metadata: Metadata = {
   title: "Browse Online Courses & Certifications | Skillora",

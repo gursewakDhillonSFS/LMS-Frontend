@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import React from "react";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://skillora.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillora.com";
 
 export const metadata: Metadata = {
   title: "Course Details & Curriculum | Skillora",

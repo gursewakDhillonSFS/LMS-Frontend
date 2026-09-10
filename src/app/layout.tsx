@@ -55,7 +55,7 @@ const notoSansGurmukhi = Noto_Sans_Gurmukhi({
   display: "swap",
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://skillora.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillora.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
