@@ -1,35 +1,55 @@
-"use client";
-import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
-import OnboardingSubscription from "@/modules/onboard/OnboardingSubscription";
-import { HomeIcon } from "@/utils/icons";
-import { Breadcrumb } from "antd";
 import React from "react";
+import type { Metadata } from "next";
+import SubscriptionWrapper from "@/modules/subscription/SubscriptionWrapper";
+import JsonLd, { getBreadcrumbSchema } from "@/components/JsonLd";
 
-const page = () => {
-  const items = [
-    {
-      title: <HomeIcon />,
-      href: "/",
-    },
-    {
-      title: "Learning + Pro",
-    },
-  ];
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://skillora.com";
+
+export const metadata: Metadata = {
+  title: "Skillora Pro Membership — Unlimited Access to All Courses",
+  description:
+    "Unlock unlimited access to 1,000+ courses, hands-on projects, verified certificates, and mentor support with Skillora Pro.",
+  keywords: [
+    "Skillora Pro",
+    "course subscription",
+    "unlimited learning",
+    "tech certificates",
+    "coding membership",
+  ],
+  alternates: {
+    canonical: `${baseUrl}/subscription`,
+  },
+  openGraph: {
+    title: "Skillora Pro Membership — Unlimited Access to All Courses",
+    description:
+      "Unlock unlimited access to 1,000+ courses, hands-on projects, verified certificates, and mentor support with Skillora Pro.",
+    url: `${baseUrl}/subscription`,
+    type: "website",
+    siteName: "Skillora",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Skillora Pro Membership — Unlimited Access to All Courses",
+    description:
+      "Unlock unlimited access to 1,000+ courses, hands-on projects, verified certificates, and mentor support with Skillora Pro.",
+  },
+};
+
+const SubscriptionPage = () => {
+  const breadcrumbs = getBreadcrumbSchema(
+    [
+      { name: "Home", item: "/" },
+      { name: "Skillora Pro", item: "/subscription" },
+    ],
+    baseUrl
+  );
+
   return (
-    <div>
-      <div className="px-[20px] xl:px-[120px]">
-        <Breadcrumb
-          separator={<span className="text-[#002333] font-[700]">{">"}</span>}
-          items={items}
-          itemRender={(item) => <BreadcrumbItemRender item={item} />}
-          className=" !pt-[20px]"
-        />
-        <div className="my-10">
-          <OnboardingSubscription isHome={true} />
-        </div>
-      </div>
-    </div>
+    <>
+      <JsonLd id="subscription-breadcrumbs-schema" data={breadcrumbs} />
+      <SubscriptionWrapper />
+    </>
   );
 };
 
-export default page;
+export default SubscriptionPage;

@@ -35,7 +35,7 @@ const testimonials: TestimonialItem[] = [
     role: "UI/UX Design Learner",
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
     feedback:
-      "Learning+ gave me the confidence to switch my career. Great content and supportive community!",
+      "Skillora gave me the confidence to switch my career. Great content and supportive community!",
     rating: 5,
   },
   {
@@ -79,7 +79,7 @@ export default function Testimonials() {
               What Our Learners Say
             </h2>
             <p className="text-sm sm:text-base text-[#64748B] mt-2 max-w-xl">
-              Join thousands of students who have already transformed their lives with Learning+.
+              Join thousands of students who have already transformed their lives with Skillora.
             </p>
           </div>
 

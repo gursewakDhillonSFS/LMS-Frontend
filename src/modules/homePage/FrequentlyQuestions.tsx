@@ -40,12 +40,12 @@ const faqsRight: FAQItem[] = [
   {
     question: "Can I access courses on mobile?",
     answer:
-      "Yes, Learning+ is fully responsive on all devices, and you can download our native iOS or Android mobile apps for offline learning.",
+      "Yes, Skillora is fully responsive on all devices, and you can download our native iOS or Android mobile apps for offline learning.",
   },
   {
     question: "How do I contact support?",
     answer:
-      "Our dedicated support team is available 24/7 via live chat, email at support@learningplus.com, or through our community help forum.",
+      "Our dedicated support team is available 24/7 via live chat, email at support@skillora.com, or through our community help forum.",
   },
   {
     question: "Are the courses self-paced?",

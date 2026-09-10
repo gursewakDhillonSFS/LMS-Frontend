@@ -185,7 +185,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
       </div>
 
       <p className="text-center text-sm text-slate-600 pb-1">
-        New to Learning+?{" "}
+        New to Skillora?{" "}
         <CommonLink
           text="Create an Account"
           className="font-bold text-[#4F46E5] hover:text-[#4338CA] hover:underline"

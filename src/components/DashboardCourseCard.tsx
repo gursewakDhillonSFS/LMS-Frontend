@@ -154,7 +154,7 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
         </div>
         <div className="text-[12px]">
           <span className="text-[var(--text-secondary)]">Include with </span>
-          <CommonLink text="Learning+ Pro" />
+          <CommonLink text="Skillora Pro" />
         </div>
       </div>
     </div>

@@ -183,7 +183,7 @@ const Footer: React.FC = () => {
         {/* Copyright & Scroll To Top */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="w-full text-center sm:text-left">
-            © 2025. Learning+. All Rights Reserved.
+            © 2026. Skillora. All Rights Reserved.
           </div>
           <button
             onClick={scrollToTop}

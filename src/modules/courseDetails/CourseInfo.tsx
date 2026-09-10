@@ -304,7 +304,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 <span className="text-slate-300">|</span>
                 <div className="flex items-center gap-1.5 text-indigo-700 font-semibold">
                   <CrownOutlined className="text-indigo-600" />
-                  <span>Included with Learning+ Pro</span>
+                  <span>Included with Skillora Pro</span>
                 </div>
               </div>
             </div>
@@ -319,8 +319,9 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                         ? courseImageUrl
                         : Fallback
                     }
-                    alt={coursesInfo?.course_name || "Course preview"}
+                    alt={coursesInfo?.course_name ? `${coursesInfo.course_name} syllabus preview` : "Skillora course curriculum preview"}
                     fill
+                    priority
                     unoptimized
                     onError={() => setImgError(true)}
                     className="object-cover group-hover:scale-105 transition-transform duration-500"

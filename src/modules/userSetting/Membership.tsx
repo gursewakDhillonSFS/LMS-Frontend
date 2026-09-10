@@ -34,7 +34,7 @@ const Membership = () => {
             <div className="flex items-start justify-between">
               <div className="flex flex-col">
                 <h1 className="text-[24px] leading-[120%] font-bold text-secondary">
-                  Learning+ Pro
+                  Skillora Pro
                 </h1>
                 <h1 className="text-[20px] leading-[120%] font-semibold text-[#111111]">
                   $99/mo

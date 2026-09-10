@@ -66,7 +66,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           open={login}
           onClose={() => dispatch(setSignin(false))}
           title="Log Into Account"
-          subtitle="Welcome to Learning+, please enter your login details to access your account."
+          subtitle="Welcome to Skillora, please enter your login details to access your account."
         >
           <SignInForm
             onSignUp={() => {
@@ -101,7 +101,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           onClose={() => dispatch(setForgotPass(false))}
           title="Forgot password"
           centered={true}
-          subtitle="Enter the email address you use on Learning+. We'll end you a OTP to reset your password."
+          subtitle="Enter the email address you use on Skillora. We'll send you an OTP to reset your password."
         >
           <ForgetPassword
             onOtp={() => {

@@ -13,37 +13,104 @@ import Provider from "./Provider";
 import "react-phone-input-2/lib/style.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import JsonLd, { getOrganizationSchema, getWebSiteSchema } from "@/components/JsonLd";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
+  display: "swap",
 });
 
 const plus_jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-plus-jakarta-sans",
+  display: "swap",
 });
 
 const fjallaOne = Fjalla_One({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-fjalla-one",
+  display: "swap",
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://skillora.com";
+
 export const metadata: Metadata = {
-  title: "Learning+ — Professional Learning Management System",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    template: "%s | Skillora",
+  },
   description:
-    "Start, switch, or advance your career with professional courses, certifications, and degrees from world-class instructors.",
+    "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors on Skillora.",
+  keywords: [
+    "Skillora",
+    "online learning platform",
+    "tech courses",
+    "web development",
+    "data science",
+    "artificial intelligence",
+    "UI UX design",
+    "professional certifications",
+    "self-paced learning",
+  ],
+  authors: [{ name: "Skillora Inc." }],
+  creator: "Skillora",
+  publisher: "Skillora",
+  applicationName: "Skillora",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: baseUrl,
+    siteName: "Skillora",
+    title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    description:
+      "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors.",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Skillora — Modern Learning Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    description:
+      "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors.",
+    creator: "@skillora",
+    images: ["/images/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -51,16 +118,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = getOrganizationSchema(baseUrl);
+  const websiteSchema = getWebSiteSchema(baseUrl);
+
   return (
     <html lang="en">
+      <head>
+        <JsonLd id="organization-schema" data={organizationSchema} />
+        <JsonLd id="website-schema" data={websiteSchema} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${fjallaOne.variable} ${poppins.variable} ${plus_jakarta.variable} antialiased scrollbar-hide`}
-        style={{ fontFamily: "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+        style={{
+          fontFamily:
+            "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        }}
       >
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
         >
-          {" "}
           <Provider>{children}</Provider>
         </GoogleOAuthProvider>
       </body>

@@ -160,7 +160,7 @@ const CategoriesSideBar = () => {
             Learn Anytime, Anywhere
           </h4>
           <p className="text-[11px] text-[#475467] leading-relaxed">
-            Build your skills and create a better future with Learning+.
+            Build your skills and create a better future with Skillora.
           </p>
         </div>
 
