@@ -19,6 +19,8 @@ interface UserState {
   education_level: string;
   organization_id: string;
   instructor_id: string;
+  teacherId?: string;
+  teacher_id?: string;
   subscription_status: string;
   subscription_id: string;
 }

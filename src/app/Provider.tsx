@@ -5,6 +5,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { ToastContainer } from "react-toastify";
 import { store, persistor } from "@/redux/store";
+import GlobalAnnouncementListener from "@/components/GlobalAnnouncementListener";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -30,6 +31,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           }
           persistor={persistor}
         >
+          <GlobalAnnouncementListener />
           {children}
         </PersistGate>
       </ReduxProvider>

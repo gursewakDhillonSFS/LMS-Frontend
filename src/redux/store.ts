@@ -22,6 +22,7 @@ import AuthModalReducer from "./slices/AuthModalSlice";
 import userDataReducer from "./slices/UserDataSlice";
 import createCourseReducer from "./slices/CreateCourseSlice";
 import TeacherDataSlice from "./slices/TeacherDataSlice";
+import announcementReducer from "./slices/AnnouncementSlice";
 
 const rootReducer = combineReducers({
   categories: categoriesReducer,
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
   instructorCourseTab: instructorCourseTabReducer,
   instructorStudenttab: instructorStudentTabReducer,
   announcementTab: announcementTabReducer,
+  announcement: announcementReducer,
 });
 
 const createNoopStorage = () => ({

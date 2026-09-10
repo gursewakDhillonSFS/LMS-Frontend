@@ -18,6 +18,8 @@ import AnnouncementPanel from "./AnnouncementPanel";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAllSlices } from "@/redux/resetSlice";
+import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
+import { markAnnouncementsAsReadApi } from "@/services/collections";
 import { RootState } from "@/redux/store";
 import { RoutePaths } from "@/utils/enums";
 import Cookies from "js-cookie";
@@ -25,6 +27,9 @@ import Cookies from "js-cookie";
 const UserHeader = () => {
   const full_name = useSelector(
     (state: RootState) => state.userdata?.full_name
+  );
+  const unreadAnnouncementCount = useSelector(
+    (state: RootState) => state.announcement?.unreadCount || 0
   );
   const role = useSelector((state: RootState) => state.userdata?.role_name);
   const profile_img = useSelector(
@@ -138,8 +143,23 @@ const UserHeader = () => {
       />
 
       <div className="flex items-center gap-[12px] cursor-pointer">
-        <div onClick={() => setAnnouncementDrawer(true)}>
-          <EarPhoneIcon />
+        <div
+          onClick={() => {
+            setAnnouncementDrawer(true);
+            if (unreadAnnouncementCount > 0) {
+              dispatch(resetUnreadCount());
+              markAnnouncementsAsReadApi().catch(console.error);
+            }
+          }}
+        >
+          <Badge
+            count={unreadAnnouncementCount}
+            overflowCount={99}
+            size="small"
+            offset={[-2, 2]}
+          >
+            <EarPhoneIcon />
+          </Badge>
         </div>
         <div className="h-[23px] border-l-1 border-[#C8C8C8] "></div>
         <div onClick={() => setNotificationDrawer(true)}>

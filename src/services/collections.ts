@@ -410,6 +410,18 @@ const GET_ANNOUNCEMENTS_BY_INSTRUCTOR = "/auth/announcement/v1/by-instructor";
 const UPDATE_ANNOUNCEMENT = "/auth/announcement/v1/update";
 const DELETE_ANNOUNCEMENT = "/auth/announcement/v1/delete";
 
+export const getMyAnnouncementsApi = (params?: URLSearchParams) =>
+  getApi(`/auth/announcement/v1/my-announcements${params ? '?' + params : ''}`);
+
+export const getUnreadAnnouncementCountApi = () =>
+  getApi("/auth/announcement/v1/unread-count");
+
+export const markAnnouncementsAsReadApi = () =>
+  postApi("/auth/announcement/v1/mark-all-read", {});
+
+export const triggerDueDateCheckApi = () =>
+  postApi("/auth/announcement/v1/trigger-due-date-check", {});
+
 export const createAnnouncementApi = (payload: object) =>
   postApi(CREATE_ANNOUNCEMENT, payload);
 

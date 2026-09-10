@@ -7,10 +7,13 @@ import { getAllCoursesApi } from "@/services/collections";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 interface CourseItem {
   course_id: string;
   course_name: string;
+  head_teacher_id?: string;
   batch?: Array<{
     _id: string;
     batchName: string;
@@ -82,15 +85,37 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
     }
   }, [postAnnouncement]);
 
+  const role = useSelector((state: RootState) => state.userdata?.role_name);
+  const teacherId = useSelector(
+    (state: RootState) =>
+      state.userdata?.instructor_id ||
+      state.userdata?.teacherId ||
+      state.userdata?.teacher_id
+  );
+  const isTeacherRole = role === "teacher";
+  const currentCourseId = Form.useWatch("courseId", form);
+  const selectedCourse = courses.find((c) => c.course_id === currentCourseId);
+  const canTargetAllBatches =
+    !isTeacherRole ||
+    (selectedCourse &&
+      String(selectedCourse.head_teacher_id) === String(teacherId));
+
   // Handle course change to populate batches
   const handleCourseChange = (courseId: string) => {
-    const selectedCourse = courses.find((c) => c.course_id === courseId);
-    if (selectedCourse && selectedCourse.batch) {
-      setBatches(selectedCourse.batch);
+    const courseObj = courses.find((c) => c.course_id === courseId);
+    if (courseObj && courseObj.batch) {
+      setBatches(courseObj.batch);
+      const isHead =
+        String(courseObj.head_teacher_id) === String(teacherId);
+      if (isTeacherRole && !isHead && courseObj.batch.length > 0) {
+        form.setFieldsValue({ batchId: courseObj.batch[0]._id });
+      } else {
+        form.setFieldsValue({ batchId: "" });
+      }
     } else {
       setBatches([]);
+      form.setFieldsValue({ batchId: "" });
     }
-    form.setFieldsValue({ batchId: "" });
   };
 
   // Prefill form in edit mode
@@ -182,13 +207,26 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
           {/* Select Batch */}
           <Form.Item
             name="batchId"
-            label={<span className="font-semibold text-slate-700">Select Batch (Optional)</span>}
+            label={
+              <span className="font-semibold text-slate-700">
+                Select Batch {!canTargetAllBatches ? "(Required)" : "(Optional)"}
+              </span>
+            }
+            rules={
+              !canTargetAllBatches
+                ? [{ required: true, message: "Please select a batch" }]
+                : []
+            }
           >
             <Select
-              placeholder="--All Batches--"
+              placeholder={
+                canTargetAllBatches ? "--All Batches--" : "--Select Batch--"
+              }
               className="w-full !h-[44px]"
               options={[
-                { label: "All Batches (Whole Course)", value: "" },
+                ...(canTargetAllBatches
+                  ? [{ label: "All Batches (Whole Course)", value: "" }]
+                  : []),
                 ...batches.map((b) => ({
                   label: b.batchName,
                   value: b._id,
