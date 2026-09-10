@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   HomeOutlined,
   CompassOutlined,
-  SearchOutlined,
-  ArrowLeftOutlined,
   BookOutlined,
   FireOutlined,
   CustomerServiceOutlined,
@@ -20,17 +17,6 @@ import { useTranslation } from "@/context/I18nContext";
 
 export default function NotFound() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/browse?search=${encodeURIComponent(searchQuery.trim())}`);
-    } else {
-      router.push("/browse");
-    }
-  };
 
   const quickLinks = [
     {
@@ -223,60 +209,9 @@ export default function NotFound() {
         <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight max-w-2xl mb-4 leading-snug">
           {t("common.notFound.title")}
         </h1>
-        <p className="text-base sm:text-lg text-slate-600 max-w-xl mb-8 leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-600 max-w-xl mb-12 leading-relaxed">
           {t("common.notFound.description")}
         </p>
-
-        {/* Integrated Search Bar */}
-        <form
-          onSubmit={handleSearch}
-          className="w-full max-w-md mb-8 relative flex items-center"
-        >
-          <div className="relative w-full flex items-center shadow-lg shadow-blue-500/5 rounded-2xl">
-            <SearchOutlined className="absolute left-4 text-slate-400 text-lg pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("common.notFound.searchPlaceholder")}
-              className="w-full pl-11 pr-24 py-3.5 text-sm sm:text-base bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-inner"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
-            >
-              {t("common.notFound.searchButton")}
-            </button>
-          </div>
-        </form>
-
-        {/* Action Buttons Group */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-14 w-full">
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold text-sm sm:text-base shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <HomeOutlined className="text-base" />
-            <span>{t("common.notFound.backHome")}</span>
-          </Link>
-
-          <Link
-            href="/browse"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-semibold text-sm sm:text-base border border-slate-200/90 shadow-sm hover:border-blue-300 hover:text-blue-600 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <CompassOutlined className="text-base text-blue-600" />
-            <span>{t("common.notFound.exploreCourses")}</span>
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl bg-transparent hover:bg-slate-100/80 text-slate-600 hover:text-slate-900 font-medium text-sm transition-colors"
-          >
-            <ArrowLeftOutlined className="text-xs" />
-            <span>{t("common.notFound.goBack")}</span>
-          </button>
-        </div>
 
         {/* ─── QUICK RECOVERY DESTINATIONS GRID ────────────────── */}
         <div className="w-full text-left">
