@@ -511,3 +511,26 @@ export const submitQuizApi = (
     }[];
   },
 ) => postApi(`/auth/quiz/v1/${quizId}/submit`, payload);
+
+// ─── Course Translation APIs ──────────────────────────────────────────────────
+export const getCourseTranslationsApi = (courseId: string) =>
+  getApi(`/auth/course/v1/translations/${courseId}`);
+
+export const updateCourseTranslationApi = (
+  courseId: string,
+  payload: {
+    locale: string;
+    course_name?: string;
+    about_course?: string;
+    description?: string;
+    overview?: string;
+    learning_points?: string[];
+    skills_you_gain?: string[];
+  },
+) => putApi(`/auth/course/v1/translations/${courseId}`, payload);
+
+export const regenerateCourseTranslationApi = (
+  courseId: string,
+  locale?: string,
+) => postApi(`/auth/course/v1/translations/${courseId}/regenerate`, { locale });
+

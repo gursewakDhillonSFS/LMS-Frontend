@@ -14,6 +14,7 @@ import InstructorCourseDetails from "@/modules/instructorcourses/InstructorCours
 import InstructorLesson from "@/modules/instructorcourses/InstructorLesson";
 import InstructorStudents from "@/modules/instructorcourses/InstructorStudents";
 import InstructorBatch from "@/modules/instructorcourses/InstructorBatch";
+import InstructorCourseTranslations from "@/modules/instructorcourses/InstructorCourseTranslations";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
@@ -147,6 +148,12 @@ const CourseDetails = () => {
           )}
           {activeTab === InstructorCourseDetailsTab?.BATCH && (
             <InstructorBatch
+              coursesInfo={coursesInfo}
+              fetchCourseInfo={fetchCourseInfo}
+            />
+          )}
+          {activeTab === InstructorCourseDetailsTab?.TRANSLATIONS && (
+            <InstructorCourseTranslations
               coursesInfo={coursesInfo}
               fetchCourseInfo={fetchCourseInfo}
             />

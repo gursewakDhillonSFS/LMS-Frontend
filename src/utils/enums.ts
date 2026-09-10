@@ -132,6 +132,7 @@ export enum InstructorCourseDetailsTab {
   LESSON = "lesson",
   STUDENTS = "students",
   BATCH = "batch",
+  TRANSLATIONS = "translations",
 }
 
 export enum InstructorAnnouncementsDetailsTabEnum {

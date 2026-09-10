@@ -232,6 +232,7 @@ export const InstructorCoursesDetailsTabs = [
   { label: "Lesson", key: InstructorCourseDetailsTab.LESSON },
   { label: "Students", key: InstructorCourseDetailsTab.STUDENTS },
   { label: "Batch", key: InstructorCourseDetailsTab.BATCH },
+  { label: "Translations", key: InstructorCourseDetailsTab.TRANSLATIONS },
 ];
 
 export const InstructorAnnouncementTabs = [
