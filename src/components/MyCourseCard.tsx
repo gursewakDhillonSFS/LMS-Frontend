@@ -39,7 +39,7 @@ export const MyCoursesCard: FC<MyCourseCardProp> = ({
   const courseImageUrl = getImageUrl(course_image_url);
   const teacherImageUrl = getImageUrl(instructor_url);
   return (
-    <div className="p-4 rounded-[10px] bg-white border border-[var(--border)] shadow-xs flex flex-col gap-4 hover:border-[var(--border-strong)] transition-all duration-150">
+    <div className="p-4 rounded-[12px] bg-white border border-[var(--border)] shadow-[0_1px_3px_rgba(16,24,40,0.04),0_4px_12px_rgba(16,24,40,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] flex flex-col gap-4 hover:shadow-[0_4px_16px_rgba(16,24,40,0.08),0_12px_24px_-4px_rgba(49,92,255,0.08)] hover:-translate-y-0.5 hover:border-[var(--border-strong)] transition-all duration-150">
       <div className="flex items-center gap-3.5">
         <div className="relative w-16 h-16 shrink-0 rounded-[8px] overflow-hidden bg-[var(--surface-subtle)] border border-[var(--border)]">
           <Image

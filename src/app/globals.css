@@ -25,10 +25,12 @@
   --error: #D64545;
   --error-light: #FEF2F2;
 
-  /* Neutral Palette */
-  --bg: #F8F9FB;
+  /* Neutral Palette — Layer 1 & 2 */
+  --bg: #F4F6FA;
+  --bg-gradient: linear-gradient(180deg, #F8FAFD 0%, #EEF2F7 100%);
   --surface: #FFFFFF;
-  --surface-subtle: #F3F4F6;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #F6F8FB;
   --surface-hover: #F9FAFB;
 
   /* Text */
@@ -40,12 +42,25 @@
   /* Borders */
   --border: #E4E7EC;
   --border-strong: #D0D5DD;
+  --border-subtle: rgba(228, 231, 236, 0.85);
 
-  /* Shadows */
+  /* Layered 3D Depth Shadows */
   --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
-  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.06), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, 0.08), 0 4px 8px -2px rgba(16, 24, 40, 0.03);
+  
+  --shadow-card: 0 1px 3px rgba(16, 24, 40, 0.04), 0 4px 12px rgba(16, 24, 40, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-card-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 16px 32px -4px rgba(49, 92, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-table: 0 1px 3px rgba(16, 24, 40, 0.04), 0 6px 18px -2px rgba(16, 24, 40, 0.06);
+  --shadow-elevated: 0 4px 16px -2px rgba(16, 24, 40, 0.06), 0 12px 32px -4px rgba(16, 24, 40, 0.08);
+  --shadow-button-primary: 0 1px 2px rgba(16, 24, 40, 0.08), 0 2px 6px rgba(49, 92, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --shadow-button-primary-hover: 0 2px 4px rgba(16, 24, 40, 0.08), 0 6px 14px rgba(49, 92, 255, 0.35);
+  --shadow-button-secondary: 0 1px 2px rgba(16, 24, 40, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-input: 0 1px 2px rgba(16, 24, 40, 0.03), inset 0 1px 2px rgba(16, 24, 40, 0.02);
+  --shadow-input-focus: 0 0 0 3px rgba(49, 92, 255, 0.14), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-modal: 0 12px 32px -4px rgba(16, 24, 40, 0.14), 0 24px 60px -8px rgba(16, 24, 40, 0.16);
+  --shadow-dropdown: 0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 12px 24px -4px rgba(16, 24, 40, 0.1);
 
   /* Radius */
   --radius-sm: 6px;
@@ -90,7 +105,8 @@
 body {
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text-primary);
-  background-color: var(--bg);
+  background: var(--bg-gradient) fixed;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
@@ -270,11 +286,15 @@ body {
 .common-modal .common-modal-content {
   padding: 24px;
   border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal) !important;
+  border: 1px solid var(--border);
 }
 
 .confirmation-modal .confirmation-modal-content {
   border-radius: var(--radius-xl) !important;
   padding: 24px !important;
+  box-shadow: var(--shadow-modal) !important;
+  border: 1px solid var(--border);
 }
 
 .confirmation-modal-root .confirmation-modal-wrap::-webkit-scrollbar {
@@ -289,20 +309,34 @@ body {
   padding: 0 !important;
 }
 
+.ant-drawer .ant-drawer-content {
+  box-shadow: var(--shadow-modal) !important;
+}
+
 /* ============================================
    Ant Design Overrides — Table
    ============================================ */
+
+.custom-table-wrapper,
+.ant-table-wrapper {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-table) !important;
+  overflow: hidden !important;
+}
 
 .table-row-light {
   background-color: #ffffff;
 }
 
 .table-row-dark {
-  background-color: var(--surface-subtle);
+  background-color: #FAFBFD;
 }
 
-.custom-table-thead .custom-table-cell {
-  background: white !important;
+.custom-table-thead .custom-table-cell,
+.ant-table-thead > tr > th {
+  background: #F8FAFD !important;
   font-weight: 600 !important;
   color: var(--text-secondary) !important;
   font-size: 13px !important;
@@ -314,19 +348,107 @@ body {
   border-bottom: 1px solid var(--border-strong) !important;
 }
 
+.ant-table-tbody > tr:hover > td,
+.custom-table-wrapper .ant-table-tbody > tr:hover > td {
+  background-color: #F6F9FF !important;
+}
+
 .custom-table-wrapper .custom-table-thead > tr > th:not(:last-child):not(.custom-table-selection-column):not(.custom-table-row-expand-icon-cell):not([colspan])::before,
 :where(.css-dev-only-do-not-override-mc1tut).custom-table-wrapper .custom-table-thead > tr > td:not(:last-child):not(.custom-table-selection-column):not(.custom-table-row-expand-icon-cell):not([colspan])::before {
   content: none !important;
 }
 
 /* ============================================
-   Ant Design Overrides — Dropdown
+   Ant Design Overrides — Dropdown & Popover
    ============================================ */
 
 .custom-dropdown-header-menu-item {
   padding: 0 !important;
   margin: 4px 0 !important;
 }
+
+.ant-dropdown .ant-dropdown-menu,
+.ant-select-dropdown,
+.ant-popover .ant-popover-inner {
+  box-shadow: var(--shadow-dropdown) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+/* ============================================
+   Reusable 3D Depth Classes
+   ============================================ */
+
+.card-depth {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  border-radius: 12px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-depth:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+  border-color: rgba(49, 92, 255, 0.25);
+}
+
+.card-depth-subtle {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  border-radius: 10px;
+  transition: all 150ms ease;
+}
+
+.card-depth-subtle:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-strong);
+}
+
+.button-depth-primary {
+  background: linear-gradient(180deg, #3864FF 0%, #2952F0 100%) !important;
+  box-shadow: var(--shadow-button-primary) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.button-depth-primary:hover {
+  box-shadow: var(--shadow-button-primary-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+.button-depth-primary:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1) !important;
+}
+
+.button-depth-secondary {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%) !important;
+  border: 1px solid var(--border-strong) !important;
+  box-shadow: var(--shadow-button-secondary) !important;
+  transition: all 150ms ease !important;
+}
+
+.button-depth-secondary:hover {
+  background: #F4F6FB !important;
+  border-color: #B5BECE !important;
+  box-shadow: var(--shadow-sm) !important;
+  transform: translateY(-1px) !important;
+}
+
+.input-depth {
+  background-color: #FFFFFF !important;
+  border: 1px solid #D8DCE4 !important;
+  box-shadow: var(--shadow-input) !important;
+  transition: all 150ms ease !important;
+}
+
+.input-depth:focus {
+  border-color: var(--primary) !important;
+  box-shadow: var(--shadow-input-focus) !important;
+}
+
 
 /* ============================================
    Ant Design Overrides — Divider

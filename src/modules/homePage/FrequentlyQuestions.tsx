@@ -1,97 +1,179 @@
 "use client";
+import React, { useState } from "react";
+import Link from "next/link";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 
-import React from "react";
-import { Collapse } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-
-type FAQItem = {
+interface FAQItem {
   question: string;
   answer: string;
-};
+}
 
-const faqData: FAQItem[] = [
+const faqsLeft: FAQItem[] = [
   {
-    question: "How do I renew my subscription?",
+    question: "How do I enroll in a course?",
     answer:
-      "To renew your subscription, go to your account settings and click on “Subscription”, then choose your desired plan and complete the payment process.",
+      "Simply browse our course catalog, choose your preferred course, and click 'Enroll Now'. If you don't have an account yet, you'll be prompted to create one in seconds.",
   },
   {
-    question: "How do I cancel my subscription?",
+    question: "Can I get a refund for my subscription?",
     answer:
-      "You can cancel your subscription by navigating to your account settings, selecting “Subscription” and clicking on “Cancel Subscription”.",
+      "Yes, we offer a 30-day money-back guarantee for all new subscriptions if you're not completely satisfied with your learning experience.",
   },
   {
-    question: "Can I get a refund for my shop subscription?",
+    question: "Do you provide certificates?",
     answer:
-      "Refunds are available within 14 days of purchase if you haven’t used any premium features. Contact support for assistance.",
+      "Yes! Upon successfully completing any course or specialization track, you will receive a verified, shareable digital certificate for your portfolio and LinkedIn profile.",
   },
   {
-    question: "How do I setup Shop ?",
+    question: "What payment methods do you accept?",
     answer:
-      "To set up your shop, go to the “Shop” tab in your dashboard, follow the setup wizard, and provide necessary business details.",
-  },
-  {
-    question: "How do I check the status of my order?",
-    answer:
-      "Log in to your account, go to “My Orders”, and view the status next to each order listed.",
-  },
-  {
-    question: "If I have an issue with my order, who do I contact?",
-    answer:
-      "Please contact our support team through the “Help Center” or email support@example.com.",
-  },
-  {
-    question: "How do I return a product?",
-    answer:
-      "Go to “My Orders”, click on the order you want to return, and select “Request Return”. Follow the provided instructions.",
-  },
-  {
-    question: "As a seller, how do I manage all of my orders?",
-    answer:
-      "Navigate to the “Seller Dashboard” and click on “Orders” to view, update, and manage all customer orders.",
+      "We accept all major credit/debit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, Google Pay, and localized bank transfer options.",
   },
 ];
 
-const renderExpandIcon = (panelProps: { isActive?: boolean }) => (
-  <PlusOutlined
-    rotate={panelProps.isActive ? 45 : 0}
-    className="text-[var(--text-secondary)] text-[14px] transition-transform duration-200"
-  />
-);
+const faqsRight: FAQItem[] = [
+  {
+    question: "Is there a free trial available?",
+    answer:
+      "Absolutely! We offer a 7-day full-access free trial so you can explore premium courses, projects, and learning paths before any commitment.",
+  },
+  {
+    question: "Can I access courses on mobile?",
+    answer:
+      "Yes, Learning+ is fully responsive on all devices, and you can download our native iOS or Android mobile apps for offline learning.",
+  },
+  {
+    question: "How do I contact support?",
+    answer:
+      "Our dedicated support team is available 24/7 via live chat, email at support@learningplus.com, or through our community help forum.",
+  },
+  {
+    question: "Are the courses self-paced?",
+    answer:
+      "Yes, all courses are 100% self-paced. You can start anytime, learn on your own schedule, and retain lifetime access to course materials.",
+  },
+];
 
-export default function FAQSection() {
+export default function FrequentlyQuestions() {
+  const [openLeft, setOpenLeft] = useState<number | null>(null);
+  const [openRight, setOpenRight] = useState<number | null>(null);
+
+  const toggleLeft = (index: number) => {
+    setOpenLeft(openLeft === index ? null : index);
+  };
+
+  const toggleRight = (index: number) => {
+    setOpenRight(openRight === index ? null : index);
+  };
+
   return (
-    <section className="bg-[var(--surface-subtle)] border-t border-[var(--border)] py-16 px-6 md:px-16 xl:px-48 flex flex-col gap-10">
-      <div className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto">
-        <h2 className="text-[28px] md:text-[40px] font-bold text-[var(--text-primary)] tracking-tight">
-          Frequently Asked Questions
-        </h2>
-        <p className="text-[14px] md:text-[16px] text-[var(--text-secondary)] leading-relaxed">
-          Everything you need to know about our courses, subscriptions, certification, and platform features.
-        </p>
-      </div>
+    <section className="py-20 px-6 sm:px-8 lg:px-16 xl:px-24 bg-white border-t border-slate-100">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#4F46E5] uppercase mb-2">
+              <span className="text-sm">✦</span> FAQS
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-sm sm:text-base text-[#64748B] mt-2 max-w-xl">
+              Find quick answers to common questions about our courses, platform, and more.
+            </p>
+          </div>
 
-      <div className="max-w-4xl mx-auto w-full bg-white border border-[var(--border)] rounded-[12px] p-2 shadow-xs">
-        <Collapse
-          prefixCls="custom-collapse"
-          accordion
-          expandIconPosition="end"
-          expandIcon={renderExpandIcon}
-          ghost
-          items={faqData.map((item, index) => ({
-            key: index.toString(),
-            label: (
-              <span className="text-[15px] md:text-[17px] font-medium text-[var(--text-primary)]">
-                {item.question}
-              </span>
-            ),
-            children: (
-              <p className="text-[14px] md:text-[15px] text-[var(--text-secondary)] leading-relaxed pb-2">
-                {item.answer}
-              </p>
-            ),
-          }))}
-        />
+          <Link
+            href="/faq"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors group"
+          >
+            <span>View All FAQs</span>
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </Link>
+        </div>
+
+        {/* 2-Column FAQ Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
+          {/* Left Column */}
+          <div className="flex flex-col gap-3.5">
+            {faqsLeft.map((faq, idx) => {
+              const isOpen = openLeft === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`border rounded-xl transition-all duration-200 bg-white ${
+                    isOpen
+                      ? "border-[#4F46E5]/40 shadow-[0_4px_16px_rgba(79,70,229,0.06)]"
+                      : "border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-slate-300"
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleLeft(idx)}
+                    className="w-full flex items-center justify-between p-4 sm:p-5 text-left cursor-pointer gap-4"
+                  >
+                    <span className="text-sm sm:text-[15px] font-semibold text-[#0F172A]">
+                      {faq.question}
+                    </span>
+                    <span
+                      className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors ${
+                        isOpen
+                          ? "bg-[#EEF2FF] text-[#4F46E5]"
+                          : "text-slate-400 bg-slate-50"
+                      }`}
+                    >
+                      {isOpen ? <MinusOutlined /> : <PlusOutlined />}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 sm:px-5 pb-4 pt-1 text-xs sm:text-sm text-[#64748B] leading-relaxed border-t border-slate-100">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col gap-3.5">
+            {faqsRight.map((faq, idx) => {
+              const isOpen = openRight === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`border rounded-xl transition-all duration-200 bg-white ${
+                    isOpen
+                      ? "border-[#4F46E5]/40 shadow-[0_4px_16px_rgba(79,70,229,0.06)]"
+                      : "border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-slate-300"
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleRight(idx)}
+                    className="w-full flex items-center justify-between p-4 sm:p-5 text-left cursor-pointer gap-4"
+                  >
+                    <span className="text-sm sm:text-[15px] font-semibold text-[#0F172A]">
+                      {faq.question}
+                    </span>
+                    <span
+                      className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors ${
+                        isOpen
+                          ? "bg-[#EEF2FF] text-[#4F46E5]"
+                          : "text-slate-400 bg-slate-50"
+                      }`}
+                    >
+                      {isOpen ? <MinusOutlined /> : <PlusOutlined />}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 sm:px-5 pb-4 pt-1 text-xs sm:text-sm text-[#64748B] leading-relaxed border-t border-slate-100">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );

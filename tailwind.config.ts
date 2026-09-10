@@ -40,6 +40,13 @@ export default {
         sm: "var(--shadow-sm)",
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
+        card: "var(--shadow-card)",
+        "card-hover": "var(--shadow-card-hover)",
+        elevated: "var(--shadow-elevated)",
+        table: "var(--shadow-table)",
+        modal: "var(--shadow-modal)",
+        dropdown: "var(--shadow-dropdown)",
+        button: "var(--shadow-button-primary)",
       },
       screens: {
         xs: "480px",

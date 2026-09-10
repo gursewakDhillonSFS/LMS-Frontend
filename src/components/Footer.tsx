@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import CommonButton from "./CommonButton";
 import {
   EnvelopeIcon,
   FaceBookIcon,
@@ -11,11 +10,12 @@ import {
   TwitterIcon,
 } from "@/utils/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setSignup } from "@/redux/slices/AuthModalSlice";
 import { RootState } from "@/redux/store";
 import { setActiveCategory } from "@/redux/slices/CategoriesSlice";
 import { useRouter } from "next/navigation";
 import { RoutePaths } from "@/utils/enums";
+import { UpOutlined, YoutubeFilled } from "@ant-design/icons";
+
 type FooterItem = {
   text: string;
   link?: string;
@@ -28,13 +28,20 @@ type FooterSection = {
 };
 
 const helpfulLinks: FooterSection = {
-  title: "Helpful links",
+  title: "HELPFUL LINKS",
   items: [
-    { text: "Become a Instructor", link: RoutePaths?.BecomeInstructor },
+    { text: "Become an Instructor", link: RoutePaths?.BecomeInstructor },
     { text: "Privacy Policy", link: "/privacy-policy" },
     { text: "Terms & Condition", link: "/terms" },
   ],
 };
+
+const defaultCategories = [
+  { name: "Data Science", id: "data-science" },
+  { name: "Digital Marketing", id: "digital-marketing" },
+  { name: "Mobile Development", id: "mobile-development" },
+  { name: "Web Development", id: "web-development" },
+];
 
 const contactInfo: FooterItem[] = [
   {
@@ -61,101 +68,138 @@ const Footer: React.FC = () => {
     (state: RootState) => state.categories.categories
   );
 
-  const handleClick = (id: string) => {
-    dispatch(setActiveCategory(id));
+  const handleClick = (id?: string) => {
+    if (id) {
+      dispatch(setActiveCategory(id));
+    }
     router.push(RoutePaths?.Browse);
   };
 
-  const handleSignup = () => {
-    dispatch(setSignup(true));
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  return (
-    <footer className="flex flex-col gap-[48px] xl:gap-[64px] justify-between bg-[var(--text-primary)] text-white px-[24px] xl:px-[80px] 2xl:px-[120px] pt-[48px] xl:pt-[64px] pb-[40px]">
-      <div className="flex flex-col items-center justify-center gap-[24px]">
-        <h2 className="text-[28px] lg:text-[32px] font-[600] text-center leading-[130%]">
-          What will learning do for your <br />personal life?
-        </h2>
-        <div className="flex gap-3">
-          <CommonButton
-            text={"Sign Up for Free"}
-            bgColor="#FFFFFF"
-            className="!text-[var(--text-primary)] !h-[40px] !text-[14px] hover:!opacity-90"
-            onClick={handleSignup}
-          />
-          <CommonButton
-            text={"Start 7-day Free Trial"}
-            className="!bg-[var(--primary)] !text-white !h-[40px] !text-[14px]"
-            onClick={() => router.push(RoutePaths?.Subscription)}
-          />
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-[48px]">
-        <div className="grid grid-cols-2 gap-[24px] lg:gap-[40px] lg:grid-cols-4">
-          <div className="flex flex-col gap-[16px] col-span-2">
-            <h4 className="font-[600] text-[15px] text-white/60 uppercase tracking-[0.05em]">Categories</h4>
-            <div className="grid grid-cols-2 gap-[12px]">
-              {categories?.map((item) => (
-                <span
-                  key={item?.category_id}
-                  className="text-[14px] text-white/80 hover:text-white cursor-pointer transition-colors duration-[150ms]"
-                  onClick={() => handleClick(item?.category_id)}
-                >
-                  {item?.category_name}
-                </span>
-              ))}
+  const displayCategories =
+    categories && categories.length > 0
+      ? categories.slice(0, 4)
+      : defaultCategories.map((c) => ({
+          category_id: c.id,
+          category_name: c.name,
+        }));
+
+  return (
+    <footer className="bg-[#090D1A] text-white pt-16 pb-8 border-t border-slate-800/80">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-16 xl:px-24">
+        {/* Main Footer Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
+          {/* Brand Column */}
+          <div className="lg:col-span-4 flex flex-col items-start gap-4">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
+              <HeaderLogoIcon textColor="#ffffff" />
+            </div>
+            <p className="text-xs text-slate-400 font-medium">
+              Learn. Build. Grow.
+            </p>
+            {/* Social Links */}
+            <div className="flex items-center gap-3 mt-2">
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
+                <FaceBookIcon />
+              </span>
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
+                <LinkdinIcon />
+              </span>
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white">
+                <TwitterIcon />
+              </span>
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/70 border border-slate-700/60 hover:bg-[#4F46E5] hover:border-[#4F46E5] transition-all cursor-pointer text-slate-300 hover:text-white text-sm">
+                <YoutubeFilled />
+              </span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-[16px]">
-            <h4 className="font-[600] text-[15px] text-white/60 uppercase tracking-[0.05em]">{helpfulLinks.title}</h4>
-            <ul className="flex flex-col gap-[12px]">
-              {helpfulLinks.items.map((item) => (
+          {/* Categories Column */}
+          <div className="lg:col-span-2 flex flex-col gap-3.5">
+            <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
+              CATEGORIES
+            </h4>
+            <ul className="flex flex-col gap-2.5">
+              {displayCategories.map((item) => (
                 <li
-                  key={item?.text}
-                  className="text-[14px] text-white/80 hover:text-white cursor-pointer transition-colors duration-[150ms]"
-                  onClick={() => {
-                    if (item?.link) router.push(item?.link);
-                  }}
+                  key={item.category_id}
+                  className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
+                  onClick={() => handleClick(item.category_id)}
                 >
-                  {item?.text}
+                  {item.category_name}
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="flex flex-col gap-[16px]">
-            <h4 className="font-[600] text-[15px] text-white/60 uppercase tracking-[0.05em]">Contact Info</h4>
-            <ul className="flex flex-col gap-[12px]">
+          {/* Additional Category / Column */}
+          <div className="lg:col-span-2 flex flex-col gap-3.5 pt-7 sm:pt-0">
+            <ul className="flex flex-col gap-2.5 mt-0 lg:mt-7">
+              <li
+                className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
+                onClick={() => handleClick("ui-ux-design")}
+              >
+                UI/UX Design
+              </li>
+            </ul>
+          </div>
+
+          {/* Helpful Links */}
+          <div className="lg:col-span-2 flex flex-col gap-3.5">
+            <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
+              {helpfulLinks.title}
+            </h4>
+            <ul className="flex flex-col gap-2.5">
+              {helpfulLinks.items.map((item) => (
+                <li
+                  key={item.text}
+                  className="text-xs text-slate-400 hover:text-white cursor-pointer transition-colors"
+                  onClick={() => {
+                    if (item.link) router.push(item.link);
+                  }}
+                >
+                  {item.text}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div className="lg:col-span-2 flex flex-col gap-3.5">
+            <h4 className="font-bold text-xs text-slate-300 tracking-wider uppercase">
+              CONTACT INFO
+            </h4>
+            <ul className="flex flex-col gap-2.5">
               {contactInfo.map((contact) => (
                 <li
-                  key={contact?.text}
-                  className="flex items-start gap-[8px] text-[14px] text-white/80"
+                  key={contact.text}
+                  className="flex items-start gap-2 text-xs text-slate-400 hover:text-slate-200 transition-colors"
                 >
-                  <span className="mt-[2px] opacity-60">{contact.icon}</span>
-                  <span>{contact.text}</span>
+                  <span className="mt-0.5 shrink-0 opacity-70">{contact.icon}</span>
+                  <a href={contact.link} className="hover:underline break-words">
+                    {contact.text}
+                  </a>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-[24px] flex flex-col md:flex-row justify-between items-center gap-[16px]">
-          <HeaderLogoIcon textColor="#ffffff" />
-          <div className="text-[13px] text-white/50">
-            © 2025 Learning+. All Rights Reserved.
+        {/* Copyright & Scroll To Top */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <div className="w-full text-center">
+            © 2025. Learning+. All Rights Reserved.
           </div>
-          <div className="flex gap-[12px]">
-            <span className="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 cursor-pointer transition-colors duration-[150ms]">
-              <FaceBookIcon />
-            </span>
-            <span className="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 cursor-pointer transition-colors duration-[150ms]">
-              <LinkdinIcon />
-            </span>
-            <span className="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 cursor-pointer transition-colors duration-[150ms]">
-              <TwitterIcon />
-            </span>
-          </div>
+          <button
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+            className="shrink-0 w-8 h-8 rounded-full bg-slate-800 hover:bg-[#4F46E5] text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+          >
+            <UpOutlined className="text-xs" />
+          </button>
         </div>
       </div>
     </footer>

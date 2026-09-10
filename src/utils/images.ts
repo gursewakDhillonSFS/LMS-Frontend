@@ -23,6 +23,11 @@ import LockImage from "../assets/LockImage.png";
 import Fallback from "../assets/Fallback.png";
 import DefaultImg from "../assets/DefaultImg.jpg";
 import DataNotFound from "../assets/nooConnection.png";
+import BrowseHeroTech from "../assets/browse_hero_tech.jpg";
+import BrowseCreativity from "../assets/browse_creativity.jpg";
+import HomeHeroStudent from "../assets/home_hero_student.jpg";
+import HomeInspiringStudent from "../assets/home_inspiring_student.jpg";
+import HomeStatsCap from "../assets/home_stats_cap.jpg";
 
 export {
   HeroImage,
@@ -50,4 +55,9 @@ export {
   Fallback,
   DefaultImg,
   DataNotFound,
+  BrowseHeroTech,
+  BrowseCreativity,
+  HomeHeroStudent,
+  HomeInspiringStudent,
+  HomeStatsCap,
 };

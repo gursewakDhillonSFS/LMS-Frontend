@@ -68,37 +68,68 @@ const Header = () => {
         <Link href={"/"}>
           <HeaderLogoIcon />
         </Link>
-        {!pathname.includes(RoutePaths?.Browse) && (
-          <div className="relative group flex flex-col gap-2">
-            <div className="flex cursor-pointer items-center !h-[36px] !gap-[6px] !text-[var(--text-primary)] !font-[500] !text-[14px] !rounded-[8px] !px-[12px] hover:!bg-[var(--surface-subtle)] transition-all duration-[150ms]">
-              <Link
-                href={"/browse"}
-                onClick={() =>
-                  dispatch(setActiveCategory(CategoryEnum.ALL_Classes))
-                }
-                className="flex items-center gap-[6px]"
-              >
-                <span>Browse</span>
-                <DownArrowIcon />
-              </Link>
-            </div>
 
-            <div className="absolute top-full left-0 z-50 hidden group-hover:flex flex-col bg-white border border-[var(--border)] shadow-[var(--shadow-lg)] rounded-[10px] min-w-[180px] py-[4px] mt-[2px]">
-              {categories.map((cat) => (
-                <Link
-                  href={"/browse"}
-                  key={cat.category_id}
-                  className="text-left px-[16px] py-[10px] hover:bg-[var(--surface-subtle)] cursor-pointer whitespace-nowrap text-[14px] text-[var(--text-primary)] transition-colors duration-[150ms]"
-                  onClick={() => {
-                    dispatch(setActiveCategory(cat.category_id));
-                  }}
-                >
-                  {cat.category_name}
-                </Link>
-              ))}
+        {/* Top Navigation Links — Matching Screenshot */}
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          <Link
+            href="/"
+            className={`px-3 py-1.5 text-[13px] rounded-[8px] transition-colors ${
+              pathname === "/" || pathname === "/homepage"
+                ? "text-[var(--primary)] font-semibold bg-[#EEF4FF]"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium"
+            }`}
+          >
+            Home
+          </Link>
+
+          <Link
+            href="/browse"
+            onClick={() => dispatch(setActiveCategory(CategoryEnum.ALL_Classes))}
+            className={`px-3 py-1.5 text-[13px] rounded-[8px] transition-colors ${
+              pathname.includes(RoutePaths?.Browse)
+                ? "text-[var(--primary)] font-semibold bg-[#EEF4FF]"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium"
+            }`}
+          >
+            All Courses
+          </Link>
+
+          {categories.slice(0, 2).map((cat) => (
+            <Link
+              key={cat.category_id}
+              href="/browse"
+              onClick={() => dispatch(setActiveCategory(cat.category_id))}
+              className="px-3 py-1.5 text-[13px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium whitespace-nowrap"
+            >
+              {cat.category_name}
+            </Link>
+          ))}
+
+          {categories.length > 2 && (
+            <div className="relative group flex items-center">
+              <button
+                type="button"
+                className="flex items-center gap-1 px-2.5 py-1.5 text-[13px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium"
+              >
+                <span>More</span>
+                <DownArrowIcon />
+              </button>
+
+              <div className="absolute top-full left-0 z-50 hidden group-hover:flex flex-col bg-white border border-[var(--border)] shadow-[var(--shadow-dropdown)] rounded-[10px] min-w-[180px] py-1 mt-1">
+                {categories.slice(2).map((cat) => (
+                  <Link
+                    href="/browse"
+                    key={cat.category_id}
+                    className="text-left px-4 py-2 hover:bg-[var(--surface-subtle)] cursor-pointer whitespace-nowrap text-[13px] text-[var(--text-primary)] transition-colors"
+                    onClick={() => dispatch(setActiveCategory(cat.category_id))}
+                  >
+                    {cat.category_name}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </nav>
 
         <div className="relative w-full">
           <SearchInput

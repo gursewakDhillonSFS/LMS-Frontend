@@ -36,7 +36,7 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
       style={{
         backgroundColor: bgColor,
       }}
-      className={`cursor-pointer flex flex-col justify-between rounded-[10px] border border-[var(--border)] gap-[16px] min-w-full overflow-hidden transition-all duration-[200ms] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-strong)] ${className}`}
+      className={`cursor-pointer flex flex-col justify-between rounded-[12px] bg-white border border-[var(--border)] gap-[16px] min-w-full overflow-hidden shadow-[0_1px_3px_rgba(16,24,40,0.04),0_4px_12px_rgba(16,24,40,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-[200ms] hover:shadow-[0_8px_20px_rgba(16,24,40,0.08),0_16px_32px_-4px_rgba(49,92,255,0.12)] hover:-translate-y-1 hover:border-[#C7D7FE] ${className}`}
     >
       <div className="flex flex-col gap-[12px]">
         <div className="w-full h-[200px] relative bg-[var(--surface-subtle)]">

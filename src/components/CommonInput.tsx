@@ -33,10 +33,10 @@ const CommonInput: React.FC<CommonInputProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col justify-center items-start rounded-[8px] border p-[10px] pt-[14px] w-full transition-all duration-[150ms] ${
+      className={`relative flex flex-col justify-center items-start rounded-[8px] border bg-white p-[10px] pt-[14px] w-full transition-all duration-[150ms] ${
         focused
-          ? "border-[var(--primary)] shadow-[0_0_0_2px_rgba(49,92,255,0.1)]"
-          : "border-[var(--border)] hover:border-[var(--border-strong)]"
+          ? "border-[var(--primary)] shadow-[0_0_0_3px_rgba(49,92,255,0.12),0_1px_2px_rgba(16,24,40,0.04)]"
+          : "border-[var(--border)] shadow-[0_1px_2px_rgba(16,24,40,0.03),inset_0_1px_1px_rgba(16,24,40,0.02)] hover:border-[var(--border-strong)]"
       } ${className}`}
       onClick={handleWrapperClick}
     >

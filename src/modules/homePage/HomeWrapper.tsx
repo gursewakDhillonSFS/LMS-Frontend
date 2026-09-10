@@ -1,24 +1,24 @@
 import React from "react";
 import HeroSection from "./HeroSection";
-import HomeImageCarousel from "./HomeImageCarousel";
-import ModernSkills from "./ModernSkills";
 import ExploreSkill from "./ExploreSkill";
-import FrequentlyQuestions from "./FrequentlyQuestions";
-import Testimonials from "./Testimonials";
-import Subscription from "./Subscription";
 import NewCourses from "./NewCourses";
+import ModernSkills from "./ModernSkills";
+import HomeImageCarousel from "./HomeImageCarousel";
+import Testimonials from "./Testimonials";
+import FrequentlyQuestions from "./FrequentlyQuestions";
+import Subscription from "./Subscription";
 
 const HomeWrapper = () => {
   return (
-    <div>
+    <div className="flex flex-col w-full bg-white">
       <HeroSection />
-      <HomeImageCarousel />
-      <ModernSkills />
       <ExploreSkill />
-      <Subscription />
       <NewCourses />
+      <ModernSkills />
+      <HomeImageCarousel />
       <Testimonials />
       <FrequentlyQuestions />
+      <Subscription />
     </div>
   );
 };
