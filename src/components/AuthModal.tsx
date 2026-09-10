@@ -24,12 +24,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
     >
       <button
         onClick={onClose}
-        className="cursor-pointer absolute w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 rounded-full flex items-center justify-center top-4 right-4 transition-all duration-150 z-20 border border-slate-200 shadow-2xs"
+        className="cursor-pointer absolute w-9 h-9 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-900 rounded-full flex items-center justify-center top-4 right-4 transition-all duration-150 z-30 border border-slate-300 shadow-sm focus:outline-none"
         aria-label="Close"
       >
-        <CloseIcon />
+        <CloseIcon color="#0F172A" />
       </button>
-      <div className="flex flex-col items-center gap-1.5 justify-center text-center pt-2 pb-5 px-4">
+      <div className="flex flex-col items-center gap-1.5 justify-center text-center pt-2 pb-4 px-4">
         <h2 className="text-2xl sm:text-[26px] font-extrabold text-slate-900 tracking-tight">
           {title}
         </h2>

@@ -119,14 +119,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
         <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
           Join As
         </label>
-        <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100/90 rounded-xl border border-slate-200">
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100/90 rounded-xl border border-slate-200">
           <button
             type="button"
             onClick={() => handleRoleChange("student")}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all duration-150 cursor-pointer outline-none focus:outline-none focus:ring-0 border ${
               role === "student"
-                ? "bg-white text-[#4F46E5] shadow-sm border border-slate-200/80"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-[#4F46E5] shadow-xs border-[#4F46E5]/40"
+                : "bg-transparent text-slate-600 hover:text-slate-900 border-transparent hover:bg-slate-200/60"
             }`}
           >
             <UserOutlined className="text-sm" />
@@ -135,10 +135,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignin }) => {
           <button
             type="button"
             onClick={() => handleRoleChange("instructor")}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all duration-150 cursor-pointer outline-none focus:outline-none focus:ring-0 border ${
               role === "instructor"
-                ? "bg-white text-[#4F46E5] shadow-sm border border-slate-200/80"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-[#4F46E5] shadow-xs border-[#4F46E5]/40"
+                : "bg-transparent text-slate-600 hover:text-slate-900 border-transparent hover:bg-slate-200/60"
             }`}
           >
             <BookOutlined className="text-sm" />
