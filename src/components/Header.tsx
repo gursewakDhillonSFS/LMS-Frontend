@@ -15,6 +15,8 @@ import { courseData } from "@/utils/interface";
 import UserAvatarDisplay from "./UserAvatarDisplay";
 import { setCourseData } from "@/redux/slices/CourseDataSlice";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { Dropdown } from "antd";
+import type { MenuProps } from "antd";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "@/context/I18nContext";
 
@@ -30,6 +32,19 @@ const Header = () => {
   const categories = useSelector(
     (state: RootState) => state?.categories?.categories
   );
+
+  const moreCategoriesMenu: MenuProps["items"] = categories.slice(2).map((cat) => ({
+    key: cat.category_id,
+    label: (
+      <Link
+        href="/browse"
+        className="px-2 py-1 text-[13px] text-slate-700 hover:text-[#4F46E5] block"
+        onClick={() => dispatch(setActiveCategory(cat.category_id))}
+      >
+        {cat.category_name}
+      </Link>
+    ),
+  }));
 
   const fetchSearchData = useCallback(async () => {
     setLoading(true);
@@ -115,7 +130,11 @@ const Header = () => {
             ))}
 
             {categories.length > 2 && (
-              <div className="relative group flex items-center">
+              <Dropdown
+                menu={{ items: moreCategoriesMenu }}
+                trigger={["hover", "click"]}
+                placement="bottomLeft"
+              >
                 <button
                   type="button"
                   className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg whitespace-nowrap transition-colors cursor-pointer"
@@ -123,20 +142,7 @@ const Header = () => {
                   <span>{t("common.nav.more")}</span>
                   <DownArrowIcon />
                 </button>
-
-                <div className="absolute top-full left-0 z-50 hidden group-hover:flex flex-col bg-white border border-slate-200 shadow-xl rounded-xl min-w-[200px] py-1.5 mt-1 animate-in fade-in zoom-in-95">
-                  {categories.slice(2).map((cat) => (
-                    <Link
-                      href="/browse"
-                      key={cat.category_id}
-                      className="px-4 py-2 hover:bg-slate-50 cursor-pointer whitespace-nowrap text-[13px] text-slate-700 hover:text-slate-900 transition-colors"
-                      onClick={() => dispatch(setActiveCategory(cat.category_id))}
-                    >
-                      {cat.category_name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              </Dropdown>
             )}
           </nav>
         </div>

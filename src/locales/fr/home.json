@@ -13,24 +13,34 @@
     "learnerStory": "Apprendre · Évoluer · Réussir"
   },
   "features": {
-    "title": "Pourquoi choisir Skillora",
+    "title": "Pourquoi apprendre avec nous ?",
     "subtitle": "Tout ce dont vous avez besoin pour accélérer votre parcours professionnel",
     "handsOn": "Projets pratiques",
     "handsOnDesc": "Créez de véritables pièces de portfolio validées par des leaders de la tech",
     "expertGuidance": "Mentorat d'experts",
     "expertGuidanceDesc": "Bénéficiez de conseils hebdomadaires directs de professionnels expérimentés",
     "certified": "Certificats accrédités",
-    "certifiedDesc": "Des diplômes partageables reconnus par les plus grandes entreprises"
+    "certifiedDesc": "Des diplômes partageables reconnus par les plus grandes entreprises",
+    "totalCourses": "Total des cours"
   },
   "categories": {
     "badge": "EXPLORER LES DOMAINES",
-    "title": "Parcourir les meilleures catégories",
-    "subtitle": "Trouvez le parcours d'apprentissage idéal pour vos objectifs de carrière"
+    "title": "Trouvez le cours idéal pour vos objectifs",
+    "subtitle": "Parcourez les meilleures catégories et commencez votre parcours d'apprentissage dès aujourd'hui.",
+    "viewAll": "Voir toutes les catégories",
+    "coursesCount": "{count}+ cours"
+  },
+  "categoryNames": {
+    "Data Science": "Science des données",
+    "Digital Marketing": "Marketing numérique",
+    "Mobile Development": "Développement mobile",
+    "UI/UX Design": "Design UI/UX",
+    "Web Development": "Développement Web"
   },
   "popularCourses": {
     "badge": "COURS POPULAIRES",
-    "title": "Cours tendances ce mois-ci",
-    "subtitle": "Découvrez les programmes les mieux notés choisis par notre communauté",
+    "title": "Cours les plus populaires",
+    "subtitle": "Programmes sélectionnés par nos experts, plébiscités par des milliers d'étudiants.",
     "allTab": "Toutes les catégories",
     "viewAll": "Voir tous les cours"
   },
@@ -50,8 +60,42 @@
   },
   "faq": {
     "badge": "FOIRE AUX QUESTIONS",
-    "title": "Des questions ? Nous avons les réponses.",
-    "subtitle": "Trouvez des réponses rapides aux questions courantes sur nos cours, notre plateforme et plus encore."
+    "title": "Foire Aux Questions",
+    "subtitle": "Trouvez des réponses rapides aux questions courantes sur nos cours, notre plateforme et plus encore.",
+    "items": [
+      {
+        "question": "Comment s'inscrire à un cours ?",
+        "answer": "Parcourez notre catalogue, choisissez votre cours et cliquez sur « S'inscrire ». Si vous n'avez pas encore de compte, vous pourrez en créer un en quelques secondes."
+      },
+      {
+        "question": "Puis-je obtenir un remboursement pour mon abonnement ?",
+        "answer": "Oui, nous offrons une garantie satisfait ou remboursé de 30 jours pour tous les nouveaux abonnements si vous n'êtes pas pleinement satisfait."
+      },
+      {
+        "question": "Fournissez-vous des certificats ?",
+        "answer": "Oui ! Dès la réussite de tout cours ou parcours certifiant, vous recevrez un certificat numérique vérifié à ajouter à votre profil LinkedIn et CV."
+      },
+      {
+        "question": "Quels modes de paiement acceptez-vous ?",
+        "answer": "Nous acceptons toutes les principales cartes bancaires (Visa, Mastercard, American Express), PayPal, Apple Pay, Google Pay ainsi que les virements bancaires locaux."
+      },
+      {
+        "question": "Un essai gratuit est-il disponible ?",
+        "answer": "Tout à fait ! Nous offrons un essai gratuit de 7 jours complet pour vous permettre de tester nos cours et projets premium sans engagement."
+      },
+      {
+        "question": "Puis-je accéder aux cours sur mobile ?",
+        "answer": "Oui, Skillora est parfaitement adapté à tous les écrans, et vous pouvez télécharger nos applications mobiles iOS ou Android pour apprendre hors-ligne."
+      },
+      {
+        "question": "Comment contacter le support ?",
+        "answer": "Notre équipe d'assistance est joignable 24h/24 et 7j/7 par chat en direct, par e-mail à support@skillora.com ou via notre forum d'entraide."
+      },
+      {
+        "question": "Les cours sont-ils à mon rythme ?",
+        "answer": "Oui, tous les cours sont 100 % flexibles et à votre rythme. Vous démarrez quand vous voulez et conservez un accès à vie aux ressources."
+      }
+    ]
   },
   "ctaBanner": {
     "title": "Développez vos compétences. Façonnez votre avenir.",

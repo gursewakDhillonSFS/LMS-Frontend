@@ -20,17 +20,27 @@
     "expertGuidance": "Expert Mentorship",
     "expertGuidanceDesc": "Direct weekly guidance from experienced practitioners",
     "certified": "Accredited Certificates",
-    "certifiedDesc": "Shareable credentials recognized across top companies"
+    "certifiedDesc": "Shareable credentials recognized across top companies",
+    "totalCourses": "Total Courses"
   },
   "categories": {
-    "badge": "EXPLORE DOMAINS",
-    "title": "Browse Top Categories",
-    "subtitle": "Find the perfect learning pathway for your career goals"
+    "badge": "EXPLORE CATEGORIES",
+    "title": "Find the Perfect Course for Your Goals",
+    "subtitle": "Explore top categories and start your learning journey today.",
+    "viewAll": "View All Categories",
+    "coursesCount": "{count}+ courses"
+  },
+  "categoryNames": {
+    "Data Science": "Data Science",
+    "Digital Marketing": "Digital Marketing",
+    "Mobile Development": "Mobile Development",
+    "UI/UX Design": "UI/UX Design",
+    "Web Development": "Web Development"
   },
   "popularCourses": {
-    "badge": "POPULAR COURSES",
-    "title": "Trending Courses This Month",
-    "subtitle": "Explore the highest-rated programs chosen by our community",
+    "badge": "FEATURED COURSES",
+    "title": "Most Popular Courses",
+    "subtitle": "Handpicked courses by our experts, loved by thousands.",
     "allTab": "All Categories",
     "viewAll": "View All Courses"
   },
@@ -49,9 +59,43 @@
     "viewAll": "View All Reviews"
   },
   "faq": {
-    "badge": "FREQUENTLY ASKED QUESTIONS",
-    "title": "Got Questions? We Have Answers.",
-    "subtitle": "Find quick answers to common questions about our courses, platform, and more."
+    "badge": "FAQS",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find quick answers to common questions about our courses, platform, and more.",
+    "items": [
+      {
+        "question": "How do I enroll in a course?",
+        "answer": "Simply browse our course catalog, choose your preferred course, and click 'Enroll Now'. If you don't have an account yet, you'll be prompted to create one in seconds."
+      },
+      {
+        "question": "Can I get a refund for my subscription?",
+        "answer": "Yes, we offer a 30-day money-back guarantee for all new subscriptions if you're not completely satisfied with your learning experience."
+      },
+      {
+        "question": "Do you provide certificates?",
+        "answer": "Yes! Upon successfully completing any course or specialization track, you will receive a verified, shareable digital certificate for your portfolio and LinkedIn profile."
+      },
+      {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit/debit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, Google Pay, and localized bank transfer options."
+      },
+      {
+        "question": "Is there a free trial available?",
+        "answer": "Absolutely! We offer a 7-day full-access free trial so you can explore premium courses, projects, and learning paths before any commitment."
+      },
+      {
+        "question": "Can I access courses on mobile?",
+        "answer": "Yes, Skillora is fully responsive on all devices, and you can download our native iOS or Android mobile apps for offline learning."
+      },
+      {
+        "question": "How do I contact support?",
+        "answer": "Our dedicated support team is available 24/7 via live chat, email at support@skillora.com, or through our community help forum."
+      },
+      {
+        "question": "Are the courses self-paced?",
+        "answer": "Yes, all courses are 100% self-paced. You can start anytime, learn on your own schedule, and retain lifetime access to course materials."
+      }
+    ]
   },
   "ctaBanner": {
     "title": "Build your skills. Shape your future.",

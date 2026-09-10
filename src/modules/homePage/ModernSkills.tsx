@@ -2,6 +2,7 @@
 import { HomeStatsCap } from "@/utils/images";
 import Image from "next/image";
 import React from "react";
+import { useTranslation } from "@/context/I18nContext";
 
 const BookIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -27,18 +28,18 @@ const MedalIcon = () => (
 );
 
 const ModernSkills = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-10 md:py-16 px-6 md:px-12 xl:px-20 2xl:px-24">
       <div className="max-w-7xl mx-auto rounded-[24px] bg-gradient-to-r from-[#EEF4FF] via-[#F3F7FF] to-[#FAF5FF] border border-[#D5E3FC] p-6 sm:p-10 lg:p-12 shadow-[0_6px_24px_rgba(49,92,255,0.06)] flex flex-col lg:flex-row items-center justify-between gap-8">
         {/* Left Headline */}
         <div className="flex flex-col gap-2 max-w-sm text-center lg:text-left">
           <h2 className="text-[26px] md:text-[32px] font-extrabold text-[var(--text-primary)] tracking-tight leading-tight">
-            Why Learn With Us?
+            {t("home.features.title")}
           </h2>
           <p className="text-[13px] md:text-[14px] text-[var(--text-secondary)] leading-relaxed">
-            We&apos;re more than just a learning platform. We&apos;re your
-            partner in growth, offering the best resources, support, and
-            opportunities to succeed.
+            {t("home.features.subtitle")}
           </p>
         </div>
 
@@ -50,10 +51,10 @@ const ModernSkills = () => {
               <BookIcon />
             </div>
             <div className="text-[22px] md:text-[26px] font-extrabold text-[var(--primary)] tracking-tight">
-              16500+
+              1,000+
             </div>
             <span className="text-[12px] font-medium text-[var(--text-secondary)]">
-              Total Courses
+              {t("home.features.totalCourses")}
             </span>
           </div>
 
@@ -63,10 +64,10 @@ const ModernSkills = () => {
               <UsersIcon />
             </div>
             <div className="text-[22px] md:text-[26px] font-extrabold text-[var(--primary)] tracking-tight">
-              5.1 crore+
+              50,000+
             </div>
             <span className="text-[12px] font-medium text-[var(--text-secondary)]">
-              Total Enrollments
+              {t("home.hero.activeLearners")}
             </span>
           </div>
 
@@ -76,10 +77,10 @@ const ModernSkills = () => {
               <MedalIcon />
             </div>
             <div className="text-[22px] md:text-[26px] font-extrabold text-[var(--primary)] tracking-tight">
-              44.4 lakh+
+              25,000+
             </div>
             <span className="text-[12px] font-medium text-[var(--text-secondary)]">
-              Total Certificates
+              {t("home.features.certified")}
             </span>
           </div>
         </div>

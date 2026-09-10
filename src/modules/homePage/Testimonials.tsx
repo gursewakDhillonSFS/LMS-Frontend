@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { StarFilled } from "@ant-design/icons";
 import { RightOutlined, LeftOutlined } from "@ant-design/icons";
+import { useTranslation } from "@/context/I18nContext";
 
 interface TestimonialItem {
   name: string;
@@ -49,6 +50,7 @@ const testimonials: TestimonialItem[] = [
 ];
 
 export default function Testimonials() {
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
 
   const nextSlide = () => {
@@ -73,21 +75,21 @@ export default function Testimonials() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#4F46E5] uppercase mb-2">
-              <span className="text-sm">✦</span> TESTIMONIALS
+              <span className="text-sm">✦</span> {t("home.testimonials.badge")}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F172A] tracking-tight">
-              What Our Learners Say
+              {t("home.testimonials.title")}
             </h2>
             <p className="text-sm sm:text-base text-[#64748B] mt-2 max-w-xl">
-              Join thousands of students who have already transformed their lives with Skillora.
+              {t("home.testimonials.subtitle")}
             </p>
           </div>
 
           <Link
-            href="/reviews"
+            href="/browse"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors group"
           >
-            <span>View All Reviews</span>
+            <span>{t("home.testimonials.viewAll")}</span>
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>

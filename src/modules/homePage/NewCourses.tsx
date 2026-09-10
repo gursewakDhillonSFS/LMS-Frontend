@@ -11,8 +11,10 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useTranslation } from "@/context/I18nContext";
 
 const NewCourses = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -60,22 +62,22 @@ const NewCourses = () => {
           <div className="flex flex-col gap-1.5">
             <span className="text-[var(--primary)] text-[11px] font-bold tracking-[0.14em] uppercase flex items-center gap-1.5">
               <span>✦</span>
-              <span>FEATURED COURSES</span>
+              <span>{t("home.popularCourses.badge")}</span>
             </span>
             <h2 className="text-[26px] md:text-[32px] font-bold text-[var(--text-primary)] tracking-tight leading-tight">
-              Most Popular Courses
+              {t("home.popularCourses.title")}
             </h2>
             <p className="text-[13px] md:text-[14px] text-[var(--text-secondary)]">
-              Handpicked courses by our experts, loved by thousands.
+              {t("home.popularCourses.subtitle")}
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => router.push(RoutePaths?.Browse)}
-            className="text-[13px] font-semibold text-[var(--primary)] hover:underline flex items-center gap-1 shrink-0"
+            className="text-[13px] font-semibold text-[var(--primary)] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
           >
-            <span>View All Courses</span>
+            <span>{t("home.popularCourses.viewAll")}</span>
             <span>→</span>
           </button>
         </div>

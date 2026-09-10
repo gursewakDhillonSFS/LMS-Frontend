@@ -5,6 +5,7 @@ import { RoutePaths } from "@/utils/enums";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "@/context/I18nContext";
 
 interface CategoryCardItem {
   id?: string;
@@ -16,6 +17,7 @@ interface CategoryCardItem {
 }
 
 export default function ExploreSkill() {
+  const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch();
   const categories = useSelector(
@@ -101,10 +103,12 @@ export default function ExploreSkill() {
         c.category_name.toLowerCase().includes(item.name.toLowerCase().split(" ")[0]) ||
         item.name.toLowerCase().includes(c.category_name.toLowerCase())
     );
+    const categoryTranslationKey = `home.categoryNames.${item.name}`;
+    const translatedName = t(categoryTranslationKey);
     return {
       ...item,
       id: matched?.category_id,
-      name: matched?.category_name || item.name,
+      name: translatedName !== categoryTranslationKey ? translatedName : (matched?.category_name || item.name),
     };
   });
 
@@ -116,22 +120,22 @@ export default function ExploreSkill() {
           <div className="flex flex-col gap-1.5">
             <span className="text-[var(--primary)] text-[11px] font-bold tracking-[0.14em] uppercase flex items-center gap-1.5">
               <span>✦</span>
-              <span>EXPLORE CATEGORIES</span>
+              <span>{t("home.categories.badge")}</span>
             </span>
             <h2 className="text-[26px] md:text-[32px] font-bold text-[var(--text-primary)] tracking-tight leading-tight">
-              Find the Perfect Course for Your Goals
+              {t("home.categories.title")}
             </h2>
             <p className="text-[13px] md:text-[14px] text-[var(--text-secondary)]">
-              Explore top categories and start your learning journey today.
+              {t("home.categories.subtitle")}
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => router.push(RoutePaths?.Browse)}
-            className="text-[13px] font-semibold text-[var(--primary)] hover:underline flex items-center gap-1 shrink-0"
+            className="text-[13px] font-semibold text-[var(--primary)] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
           >
-            <span>View All Categories</span>
+            <span>{t("home.categories.viewAll")}</span>
             <span>→</span>
           </button>
         </div>
@@ -156,7 +160,11 @@ export default function ExploreSkill() {
                   {cat.name}
                 </h3>
                 <div className="flex items-center justify-between text-[12px] text-[var(--text-secondary)]">
-                  <span>{cat.coursesCount}</span>
+                  <span>
+                    {t("home.categories.coursesCount", {
+                      count: cat.coursesCount.replace(/\D/g, "") || "80",
+                    })}
+                  </span>
                   <span className="text-[var(--primary)] font-bold transition-transform group-hover:translate-x-1">
                     →
                   </span>

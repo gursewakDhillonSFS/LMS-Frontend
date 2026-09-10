@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
+import { useTranslation } from "@/context/I18nContext";
+import { translations } from "@/locales";
 
 interface FAQItem {
   question: string;
@@ -55,8 +57,18 @@ const faqsRight: FAQItem[] = [
 ];
 
 export default function FrequentlyQuestions() {
+  const { locale, t } = useTranslation();
   const [openLeft, setOpenLeft] = useState<number | null>(null);
   const [openRight, setOpenRight] = useState<number | null>(null);
+
+  const currentFaqItems: FAQItem[] =
+    (translations[locale]?.home?.faq as any)?.items ||
+    (translations.en.home.faq as any)?.items ||
+    faqsLeft.concat(faqsRight);
+
+  const half = Math.ceil(currentFaqItems.length / 2);
+  const currentFaqsLeft = currentFaqItems.slice(0, half);
+  const currentFaqsRight = currentFaqItems.slice(half);
 
   const toggleLeft = (index: number) => {
     setOpenLeft(openLeft === index ? null : index);
@@ -73,13 +85,13 @@ export default function FrequentlyQuestions() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#4F46E5] uppercase mb-2">
-              <span className="text-sm">✦</span> FAQS
+              <span className="text-sm">✦</span> {t("home.faq.badge")}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F172A] tracking-tight">
-              Frequently Asked Questions
+              {t("home.faq.title")}
             </h2>
             <p className="text-sm sm:text-base text-[#64748B] mt-2 max-w-xl">
-              Find quick answers to common questions about our courses, platform, and more.
+              {t("home.faq.subtitle")}
             </p>
           </div>
         </div>
@@ -88,7 +100,7 @@ export default function FrequentlyQuestions() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
           {/* Left Column */}
           <div className="flex flex-col gap-3.5">
-            {faqsLeft.map((faq, idx) => {
+            {currentFaqsLeft.map((faq, idx) => {
               const isOpen = openLeft === idx;
               return (
                 <div
@@ -128,7 +140,7 @@ export default function FrequentlyQuestions() {
 
           {/* Right Column */}
           <div className="flex flex-col gap-3.5">
-            {faqsRight.map((faq, idx) => {
+            {currentFaqsRight.map((faq, idx) => {
               const isOpen = openRight === idx;
               return (
                 <div
