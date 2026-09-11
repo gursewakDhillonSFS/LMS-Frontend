@@ -59,12 +59,32 @@ export default function TeacherEarningsPage() {
   const handleConnectStripe = async () => {
     try {
       setConnectLoading(true);
-      const res = await createTeacherConnectApi();
-      if (res?.status && res.data?.onboarding_url) {
-        window.location.href = res.data.onboarding_url;
-      } else {
-        toast.error(res?.message || "Failed to generate Stripe onboarding link");
+      const res: any = await createTeacherConnectApi();
+
+      const redirectUrl =
+        res?.data?.url ||
+        res?.data?.onboarding_url ||
+        res?.onboarding_url ||
+        res?.url;
+
+      if (redirectUrl) {
+        toast.success("Redirecting to Stripe Connect setup...");
+        window.location.href = redirectUrl;
+        return;
       }
+
+      if (
+        res?.data?.connect_status === "active" ||
+        res?.message === "Stripe Connect already active"
+      ) {
+        toast.success("Stripe Connect account is already active!");
+        fetchData();
+        return;
+      }
+
+      toast.error(
+        res?.message || "Failed to generate Stripe onboarding link"
+      );
     } catch (err: any) {
       console.error("Stripe connect error", err);
       toast.error(err?.response?.data?.message || "Could not connect Stripe");
