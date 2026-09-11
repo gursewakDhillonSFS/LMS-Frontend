@@ -106,34 +106,46 @@ const ProfileSetup = () => {
       formData.append("photo", uploadedFile);
     }
 
-    if (user_id) {
-      const payload = {
-        ...values,
-        user_id,
-      };
-      formData.append("payload", JSON.stringify(payload));
-
-      try {
-        setLoading(true);
-        const response = await createOrganisationApi(formData);
-
-        if (response?.status) {
-          toast.success("Organization profile created successfully!");
-          const newOrgId = response.data?._id || response.data?.organization_id;
-          if (newOrgId) {
-            dispatch(updateUser({ organization_id: String(newOrgId) }));
-          }
-          setStep("2");
-          Cookies.set("instructor_onboarding", "2");
-        } else {
-          toast.warning(response?.message ?? "Something went wrong");
+    const effectiveUserId =
+      user_id ||
+      userData?.user_id ||
+      (() => {
+        const t = Cookies.get("token");
+        if (!t) return null;
+        try {
+          const p = JSON.parse(atob(t.split(".")[1]));
+          return p?.sub || p?.user_id || p?.userId || null;
+        } catch {
+          return null;
         }
-      } catch (err) {
-        console.error("Submission error:", err);
-        toast.error("Failed to create organization profile.");
-      } finally {
-        setLoading(false);
+      })();
+
+    const payload = {
+      ...values,
+      user_id: effectiveUserId,
+    };
+    formData.append("payload", JSON.stringify(payload));
+
+    try {
+      setLoading(true);
+      const response = await createOrganisationApi(formData);
+
+      if (response?.status) {
+        toast.success("Organization profile created successfully!");
+        const newOrgId = response.data?._id || response.data?.organization_id;
+        if (newOrgId) {
+          dispatch(updateUser({ organization_id: String(newOrgId) }));
+        }
+        setStep("2");
+        Cookies.set("instructor_onboarding", "2", { path: "/" });
+      } else {
+        toast.warning(response?.message ?? "Something went wrong");
       }
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      toast.error(err?.response?.data?.message || err?.message || "Failed to create organization profile.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,29 +162,43 @@ const ProfileSetup = () => {
   }) => {
     setLoading(true);
     const dobString = values?.dob ? dayjs(values.dob).format("YYYY-MM-DD") : "";
+    const effectiveUserId =
+      user_id ||
+      userData?.user_id ||
+      (() => {
+        const t = Cookies.get("token");
+        if (!t) return null;
+        try {
+          const p = JSON.parse(atob(t.split(".")[1]));
+          return p?.sub || p?.user_id || p?.userId || null;
+        } catch {
+          return null;
+        }
+      })();
+
     const payload = {
       ...values,
       email: values?.email || userData?.email || "",
       dob: dobString,
-      user_id,
+      user_id: effectiveUserId,
     };
 
     try {
       const res = await createInstrucotor(payload);
-      if (res.status) {
+      if (res.status || res.success) {
         toast.success(res.message || "Lead instructor profile verified!");
         const newTeacherId = res.teacher?._id || res.teacher?.instructor_id;
         if (newTeacherId) {
           dispatch(updateUser({ instructor_id: String(newTeacherId) }));
         }
-        Cookies.set("instructor_onboarding", "undefined");
-        router.push(RoutePaths?.InstructorPanel || "/instructorPanel");
+        Cookies.set("instructor_onboarding", "completed", { path: "/" });
+        window.location.href = RoutePaths?.InstructorPanel || "/instructor-panel";
       } else {
         toast.warning(res.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to complete instructor profile.");
+      toast.error(error?.response?.data?.message || error?.message || "Failed to complete instructor profile.");
     } finally {
       setLoading(false);
     }
@@ -194,11 +220,11 @@ const ProfileSetup = () => {
   const handleLogout = () => {
     setLoading(true);
     try {
-      Cookies.remove("token");
-      Cookies.remove("role_name");
-      Cookies.remove("user_onboarding");
-      Cookies.remove("instructor_onboarding");
-      Cookies.remove("profileStatus");
+      Cookies.remove("token", { path: "/" });
+      Cookies.remove("role_name", { path: "/" });
+      Cookies.remove("user_onboarding", { path: "/" });
+      Cookies.remove("instructor_onboarding", { path: "/" });
+      Cookies.remove("profileStatus", { path: "/" });
       dispatch(resetAllSlices());
       if (typeof window !== "undefined") {
         window.location.href = "/";

@@ -23,11 +23,11 @@ const Api = axios.create({
 Api.defaults.headers.post["Content-Type"] = "application/json;charset=utf-8";
 
 const clearAuthCookies = () => {
-  Cookies.remove("token");
-  Cookies.remove("role_name");
-  Cookies.remove("user_onboarding");
-  Cookies.remove("instructor_onboarding");
-  Cookies.remove("profileStatus");
+  Cookies.remove("token", { path: "/" });
+  Cookies.remove("role_name", { path: "/" });
+  Cookies.remove("user_onboarding", { path: "/" });
+  Cookies.remove("instructor_onboarding", { path: "/" });
+  Cookies.remove("profileStatus", { path: "/" });
 };
 
 Api.interceptors.request.use(

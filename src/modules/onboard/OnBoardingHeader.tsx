@@ -20,11 +20,11 @@ const OnBoardingHeader: React.FC<OnBoardingHeaderProps> = ({
   const router = useRouter();
 
   const handleLogout = () => {
-    Cookies.remove("token");
-    Cookies.remove("role_name");
-    Cookies.remove("user_onboarding");
-    Cookies.remove("instructor_onboarding");
-    Cookies.remove("profileStatus");
+    Cookies.remove("token", { path: "/" });
+    Cookies.remove("role_name", { path: "/" });
+    Cookies.remove("user_onboarding", { path: "/" });
+    Cookies.remove("instructor_onboarding", { path: "/" });
+    Cookies.remove("profileStatus", { path: "/" });
     dispatch(resetAllSlices());
     router.push("/");
   };

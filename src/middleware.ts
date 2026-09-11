@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   )?.value;
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/setup-password")) {
+  if (pathname.startsWith("/setup-password") || pathname.startsWith("/browse")) {
     return NextResponse.next();
   }
 
@@ -109,11 +109,15 @@ export function middleware(request: NextRequest) {
     let onboardingRedirectUrl = null;
 
     if (role === Role?.STUDENT) {
-      if (!(userOnboarding === "undefined")) {
+      const isStillOnboarding =
+        userOnboarding === "1" || userOnboarding === "2" || userOnboarding === "3";
+      if (isStillOnboarding) {
         onboardingRedirectUrl = RoutePaths?.Onboarding;
       }
     } else if (role === Role?.INSTRUCTOR) {
-      if (!(instructorOnboarding === "undefined")) {
+      const isStillOnboarding =
+        instructorOnboarding === "1" || instructorOnboarding === "2";
+      if (isStillOnboarding) {
         onboardingRedirectUrl = `${RoutePaths?.BecomeInstructor}/onboarding`;
       }
     }

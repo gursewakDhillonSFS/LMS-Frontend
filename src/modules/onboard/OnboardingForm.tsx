@@ -11,7 +11,8 @@ import {
   onboardingStep2,
   onboardingStep3,
 } from "@/services/collections";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "@/redux/slices/UserDataSlice";
 import { RootState } from "@/redux/store";
 import { educationOptions, goalOptions, categories as fallbackCategories } from "@/utils/constant";
 import { OnboardingFormValues } from "@/utils/interface";
@@ -38,6 +39,7 @@ const goalDescriptions: Record<string, string> = {
 
 const OnboardingForm: React.FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [form] = Form.useForm<OnboardingFormValues>();
   const [step, setStep] = useState<number>(0);
   const [selectedGoal, setSelectedGoal] = useState<string>("");
@@ -82,40 +84,64 @@ const OnboardingForm: React.FC = () => {
 
       setLoading(true);
 
-      if (step === 0 && userData?.user_id) {
+      const effectiveUserId =
+        userData?.user_id ||
+        (() => {
+          const t = Cookies.get("token");
+          if (!t) return null;
+          try {
+            const p = JSON.parse(atob(t.split(".")[1]));
+            return p?.sub || p?.user_id || p?.userId || null;
+          } catch {
+            return null;
+          }
+        })();
+
+      if (step === 0 && effectiveUserId) {
         const response = await onboardingStep1({
-          user_id: userData.user_id,
+          user_id: effectiveUserId,
           career: value.goal,
         });
         if (response?.status) {
-          Cookies.set("user_onboarding", "2");
+          dispatch(updateUser({ career: value.goal }));
+          Cookies.set("user_onboarding", "2", { path: "/" });
         }
-      } else if (step === 1 && userData?.user_id) {
+      } else if (step === 1 && effectiveUserId) {
         const response = await onboardingStep2({
-          user_id: userData.user_id,
+          user_id: effectiveUserId,
           topic: value.topics,
         });
         if (response?.status) {
-          Cookies.set("user_onboarding", "3");
+          dispatch(updateUser({ topics: value.topics }));
+          Cookies.set("user_onboarding", "3", { path: "/" });
         }
-      } else if (step === 2 && userData?.user_id) {
-        const response = await onboardingStep3({
-          user_id: userData.user_id,
-          education_level: value.education,
-        });
-        if (response?.status) {
-          Cookies.set("user_onboarding", "undefined");
+      } else if (step === 2) {
+        if (effectiveUserId) {
+          try {
+            const response = await onboardingStep3({
+              user_id: effectiveUserId,
+              education_level: value.education,
+            });
+            if (response?.status) {
+              dispatch(updateUser({ education_level: value.education }));
+            }
+          } catch (apiErr) {
+            console.warn("Onboarding step 3 API warning:", apiErr);
+          }
         }
+        Cookies.set("user_onboarding", "completed", { path: "/" });
+        toast.success("Profile setup complete! Welcome to Skillora.");
+        window.location.href = RoutePaths?.Dashboard || "/dashboard";
+        return;
       }
 
-      if (step === 2) {
-        toast.success("Profile setup complete! Welcome to Skillora.");
-        router.push(RoutePaths?.Dashboard || "/dashboard");
-      } else {
-        setStep((prev) => prev + 1);
+      setStep((prev) => prev + 1);
+    } catch (error: any) {
+      console.warn("Validation failed or submission error:", error);
+      const msg = error?.errorFields?.[0]?.errors?.[0] || error?.message;
+      if (msg) {
+        toast.error(msg);
       }
-    } catch (error) {
-      console.warn("Validation failed:", error);
     } finally {
       setLoading(false);
     }

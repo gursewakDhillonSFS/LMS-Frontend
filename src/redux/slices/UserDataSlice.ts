@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { resetAllSlices } from "../resetSlice";
+import { Role } from "@/utils/enums";
 
 interface UserState {
   user_id: string;
@@ -39,23 +40,31 @@ const userDataSlice = createSlice({
         organization_id,
         instructor_id,
       } = action.payload;
-      Cookies.set("token", access_token);
-      Cookies.set("role_name", role_name);
-      if (career === null) {
-        Cookies.set("user_onboarding", "1");
-      } else if (topics === null) {
-        Cookies.set("user_onboarding", "2");
-      } else if (education_level === null) {
-        Cookies.set("user_onboarding", "3");
+      Cookies.set("token", access_token, { path: "/" });
+      Cookies.set("role_name", role_name, { path: "/" });
+      if (role_name === Role.STUDENT || role_name === "student") {
+        if (career === null) {
+          Cookies.set("user_onboarding", "1", { path: "/" });
+        } else if (topics === null) {
+          Cookies.set("user_onboarding", "2", { path: "/" });
+        } else if (education_level === null) {
+          Cookies.set("user_onboarding", "3", { path: "/" });
+        } else {
+          Cookies.set("user_onboarding", "completed", { path: "/" });
+        }
+        Cookies.remove("instructor_onboarding", { path: "/" });
+      } else if (role_name === Role.INSTRUCTOR || role_name === "instructor") {
+        if (organization_id == null) {
+          Cookies.set("instructor_onboarding", "1", { path: "/" });
+        } else if (!instructor_id) {
+          Cookies.set("instructor_onboarding", "2", { path: "/" });
+        } else {
+          Cookies.set("instructor_onboarding", "completed", { path: "/" });
+        }
+        Cookies.remove("user_onboarding", { path: "/" });
       } else {
-        Cookies.set("user_onboarding", "undefined");
-      }
-      if (organization_id == null) {
-        Cookies.set("instructor_onboarding", "1");
-      } else if (!instructor_id) {
-        Cookies.set("instructor_onboarding", "2");
-      } else {
-        Cookies.set("instructor_onboarding", "undefined");
+        Cookies.remove("user_onboarding", { path: "/" });
+        Cookies.remove("instructor_onboarding", { path: "/" });
       }
       return action.payload;
     },
@@ -66,19 +75,19 @@ const userDataSlice = createSlice({
       return state;
     },
     clearUser: () => {
-      Cookies.remove("token");
-      Cookies.remove("role_name");
-      Cookies.remove("user_onboarding");
-      Cookies.remove("instructor_onboarding");
+      Cookies.remove("token", { path: "/" });
+      Cookies.remove("role_name", { path: "/" });
+      Cookies.remove("user_onboarding", { path: "/" });
+      Cookies.remove("instructor_onboarding", { path: "/" });
       return null;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(resetAllSlices, () => {
-      Cookies.remove("token");
-      Cookies.remove("role_name");
-      Cookies.remove("user_onboarding");
-      Cookies.remove("instructor_onboarding");
+      Cookies.remove("token", { path: "/" });
+      Cookies.remove("role_name", { path: "/" });
+      Cookies.remove("user_onboarding", { path: "/" });
+      Cookies.remove("instructor_onboarding", { path: "/" });
       return null;
     });
   },
