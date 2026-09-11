@@ -187,8 +187,8 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
         statusFilter === "all"
           ? true
           : statusFilter === "published"
-          ? status === "published" || status === "publish"
-          : status === "draft" || status === "unpublish";
+            ? status === "published" || status === "publish"
+            : status === "draft" || status === "unpublish";
 
       return nameMatch && statusMatch;
     });
@@ -353,10 +353,27 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
       <div className="w-full flex flex-col gap-6 pb-12 animate-fadeIn">
         {/* 1. Header Row: Subtitle + "+ Create Course" CTA */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-          <div className="flex flex-col gap-1">
-            <p className="text-xs sm:text-sm text-[#667085] leading-relaxed">
-              Manage your courses, track progress and grow your learning community.
-            </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab("courses")}
+              className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === "courses"
+                  ? "bg-[#315CFF] text-white shadow-xs"
+                  : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
+                }`}
+            >
+              Courses
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("requested_demo")}
+              className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === "requested_demo"
+                  ? "bg-[#315CFF] text-white shadow-xs"
+                  : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
+                }`}
+            >
+              Requested Demo
+            </button>
           </div>
 
           <button
@@ -369,32 +386,6 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
           >
             <PlusOutlined className="text-xs" />
             <span>Create Course</span>
-          </button>
-        </div>
-
-        {/* 2. Top Pill Switcher: Courses | Requested Demo */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("courses")}
-            className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "courses"
-                ? "bg-[#315CFF] text-white shadow-xs"
-                : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
-            }`}
-          >
-            Courses
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("requested_demo")}
-            className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "requested_demo"
-                ? "bg-[#315CFF] text-white shadow-xs"
-                : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
-            }`}
-          >
-            Requested Demo
           </button>
         </div>
 
@@ -423,11 +414,10 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
 
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-md ${
-                      card.deltaType === "positive"
+                    className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-md ${card.deltaType === "positive"
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : "bg-slate-100 text-slate-700 border border-slate-200"
-                    }`}
+                      }`}
                   >
                     {card.deltaType === "positive" && (
                       <ArrowUpOutlined className="text-[9px]" />
@@ -490,11 +480,10 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                     onClick={() => setViewMode("table")}
                     aria-label="Table View"
                     title="Table View"
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
-                      viewMode === "table" || viewMode === "auto"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${viewMode === "table" || viewMode === "auto"
                         ? "bg-white text-[#315CFF] shadow-xs"
                         : "text-[#667085] hover:text-[#101828]"
-                    }`}
+                      }`}
                   >
                     <TableOutlined className="text-sm" />
                   </button>
@@ -503,11 +492,10 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                     onClick={() => setViewMode("cards")}
                     aria-label="Cards View"
                     title="Cards View"
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
-                      viewMode === "cards"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${viewMode === "cards"
                         ? "bg-white text-[#315CFF] shadow-xs"
                         : "text-[#667085] hover:text-[#101828]"
-                    }`}
+                      }`}
                   >
                     <AppstoreOutlined className="text-sm" />
                   </button>
@@ -561,13 +549,12 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
               <>
                 {/* 4A. Desktop / Large Screen: Modern Table View */}
                 <div
-                  className={`w-full overflow-x-auto ${
-                    viewMode === "cards"
+                  className={`w-full overflow-x-auto ${viewMode === "cards"
                       ? "hidden"
                       : viewMode === "table"
-                      ? "block"
-                      : "hidden lg:block"
-                  }`}
+                        ? "block"
+                        : "hidden lg:block"
+                    }`}
                 >
                   <table className="w-full text-left border-collapse">
                     <thead>
@@ -599,9 +586,9 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                       {filteredCourses.map((item, index) => {
                         const isPublished =
                           (item.course_status || item.status || "").toLowerCase() ===
-                            "published" ||
+                          "published" ||
                           (item.course_status || item.status || "").toLowerCase() ===
-                            "publish";
+                          "publish";
 
                         const createdDate = item.created_at
                           ? item.created_at.split("T")[0]
@@ -612,7 +599,7 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
 
                         const imgUrl =
                           !imgErrors[item.course_id] &&
-                          isValidUrl(getImageUrl(item.course_image_url))
+                            isValidUrl(getImageUrl(item.course_image_url))
                             ? getImageUrl(item.course_image_url)
                             : Fallback;
 
@@ -763,20 +750,19 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
 
                 {/* 4B. Mobile / Small Screen: Responsive Course Cards */}
                 <div
-                  className={`w-full p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 ${
-                    viewMode === "table"
+                  className={`w-full p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 ${viewMode === "table"
                       ? "hidden"
                       : viewMode === "cards"
-                      ? "grid"
-                      : "grid lg:hidden"
-                  }`}
+                        ? "grid"
+                        : "grid lg:hidden"
+                    }`}
                 >
                   {filteredCourses.map((item, index) => {
                     const isPublished =
                       (item.course_status || item.status || "").toLowerCase() ===
-                        "published" ||
+                      "published" ||
                       (item.course_status || item.status || "").toLowerCase() ===
-                        "publish";
+                      "publish";
 
                     const createdDate = item.created_at
                       ? item.created_at.split("T")[0]
@@ -787,7 +773,7 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
 
                     const imgUrl =
                       !imgErrors[item.course_id] &&
-                      isValidUrl(getImageUrl(item.course_image_url))
+                        isValidUrl(getImageUrl(item.course_image_url))
                         ? getImageUrl(item.course_image_url)
                         : Fallback;
 
@@ -916,11 +902,10 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                           key={p}
                           type="button"
                           onClick={() => setPage(p)}
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-semibold transition-all cursor-pointer ${
-                            page === p
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-semibold transition-all cursor-pointer ${page === p
                               ? "bg-[#315CFF] text-white shadow-xs"
                               : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
-                          }`}
+                            }`}
                         >
                           {p}
                         </button>
