@@ -1,30 +1,54 @@
-import CommonLink from "@/components/CommonLink";
+"use client";
+
 import { resetAllSlices } from "@/redux/resetSlice";
 import { HeaderLogoIcon } from "@/utils/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
+import { LogoutOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie";
 
-const OnBoardingHeader = () => {
+interface OnBoardingHeaderProps {
+  title?: string;
+}
+
+const OnBoardingHeader: React.FC<OnBoardingHeaderProps> = ({
+  title = "Student Setup",
+}) => {
   const dispatch = useDispatch();
   const router = useRouter();
+
   const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("role_name");
+    Cookies.remove("user_onboarding");
+    Cookies.remove("instructor_onboarding");
+    Cookies.remove("profileStatus");
     dispatch(resetAllSlices());
     router.push("/");
   };
-  return (
-    <div className="sticky top-0 z-50 bg-white flex items-center justify-between w-full h-[82px] border-b-[1px] border-[#D8D8D8] px-[20px] py-[8px] lg:px-[40px] lg:py-[16px]">
-      <Link href={"/"}>
-        <HeaderLogoIcon />
-      </Link>
 
-      <CommonLink
-        text={"Exit"}
-        className="text-[16px] font-[700]"
+  return (
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 h-[72px] px-4 sm:px-8 lg:px-12 flex items-center justify-between shadow-xs">
+      <div className="flex items-center gap-4">
+        <Link href="/" className="flex items-center">
+          <HeaderLogoIcon />
+        </Link>
+        <span className="hidden sm:inline-block w-[1px] h-5 bg-slate-200" />
+        <span className="hidden sm:inline-block text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/60">
+          {title}
+        </span>
+      </div>
+
+      <button
         onClick={handleLogout}
-      />
-    </div>
+        className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 px-3.5 py-2 rounded-xl hover:bg-slate-100 transition-all cursor-pointer border border-transparent hover:border-slate-200"
+      >
+        <LogoutOutlined className="text-slate-400" />
+        <span>Exit Setup</span>
+      </button>
+    </header>
   );
 };
 

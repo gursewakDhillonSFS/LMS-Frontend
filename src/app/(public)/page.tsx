@@ -56,9 +56,9 @@ const faqs = [
       "We accept all major credit/debit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, Google Pay, and localized bank transfer options.",
   },
   {
-    question: "Is there a free trial available?",
+    question: "How do course purchases work?",
     answer:
-      "Absolutely! We offer a 7-day full-access free trial so you can explore premium courses, projects, and learning paths before any commitment.",
+      "You can purchase any course individually with a one-time payment. Every purchase includes full lifetime access, future updates, and a verified certificate of completion.",
   },
   {
     question: "Can I access courses on mobile?",

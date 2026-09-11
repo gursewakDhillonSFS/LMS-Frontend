@@ -6,7 +6,7 @@
     "titleLine2": "Avenir.",
     "description": "Apprenez les meilleures compétences en tech, design, IA et gestion grâce à des cours axés sur des projets réels animés par des experts de l'industrie.",
     "exploreCta": "Explorer plus de 1 000 cours",
-    "trialCta": "Démarrer l'essai gratuit de 7 jours",
+    "trialCta": "Commencer gratuitement",
     "activeLearners": "Apprenants actifs",
     "coursesCount": "Cours certifiés",
     "mentorsCount": "Mentors experts",
@@ -99,7 +99,7 @@
   },
   "ctaBanner": {
     "title": "Développez vos compétences. Façonnez votre avenir.",
-    "subtitle": "Commencez votre essai gratuit de 7 jours dès aujourd'hui. Annulez à tout moment en un clic.",
+    "subtitle": "Découvrez les meilleurs cours dès aujourd'hui avec un accès à vie et commencez gratuitement.",
     "signUp": "Inscrivez-vous gratuitement",
     "watchVideo": "Regarder la vidéo"
   }

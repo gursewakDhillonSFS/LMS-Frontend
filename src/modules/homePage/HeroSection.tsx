@@ -49,7 +49,7 @@ const HeroSection: FC = () => {
           {/* CTA Buttons */}
           <div className="flex flex-wrap items-center gap-3.5 pt-1">
             <CommonButton
-              text={`${t("home.hero.trialCta")} →`}
+              text={`${t("common.actions.startForFree")} →`}
               onClick={handleSignup}
               className="!h-[44px] !px-6 !text-[14px]"
             />
