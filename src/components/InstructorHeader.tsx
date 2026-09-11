@@ -22,6 +22,7 @@ import { RootState } from "@/redux/store";
 import Cookies from "js-cookie";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemePicker from "./ThemePicker";
 
 const InstructorHeader = () => {
   const { t } = useTranslation();
@@ -232,6 +233,7 @@ const InstructorHeader = () => {
           <ChatIcon />
         </button>
 
+        <ThemePicker variant="header" />
         <LanguageSwitcher variant="header" />
 
         <div className="w-[1px] h-[24px] bg-[#E4E7EC]"></div>

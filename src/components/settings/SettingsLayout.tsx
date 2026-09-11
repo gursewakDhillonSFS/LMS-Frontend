@@ -15,6 +15,7 @@ import { RootState } from "@/redux/store";
 import { updateUser } from "@/redux/slices/UserDataSlice";
 import { updateUserProfileApi } from "@/services/collections";
 import { toast } from "@/utils/toast";
+import ThemePicker from "@/components/ThemePicker";
 
 export interface SettingsTabItem {
   key: string;
@@ -135,7 +136,7 @@ export default function SettingsLayout({
               >
                 <button
                   type="button"
-                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#315CFF] hover:bg-[#2547D0] text-white flex items-center justify-center shadow-md border-2 border-white transition-transform group-hover:scale-105 cursor-pointer"
+                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary hover:opacity-90 text-white flex items-center justify-center shadow-md border-2 border-white transition-transform group-hover:scale-105 cursor-pointer"
                   title="Upload profile picture"
                 >
                   <CameraOutlined className="text-xs" />
@@ -149,7 +150,7 @@ export default function SettingsLayout({
                 <h3 className="text-base font-bold text-[#101828] truncate">
                   {displayName}
                 </h3>
-                <CheckCircleFilled className="text-[#315CFF] text-xs" />
+                <CheckCircleFilled className="text-primary text-xs" />
               </div>
               <p className="text-xs text-[#667085] truncate max-w-[240px] mx-auto">
                 {userData?.email || "user@example.com"}
@@ -177,7 +178,7 @@ export default function SettingsLayout({
                   onClick={() => onTabChange(tab.key)}
                   className={`w-full p-3 rounded-xl flex items-center gap-3.5 transition-all text-left cursor-pointer ${
                     isActive
-                      ? "bg-[#315CFF] text-white shadow-xs font-semibold"
+                      ? "bg-primary text-white shadow-xs font-semibold"
                       : "text-[#475467] hover:text-[#101828] hover:bg-[#F8FAFC] font-medium"
                   }`}
                 >
@@ -203,6 +204,16 @@ export default function SettingsLayout({
                 </button>
               );
             })}
+          </div>
+
+          {/* APPEARANCE THEME SELECTOR CARD */}
+          <div className="bg-white rounded-2xl border border-[#E4E7EC] shadow-xs p-4 hidden lg:flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Appearance Theme
+              </span>
+            </div>
+            <ThemePicker variant="header" className="w-full justify-between" />
           </div>
 
           {/* MOBILE TABS SCROLLER */}

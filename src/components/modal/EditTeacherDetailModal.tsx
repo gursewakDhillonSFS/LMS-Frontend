@@ -1,6 +1,7 @@
 "use client";
+
 import { renderFormItem } from "@/utils/commonFunctions";
-import { CloseIcon, UserProfileIcon1 } from "@/utils/icons";
+import { UserProfileIcon1 } from "@/utils/icons";
 import { CreateCourseStep1Prop, InstructorRecord } from "@/utils/interface";
 import { Form, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
@@ -11,6 +12,7 @@ import useCategories from "@/hooks/useCategories";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { getImageUrl, isValidUrl } from "@/utils/comman";
+import { CloseOutlined, EditOutlined, CameraOutlined } from "@ant-design/icons";
 
 interface EditTeacherDetailModalProps {
   open: boolean;
@@ -30,12 +32,9 @@ export const EditTeacherDetailModal: React.FC<EditTeacherDetailModalProps> = ({
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
-  console.log(photoFile);
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-
       if (!file) return;
 
       if (!file.type.startsWith("image/")) {
@@ -50,15 +49,6 @@ export const EditTeacherDetailModal: React.FC<EditTeacherDetailModalProps> = ({
   };
 
   const { data, loading: CategoryLoading } = useCategories();
-
-  // const formattedCategories = useMemo(() => {
-  //   return (
-  //     data?.map((cat: Category) => ({
-  //       label: cat.category_name,
-  //       value: cat.category_name,
-  //     })) || []
-  //   );
-  // }, [data]);
 
   const inviteTeacherFields: CreateCourseStep1Prop[] = [
     {
@@ -170,21 +160,6 @@ export const EditTeacherDetailModal: React.FC<EditTeacherDetailModalProps> = ({
     const formData = new FormData();
     formData.append("data", JSON.stringify(payload));
 
-    // let phoneNumber = "";
-    // let countryCode = "";
-    // if (value?.phone) {
-    //   const parsedPhoneNumber = parsePhoneNumberFromString("+" + value.phone);
-    //   if (parsedPhoneNumber && parsedPhoneNumber.isValid()) {
-    //     phoneNumber = parsedPhoneNumber.nationalNumber;
-    //     countryCode = parsedPhoneNumber.countryCallingCode;
-    //   } else {
-    //     console.log("Invalid phone number format", value.phone);
-    //     return;
-    //   }
-    // }
-    // value.phone = phoneNumber;
-    // value.countryCode = countryCode;
-
     if (photoFile) {
       formData.append("photo", photoFile);
     }
@@ -218,7 +193,7 @@ export const EditTeacherDetailModal: React.FC<EditTeacherDetailModalProps> = ({
         expert_in,
       } = editInstructorData;
 
-      const [First_name, ...lastNameParts] = name.split(" ");
+      const [First_name, ...lastNameParts] = (name || "").split(" ");
       const Last_name = lastNameParts.join(" ");
 
       form.setFieldsValue({
@@ -234,7 +209,6 @@ export const EditTeacherDetailModal: React.FC<EditTeacherDetailModalProps> = ({
       });
 
       if (editInstructorData?.image_url) {
-        console.log("hello");
         setProfilePhoto(
           isValidUrl(getImageUrl(editInstructorData.image_url))
             ? getImageUrl(editInstructorData.image_url)
@@ -255,74 +229,102 @@ export const EditTeacherDetailModal: React.FC<EditTeacherDetailModalProps> = ({
       open={open}
       onCancel={onCancel}
       footer={null}
-      width={700}
+      width={720}
+      centered
       closable={false}
-      className="relative !top-10 scrollbar-hide"
-      prefixCls="confirmation-modal"
+      destroyOnClose
     >
-      <button
-        onClick={onCancel}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-primary rounded-full  flex items-center justify-center -top-[10px] -right-[10px] text-sm"
-      >
-        <CloseIcon color="black" />
-      </button>
-      <div className="w-full px-4 flex flex-col items-center justify-center gap-[16px]">
-        <h1 className="text-[24px] font-bold">Edit Teacher Info</h1>
-        <div className="flex flex-col gap-2 w-full">
-          <div className="font-semibold text-xl">Instructor Photo</div>
-          <div className="flex gap-5 items-center">
-            {profilePhoto ? (
-              <Image
-                src={profilePhoto}
-                width={180}
-                height={180}
-                alt="Profile"
-                unoptimized
-                className="w-[180px] h-[180px] rounded-full object-cover "
-              />
-            ) : (
-              <UserProfileIcon1 />
-            )}
-            <div className="flex flex-col gap-[12px] justify-center h-full">
-              <p className="font-semibold text-[16px] plus-jakarta-sans">
-                Choose an image from your computer
+      <div className="relative p-1">
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-slate-100 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+              <EditOutlined className="text-lg" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                Edit Teacher Information
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Update instructor profile details and credentials
               </p>
-              <p className="text-sm text-[#767676]">
-                Minimum size 100 x 100 px
-              </p>
-              <label className="flex items-center justify-center border cursor-pointer border-[#68B8FF] rounded-[10px] w-[120px] h-[32px] text-center">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="!hidden"
-                />
-                <span className="text-sm text-center cursor-pointer text-[#68B8FF]">
-                  {profilePhoto ? "Change Image" : "Upload Image"}
-                </span>
-              </label>
             </div>
           </div>
+          <button
+            onClick={onCancel}
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <CloseOutlined className="text-xs" />
+          </button>
         </div>
+
+        {/* Form */}
         <Form
           form={form}
+          layout="vertical"
           onFinish={handleSubmit}
-          className="!w-full !flex !flex-col !items-center"
+          className="w-full flex flex-col"
         >
-          <Row gutter={[16, 0]} className="w-full">
-            {inviteTeacherFields.map((field) => {
-              return (
+          <div className="max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin flex flex-col gap-5">
+            {/* Photo upload section */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-5">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-xs bg-slate-200 flex items-center justify-center">
+                {profilePhoto ? (
+                  <Image
+                    src={profilePhoto}
+                    alt="Profile"
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                ) : (
+                  <UserProfileIcon1 />
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="font-semibold text-sm text-slate-900">
+                  Instructor Profile Photo
+                </span>
+                <p className="text-xs text-slate-500">
+                  Recommended size: square aspect ratio, at least 200x200px (JPG, PNG)
+                </p>
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs cursor-pointer w-fit transition-colors">
+                  <CameraOutlined />
+                  <span>{profilePhoto ? "Change Photo" : "Upload Photo"}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Field Grid */}
+            <Row gutter={[16, 0]} className="w-full">
+              {inviteTeacherFields.map((field) => (
                 <React.Fragment key={field?.key}>
                   {renderFormItem(field)}
                 </React.Fragment>
-              );
-            })}
-          </Row>
-          <div className="flex items-center justify-end w-full">
+              ))}
+            </Row>
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
             <CommonButton
               loading={loading}
-              text={"Update"}
-              className={`!bg-secondary text-white !w-[20%]`}
+              text="Update Teacher"
+              className="!bg-[#315CFF] text-white !py-2.5 !px-6 !rounded-xl font-semibold text-sm shadow-xs"
             />
           </div>
         </Form>

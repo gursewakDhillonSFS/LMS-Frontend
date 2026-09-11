@@ -5,6 +5,7 @@ import { Modal } from "antd";
 import React from "react";
 import CommonButton from "../CommonButton";
 import { useTranslation } from "@/context/I18nContext";
+import { CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   open,
@@ -13,7 +14,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   description,
   onSubmit,
   icon,
-  iconBG = "#00F3A2",
+  iconBG,
   loading = false,
 }) => {
   const { t } = useTranslation();
@@ -24,41 +25,69 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       onCancel={onCancel}
       centered
       footer={null}
-      width={450}
+      width={440}
       closable={false}
-      prefixCls="confirmation-modal"
+      destroyOnClose
     >
-      <div className="w-full p-4 flex flex-col items-center justify-center gap-[16px]">
-        {icon && (
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: iconBG }}
-          >
-            {icon}
-          </div>
-        )}
+      <div className="relative p-2 flex flex-col items-center text-center">
+        {/* In-header close button */}
+        <button
+          onClick={onCancel}
+          aria-label="Close modal"
+          className="absolute top-0 right-0 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          <CloseOutlined className="text-xs" />
+        </button>
 
-        <div className="text-center flex flex-col gap-1">
-          {title && (
-            <h4 className="text-[24px] font-bold text-black">{title}</h4>
-          )}
-          {description && (
-            <p className="text-[#2D2D2D] text-[16px]">{description}</p>
+        {/* Icon */}
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform shadow-xs"
+          style={{
+            backgroundColor: iconBG ? `${iconBG}18` : "#FEE4E2",
+            color: iconBG || "#D92D20",
+          }}
+        >
+          {icon ? (
+            <div className="text-2xl flex items-center justify-center">{icon}</div>
+          ) : (
+            <ExclamationCircleOutlined className="text-2xl" />
           )}
         </div>
 
-        <div className="flex gap-3 w-full">
-          <CommonButton
-            text={t("actions.no", { defaultValue: "No" })}
+        {/* Content */}
+        <div className="flex flex-col gap-1.5 mb-6 max-w-[340px]">
+          {title && (
+            <h3 className="text-lg font-bold text-slate-900 leading-tight">
+              {title}
+            </h3>
+          )}
+          {description && (
+            <p className="text-sm text-slate-500 leading-relaxed">
+              {description}
+            </p>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3 w-full">
+          <button
+            type="button"
             onClick={onCancel}
-            className="border border-black !bg-transparent !w-full"
-          />
-          <CommonButton
-            loading={loading}
-            text={t("actions.yes", { defaultValue: "Yes" })}
+            className="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-colors cursor-pointer"
+          >
+            {t("actions.no", { defaultValue: "Cancel" })}
+          </button>
+          <button
+            type="button"
+            disabled={loading}
             onClick={onSubmit}
-            className={`!bg-[${iconBG}] text-white !w-full`}
-          />
+            className="w-full py-2.5 px-4 rounded-xl text-white font-semibold text-sm shadow-xs transition-opacity flex items-center justify-center cursor-pointer disabled:opacity-50"
+            style={{
+              backgroundColor: iconBG && iconBG !== "#00F3A2" ? iconBG : "#315CFF",
+            }}
+          >
+            {loading ? "Processing..." : t("actions.yes", { defaultValue: "Confirm" })}
+          </button>
         </div>
       </div>
     </Modal>

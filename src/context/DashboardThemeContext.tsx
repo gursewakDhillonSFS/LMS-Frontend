@@ -10,7 +10,7 @@ interface DashboardThemeContextType {
 }
 
 const DashboardThemeContext = createContext<DashboardThemeContextType>({
-  theme: "dark",
+  theme: "light",
   toggleTheme: () => {},
   setTheme: () => {},
 });
@@ -21,15 +21,9 @@ export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = (
   const [theme, setThemeState] = useState<ThemeMode>("light");
 
   useEffect(() => {
-    // Default to clean white/light theme as requested
-    const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "dark") {
-      // If user specifically requests dark in future, but default clean white now
-      setThemeState("light");
-      localStorage.setItem("dashboard_theme", "light");
-      document.documentElement.setAttribute("data-theme", "light");
-    } else {
-      setThemeState("light");
+    // Only set if no global app theme has been applied
+    const appTheme = localStorage.getItem("app_color_theme");
+    if (!appTheme) {
       document.documentElement.setAttribute("data-theme", "light");
     }
   }, []);

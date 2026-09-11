@@ -157,6 +157,7 @@ const antdTheme = {
 
 import { setMessageInstance } from "@/utils/toast";
 import { I18nProvider, useTranslation } from "@/context/I18nContext";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { SupportedLocale } from "@/locales";
 import enUS from "antd/locale/en_US";
 import frFR from "antd/locale/fr_FR";
@@ -171,10 +172,11 @@ function AntdAppBridge() {
 
 function AntdLocalizedConfig({ children }: { children: React.ReactNode }) {
   const { locale } = useTranslation();
+  const { antdTheme: dynamicAntdTheme } = useTheme();
   const antdLocale = locale === "fr" ? frFR : enUS;
 
   return (
-    <ConfigProvider theme={antdTheme} locale={antdLocale}>
+    <ConfigProvider theme={dynamicAntdTheme} locale={antdLocale}>
       <App>
         <AntdAppBridge />
         {children}
@@ -191,25 +193,27 @@ export default function Providers({
   initialLocale?: SupportedLocale;
 }) {
   return (
-    <I18nProvider initialLocale={initialLocale}>
-      <ReduxProvider store={store}>
-        <PersistGate
-          loading={
-            <div
-              className="w-full h-screen flex items-center justify-center"
-              style={{ backgroundColor: "#F8F9FB" }}
-            >
-              <Spin size="large" />
-            </div>
-          }
-          persistor={persistor}
-        >
-          <AntdLocalizedConfig>
-            <GlobalAnnouncementListener />
-            {children}
-          </AntdLocalizedConfig>
-        </PersistGate>
-      </ReduxProvider>
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider initialLocale={initialLocale}>
+        <ReduxProvider store={store}>
+          <PersistGate
+            loading={
+              <div
+                className="w-full h-screen flex items-center justify-center"
+                style={{ backgroundColor: "#F8F9FB" }}
+              >
+                <Spin size="large" />
+              </div>
+            }
+            persistor={persistor}
+          >
+            <AntdLocalizedConfig>
+              <GlobalAnnouncementListener />
+              {children}
+            </AntdLocalizedConfig>
+          </PersistGate>
+        </ReduxProvider>
+      </I18nProvider>
+    </ThemeProvider>
   );
 }

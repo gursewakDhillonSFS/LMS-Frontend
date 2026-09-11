@@ -1,6 +1,6 @@
 "use client";
+
 import { renderFormItem } from "@/utils/commonFunctions";
-import { CloseIcon } from "@/utils/icons";
 import { CreateCourseStep1Prop } from "@/utils/interface";
 import { Form, Modal, Row } from "antd";
 import React, { useState, useMemo } from "react";
@@ -10,6 +10,7 @@ import { RootState } from "@/redux/store";
 import { createInstrucotor } from "@/services/collections";
 import { toast } from "@/utils/toast";
 import useCategories from "@/hooks/useCategories";
+import { CloseOutlined, UserAddOutlined } from "@ant-design/icons";
 
 interface InviteTeacherModalProps {
   open: boolean;
@@ -30,7 +31,7 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
 
   const categoryOptions = useMemo(() => {
     if (data && data.length > 0) {
-      return data.map((item: any) => {
+      return data.map((item: { category_name?: string; label?: string; name?: string }) => {
         const categoryName =
           item?.category_name || item?.label || item?.name || String(item);
         return {
@@ -165,39 +166,65 @@ export const InviteTeacherModal: React.FC<InviteTeacherModalProps> = ({
       onCancel={handleClose}
       centered
       footer={null}
-      width={700}
+      width={720}
       closable={false}
-      className="relative"
-      prefixCls="confirmation-modal"
+      destroyOnClose
     >
-      <button
-        onClick={handleClose}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-primary rounded-full flex items-center justify-center -top-[10px] -right-[10px] text-sm"
-      >
-        <CloseIcon color="black" />
-      </button>
+      <div className="relative p-1">
+        {/* Modal Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-slate-100 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+              <UserAddOutlined className="text-lg" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                Invite Teacher
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Onboard a new instructor with their credentials and specializations
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleClose}
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <CloseOutlined className="text-xs" />
+          </button>
+        </div>
 
-      <div className="w-full px-4 flex flex-col items-center justify-center gap-[16px]">
-        <h1 className="text-[24px] font-bold">Invite Teacher</h1>
+        {/* Form Body */}
         <Form
           form={form}
+          layout="vertical"
           onFinish={handleSubmit}
-          className="!w-full !flex !flex-col !items-center"
+          className="w-full flex flex-col"
         >
-          <Row gutter={[16, 0]} className="w-full">
-            {inviteTeacherFields.map((field) => {
-              return (
+          <div className="max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin">
+            <Row gutter={[16, 0]} className="w-full">
+              {inviteTeacherFields.map((field) => (
                 <React.Fragment key={field?.key}>
                   {renderFormItem(field)}
                 </React.Fragment>
-              );
-            })}
-          </Row>
-          <div className="flex items-center justify-end w-full">
+              ))}
+            </Row>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
             <CommonButton
               loading={loading}
-              text={"Invite"}
-              className={`!bg-secondary text-white !w-[20%]`}
+              text="Send Invite"
+              className="!bg-[#315CFF] text-white !py-2.5 !px-6 !rounded-xl font-semibold text-sm shadow-xs"
             />
           </div>
         </Form>

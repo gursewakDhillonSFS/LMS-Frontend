@@ -1,5 +1,6 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { CloseIcon } from "@/utils/icons";
 import { Form, Modal, Select, Input, Checkbox, DatePicker } from "antd";
 import { useForm } from "antd/es/form/Form";
 import CommonButton from "../CommonButton";
@@ -9,6 +10,7 @@ import dayjs from "dayjs";
 import { AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { CloseOutlined, SoundOutlined, CalendarOutlined } from "@ant-design/icons";
 
 interface CourseItem {
   course_id: string;
@@ -105,8 +107,7 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
     const courseObj = courses.find((c) => c.course_id === courseId);
     if (courseObj && courseObj.batch) {
       setBatches(courseObj.batch);
-      const isHead =
-        String(courseObj.head_teacher_id) === String(teacherId);
+      const isHead = String(courseObj.head_teacher_id) === String(teacherId);
       if (isTeacherRole && !isHead && courseObj.batch.length > 0) {
         form.setFieldsValue({ batchId: courseObj.batch[0]._id });
       } else {
@@ -131,7 +132,6 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
       });
       setIsScheduled(!!editData.scheduledAt);
 
-      // Populate batches for the course
       const selectedCourse = courses.find((c) => c.course_id === editData.courseId);
       if (selectedCourse && selectedCourse.batch) {
         setBatches(selectedCourse.batch);
@@ -141,7 +141,7 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
       setIsScheduled(false);
       setBatches([]);
     }
-  }, [editData, postAnnouncement, courses]);
+  }, [editData, postAnnouncement, courses, form]);
 
   const onFinish = async (values: FormValues, status: "published" | "draft") => {
     const payload: Record<string, unknown> = {
@@ -161,22 +161,36 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
       onCancel={() => setPostAnnouncement(false)}
       footer={false}
       closable={false}
-      width={550}
+      width={600}
       centered
-      className="relative"
+      destroyOnClose
     >
-      <button
-        onClick={() => setPostAnnouncement(false)}
-        className="cursor-pointer absolute w-[30px] h-[30px] bg-slate-900 rounded-full text-white flex items-center justify-center -top-[10px] -right-[10px] text-sm hover:bg-slate-800 transition-colors shadow"
-      >
-        <CloseIcon />
-      </button>
+      <div className="relative p-1">
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-slate-100 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+              <SoundOutlined className="text-lg" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                {editData ? "Edit Announcement" : "Post Announcement"}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Broadcast updates, deadlines, or messages to your students
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setPostAnnouncement(false)}
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <CloseOutlined className="text-xs" />
+          </button>
+        </div>
 
-      <div className="p-2">
-        <h2 className="font-bold text-2xl text-slate-800 mb-6 text-center">
-          {editData ? "📝 Edit Announcement" : "📢 Post Announcement"}
-        </h2>
-
+        {/* Form */}
         <Form
           form={form}
           layout="vertical"
@@ -184,103 +198,126 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
             setClickedSubmitType("published");
             onFinish(values, "published");
           }}
-          className="w-full"
+          className="w-full flex flex-col gap-4"
         >
-          {/* Select Course */}
-          <Form.Item
-            name="courseId"
-            label={<span className="font-semibold text-slate-700">Course</span>}
-            rules={[{ required: true, message: "Course is required" }]}
-          >
-            <Select
-              loading={coursesLoading}
-              placeholder="--Select Course--"
-              className="w-full !h-[44px]"
-              onChange={handleCourseChange}
-              options={courses.map((c) => ({
-                label: c.course_name,
-                value: c.course_id,
-              }))}
-            />
-          </Form.Item>
+          <div className="max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin flex flex-col gap-4">
+            {/* Course & Batch in responsive grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Form.Item
+                name="courseId"
+                label={<span className="text-xs font-semibold text-slate-700">Course</span>}
+                rules={[{ required: true, message: "Course is required" }]}
+                className="!mb-0"
+              >
+                <Select
+                  loading={coursesLoading}
+                  placeholder="Select course"
+                  className="w-full !h-[42px]"
+                  onChange={handleCourseChange}
+                  options={courses.map((c) => ({
+                    label: c.course_name,
+                    value: c.course_id,
+                  }))}
+                />
+              </Form.Item>
 
-          {/* Select Batch */}
-          <Form.Item
-            name="batchId"
-            label={
-              <span className="font-semibold text-slate-700">
-                Select Batch {!canTargetAllBatches ? "(Required)" : "(Optional)"}
-              </span>
-            }
-            rules={
-              !canTargetAllBatches
-                ? [{ required: true, message: "Please select a batch" }]
-                : []
-            }
-          >
-            <Select
-              placeholder={
-                canTargetAllBatches ? "--All Batches--" : "--Select Batch--"
-              }
-              className="w-full !h-[44px]"
-              options={[
-                ...(canTargetAllBatches
-                  ? [{ label: "All Batches (Whole Course)", value: "" }]
-                  : []),
-                ...batches.map((b) => ({
-                  label: b.batchName,
-                  value: b._id,
-                })),
-              ]}
-            />
-          </Form.Item>
+              <Form.Item
+                name="batchId"
+                label={
+                  <span className="text-xs font-semibold text-slate-700">
+                    Batch {!canTargetAllBatches ? "(Required)" : "(Optional)"}
+                  </span>
+                }
+                rules={
+                  !canTargetAllBatches
+                    ? [{ required: true, message: "Please select a batch" }]
+                    : []
+                }
+                className="!mb-0"
+              >
+                <Select
+                  placeholder={
+                    canTargetAllBatches ? "All Batches (Whole Course)" : "Select Batch"
+                  }
+                  className="w-full !h-[42px]"
+                  options={[
+                    ...(canTargetAllBatches
+                      ? [{ label: "All Batches (Whole Course)", value: "" }]
+                      : []),
+                    ...batches.map((b) => ({
+                      label: b.batchName,
+                      value: b._id,
+                    })),
+                  ]}
+                />
+              </Form.Item>
+            </div>
 
-          {/* Title */}
-          <Form.Item
-            name="title"
-            label={<span className="font-semibold text-slate-700">Subject / Title</span>}
-            rules={[{ required: true, message: "Subject title is required" }]}
-          >
-            <Input placeholder="Enter title" className="!h-[44px] !rounded-lg" />
-          </Form.Item>
-
-          {/* Message */}
-          <Form.Item
-            name="message"
-            label={<span className="font-semibold text-slate-700">Announcement Message</span>}
-            rules={[{ required: true, message: "Message is required" }]}
-          >
-            <Input.TextArea
-              placeholder="Enter announcement message..."
-              rows={4}
-              className="!rounded-lg"
-            />
-          </Form.Item>
-
-          {/* Schedule announcement checkbox */}
-          <Form.Item name="isScheduled" valuePropName="checked" className="!mb-4">
-            <Checkbox onChange={(e) => setIsScheduled(e.target.checked)}>
-              Schedule this announcement for a future date
-            </Checkbox>
-          </Form.Item>
-
-          {/* Schedule Date */}
-          {isScheduled && (
+            {/* Title */}
             <Form.Item
-              name="scheduledAt"
-              label={<span className="font-semibold text-slate-700">Date</span>}
-              rules={[{ required: true, message: "Schedule date is required" }]}
+              name="title"
+              label={<span className="text-xs font-semibold text-slate-700">Subject / Title</span>}
+              rules={[{ required: true, message: "Subject title is required" }]}
+              className="!mb-0"
             >
-              <DatePicker
-                className="w-full !h-[44px] !rounded-lg"
-                format="DD/MM/YYYY"
-                disabledDate={(current) => current && current < dayjs().startOf("day")}
+              <Input
+                placeholder="e.g. Midterm Exam Schedule Update"
+                className="!h-[42px] !rounded-xl"
               />
             </Form.Item>
-          )}
 
-          {/* Submit buttons */}
-          <div className="flex justify-end items-center gap-3 border-t border-slate-100 pt-4 mt-6">
+            {/* Message */}
+            <Form.Item
+              name="message"
+              label={<span className="text-xs font-semibold text-slate-700">Announcement Content</span>}
+              rules={[{ required: true, message: "Message is required" }]}
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="Write your announcement details here..."
+                rows={4}
+                className="!rounded-xl text-sm"
+              />
+            </Form.Item>
+
+            {/* Schedule Checkbox & Date */}
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col gap-3">
+              <Form.Item name="isScheduled" valuePropName="checked" className="!mb-0">
+                <Checkbox
+                  onChange={(e) => setIsScheduled(e.target.checked)}
+                  className="text-xs font-medium text-slate-700"
+                >
+                  Schedule this announcement for a future date
+                </Checkbox>
+              </Form.Item>
+
+              {isScheduled && (
+                <Form.Item
+                  name="scheduledAt"
+                  label={<span className="text-xs font-semibold text-slate-700">Publish Date</span>}
+                  rules={[{ required: true, message: "Schedule date is required" }]}
+                  className="!mb-0"
+                >
+                  <DatePicker
+                    suffixIcon={<CalendarOutlined />}
+                    className="w-full !h-[42px] !rounded-xl"
+                    format="DD/MM/YYYY"
+                    disabledDate={(current) => current && current < dayjs().startOf("day")}
+                  />
+                </Form.Item>
+              )}
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => setPostAnnouncement(false)}
+              className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
             <CommonButton
               onClick={() => {
                 setClickedSubmitType("draft");
@@ -295,14 +332,14 @@ const PostAnnouncementModal: React.FC<PostAnnouncementModalProps> = ({
               loading={loading && clickedSubmitType === "draft"}
               disable={loading}
               text={editData ? "Save Draft" : "Save as Draft"}
-              className="!bg-slate-100 !text-slate-700 hover:!bg-slate-200 border-none px-6"
+              className="!bg-slate-100 !text-slate-700 hover:!bg-slate-200 border-none !py-2.5 !px-5 !rounded-xl font-semibold text-sm"
             />
             <CommonButton
               type="submit"
               loading={loading && clickedSubmitType === "published"}
               disable={loading}
               text={editData ? "Publish Now" : "Post Announcement"}
-              className="!bg-secondary text-white px-6"
+              className="!bg-[#315CFF] text-white !py-2.5 !px-6 !rounded-xl font-semibold text-sm shadow-xs"
             />
           </div>
         </Form>

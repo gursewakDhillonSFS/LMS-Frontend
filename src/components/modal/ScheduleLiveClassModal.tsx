@@ -1,4 +1,5 @@
-import { CloseIcon } from "@/utils/icons";
+"use client";
+
 import { Form, Modal, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import React, { useEffect, useState } from "react";
@@ -6,6 +7,7 @@ import CommonButton from "../CommonButton";
 import { renderFormItem } from "@/utils/commonFunctions";
 import { CreateCourseStep1Prop } from "@/utils/interface";
 import { getAllCoursesApi } from "@/services/collections";
+import { CloseOutlined, VideoCameraOutlined } from "@ant-design/icons";
 
 interface ScheduleLiveClassModalProps {
   open: boolean;
@@ -40,7 +42,7 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
             key: "courseId",
             label: "Course",
             type: "select",
-            placeholder: "--Select Option--",
+            placeholder: "--Select Course--",
             options: list.map(
               (c: { course_id: string; course_name: string }) => ({
                 label: c.course_name,
@@ -53,15 +55,15 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
             key: "batchId",
             label: "Batch",
             type: "select",
-            placeholder: "--Select Option--",
+            placeholder: "--Select Batch--",
             options: [],
             colSpan: 24,
           },
           {
             key: "title",
-            label: "Title",
+            label: "Live Session Title",
             type: "text",
-            placeholder: "Live class title",
+            placeholder: "e.g. Advanced Analysis & Live Q&A",
             colSpan: 24,
           },
           {
@@ -87,9 +89,9 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
           },
           {
             key: "meetingLink",
-            label: "Meeting Link",
+            label: "Meeting URL (Zoom, Meet)",
             type: "text",
-            placeholder: "https://zoom.us/...",
+            placeholder: "https://zoom.us/j/...",
             colSpan: 24,
           },
         ]);
@@ -137,32 +139,65 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
       onCancel={onClose}
       footer={false}
       closable={false}
-      width={400}
-      className="!relative"
+      width={480}
+      centered
+      destroyOnClose
     >
-      <button
-        onClick={onClose}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-black rounded-full text-white flex items-center justify-center -top-[10px] -right-[10px] text-sm"
-      >
-        <CloseIcon />
-      </button>
-      <div className="flex flex-col gap-4">
-        <h1 className="font-bold text-2xl text-center">Schedule Live Class</h1>
+      <div className="relative p-1">
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-slate-100 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+              <VideoCameraOutlined className="text-lg" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                Schedule Live Class
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Set up an interactive session with video link
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <CloseOutlined className="text-xs" />
+          </button>
+        </div>
+
+        {/* Form Body */}
         <Form
           form={form}
+          layout="vertical"
           onFinish={handleSubmit}
           onValuesChange={handleValuesChange}
-          className="!w-full !flex !flex-col !items-center"
+          className="w-full flex flex-col"
         >
-          <Row gutter={[16, 0]} className="w-full">
-            {fields.map((field) => renderFormItem(field))}
-          </Row>
-          <CommonButton
-            text="Schedule"
-            type="submit"
-            loading={loading}
-            className="!w-full !mt-2"
-          />
+          <div className="max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin">
+            <Row gutter={[16, 0]} className="w-full">
+              {fields.map((field) => renderFormItem(field))}
+            </Row>
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <CommonButton
+              text="Schedule Session"
+              type="submit"
+              loading={loading}
+              className="!bg-[#315CFF] text-white !py-2.5 !px-6 !rounded-xl font-semibold text-sm shadow-xs"
+            />
+          </div>
         </Form>
       </div>
     </Modal>

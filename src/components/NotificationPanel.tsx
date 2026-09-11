@@ -1,7 +1,9 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
-import { CloseOutlined } from "@ant-design/icons";
-import CommonLink from "./CommonLink";
+import { CloseOutlined, BellOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { useTranslation } from "@/context/I18nContext";
 
 const notifications = {
   new: [
@@ -89,34 +91,35 @@ type NotificationData = {
 };
 
 const NotificationCard: React.FC<{ data: NotificationData }> = ({ data }) => (
-  <div className="flex items-center gap-2 w-full">
-    <div className="relative min-w-10">
+  <div className="group relative flex items-start gap-3 p-3 rounded-xl border border-transparent hover:border-slate-200/80 hover:bg-slate-50/80 transition-all duration-200">
+    <div className="relative shrink-0 mt-0.5">
       <Image
         unoptimized
-        width={40}
-        height={40}
+        width={38}
+        height={38}
         src={data.avatar}
         alt={data.course}
-        className="!w-[40px] !h-[40px] rounded-full"
+        className="w-[38px] h-[38px] rounded-full object-cover ring-2 ring-white shadow-xs"
       />
-      <div className="absolute top-0 bg-blue-500 rounded-full w-2 h-2"></div>
+      <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#315CFF] border-2 border-white rounded-full"></span>
     </div>
-    <div className="flex flex-col gap-1">
-      <p className="text-sm">
-        <span className="font-[600]">{data.course}</span>{" "}
-        <span>
-          {data.message}{" "}
-          {data.type && (
-            <CommonLink text={`"${data.type}"`} className="text-[#FB4A49]" />
-          )}
-        </span>
+    <div className="flex flex-col gap-1 min-w-0 flex-1">
+      <p className="text-[13px] text-slate-700 leading-snug">
+        <span className="font-semibold text-slate-900">{data.course}</span>{" "}
+        <span className="text-slate-600">{data.message}</span>{" "}
+        {data.type && (
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-[#315CFF] border border-blue-100">
+            {data.type}
+          </span>
+        )}
       </p>
-      <p className="text-xs text-[#8A8A8A] ">{data.time}</p>
+      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+        <ClockCircleOutlined className="text-[10px]" />
+        <span>{data.time}</span>
+      </div>
     </div>
   </div>
 );
-
-import { useTranslation } from "@/context/I18nContext";
 
 export interface NotificationProps {
   onClose: () => void;
@@ -127,40 +130,58 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose }) => {
   const sections = Object.entries(notifications);
 
   const getSectionTitle = (section: string) => {
-    if (section === "all") return t("common.nav.allNotifications", { defaultValue: "All Notification" });
+    if (section === "all") return t("common.nav.allNotifications", { defaultValue: "All Notifications" });
     if (section === "new") return t("common.nav.new", { defaultValue: "New" });
     if (section === "today") return t("common.nav.today", { defaultValue: "Today" });
     return section;
   };
 
+  const totalCount = Object.values(notifications).reduce((acc, items) => acc + items.length, 0);
+
   return (
-    <div>
-      <div className="flex justify-between items-center bg-[#F3F6FC] px-[24px] pt-[24px] pb-[10px]">
-        <h2 className="text-lg text-[#0E0E0E] font-bold">
-          {t("common.panels.notificationsTitle", { defaultValue: "Notification" })}
-        </h2>
+    <div className="flex flex-col h-full bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+            <BellOutlined className="text-base" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900">
+                {t("common.panels.notificationsTitle", { defaultValue: "Notifications" })}
+              </h2>
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#315CFF]/10 text-[#315CFF]">
+                {totalCount}
+              </span>
+            </div>
+          </div>
+        </div>
         <button
           onClick={onClose}
-          className="cursor-pointer text-red-500 hover:text-red-700"
+          aria-label="Close notification panel"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
         >
-          <CloseOutlined />
+          <CloseOutlined className="text-xs" />
         </button>
       </div>
-      <div className="overflow-y-auto h-[calc(100vh-80px)] px-[24px] py-3 scrollbar-hide">
-        {sections.map(([section, items], index) => (
-          <div key={section} className="flex flex-col gap-3">
-            <p className="text-sm font-bold text-[#0E0E0E] capitalize">
-              {getSectionTitle(section)}
-            </p>
 
-            <div className="flex flex-col gap-2">
+      {/* Body List */}
+      <div className="flex-1 overflow-y-auto px-4 py-3 divide-y divide-slate-100 scrollbar-thin">
+        {sections.map(([section, items]) => (
+          <div key={section} className="py-3 first:pt-1 last:pb-1">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                {getSectionTitle(section)}
+              </span>
+              <span className="text-[11px] text-slate-400 font-medium">{items.length}</span>
+            </div>
+
+            <div className="flex flex-col gap-1">
               {items.map((item, idx) => (
                 <NotificationCard key={idx} data={item} />
               ))}
             </div>
-
-            {/* Show border below section unless it's the last one */}
-            {index < sections.length - 1 && <div className="border-b my-4" />}
           </div>
         ))}
       </div>

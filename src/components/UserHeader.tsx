@@ -24,6 +24,7 @@ import { RoutePaths } from "@/utils/enums";
 import Cookies from "js-cookie";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemePicker from "./ThemePicker";
 
 const UserHeader = () => {
   const { t } = useTranslation();
@@ -179,6 +180,7 @@ const UserHeader = () => {
           <ChatIcon />
         </button>
 
+        <ThemePicker variant="header" />
         <LanguageSwitcher variant="header" />
         <div className="w-[1px] h-[24px] bg-[var(--border)]"></div>
         <Dropdown

@@ -1,5 +1,5 @@
 "use client";
-import { CalendarIcon2, ClockWheelIcon, CloseIcon } from "@/utils/icons";
+
 import React, { useState, useEffect } from "react";
 import { DatePicker, Form, Input, Modal, TimePicker, Select } from "antd";
 import CommonButton from "../CommonButton";
@@ -7,6 +7,13 @@ import { useForm } from "antd/es/form/Form";
 import { getAllCoursesApi, createScheduleApi, updateScheduleApi } from "@/services/collections";
 import { toast } from "@/utils/toast";
 import dayjs from "dayjs";
+import {
+  CloseOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
+  LinkOutlined,
+  BookOutlined,
+} from "@ant-design/icons";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -54,7 +61,7 @@ const ScheduleModalForm: React.FC<ScheduleModalProps> = ({
   open,
   onClose,
   onSuccess,
-  centered = false,
+  centered = true,
   editData = null,
 }) => {
   const [form] = useForm();
@@ -167,68 +174,81 @@ const ScheduleModalForm: React.FC<ScheduleModalProps> = ({
       open={open}
       onCancel={onClose}
       footer={null}
-      width={520}
+      width={560}
       centered={centered}
       closable={false}
-      prefixCls="common-modal"
-      className={`relative ${!centered && "!top-10"}`}
+      destroyOnClose
     >
-      <button
-        onClick={onClose}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-black rounded-full text-white flex items-center justify-center -top-[10px] -right-[10px] text-sm z-50 hover:bg-red-500 transition-colors"
-      >
-        <CloseIcon />
-      </button>
-      <div className="flex flex-col gap-[24px]">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
-          {editData ? "Edit Schedule Event" : "Add Schedule"}
-        </h2>
+      <div className="relative p-1">
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-slate-100 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+              <CalendarOutlined className="text-lg" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                {editData ? "Edit Schedule Event" : "Add Schedule Event"}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Organize calendar sessions, classes, or mentoring calls
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <CloseOutlined className="text-xs" />
+          </button>
+        </div>
+
+        {/* Form Body */}
         <Form
           form={form}
           requiredMark={false}
           layout="vertical"
           onFinish={handleFormSubmit}
+          className="w-full flex flex-col gap-4"
         >
-          {/* Title */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="title" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-              Title
-            </label>
+          <div className="max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin flex flex-col gap-4">
+            {/* Title */}
             <Form.Item
               name="title"
+              label={<span className="text-xs font-semibold text-slate-700">Event Title</span>}
               rules={[{ required: true, message: "Please enter a title" }]}
+              className="!mb-0"
             >
               <Input
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px] focus:!border-secondary"
-                placeholder="Enter event title"
+                className="!h-[42px] !rounded-xl text-sm"
+                placeholder="e.g. Weekly Group Mentorship Session"
               />
             </Form.Item>
-          </div>
 
-          {/* Description */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="description" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-              Description (Optional)
-            </label>
-            <Form.Item name="description">
+            {/* Description */}
+            <Form.Item
+              name="description"
+              label={<span className="text-xs font-semibold text-slate-700">Description (Optional)</span>}
+              className="!mb-0"
+            >
               <TextArea
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px] focus:!border-secondary"
+                className="!rounded-xl text-sm"
                 rows={3}
-                placeholder="Enter event description details"
+                placeholder="Enter event overview, topics, or instructions..."
               />
             </Form.Item>
-          </div>
 
-          {/* Course & Batch selectors */}
-          <div className="flex gap-4">
-            <div className="w-1/2 flex flex-col gap-1">
-              <label htmlFor="courseId" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-                Course (Optional)
-              </label>
-              <Form.Item name="courseId">
+            {/* Course & Batch */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Form.Item
+                name="courseId"
+                label={<span className="text-xs font-semibold text-slate-700">Course (Optional)</span>}
+                className="!mb-0"
+              >
                 <Select
                   placeholder="Select Course"
-                  className="w-full h-[46px] rounded-[8px]"
+                  className="w-full !h-[42px]"
                   onChange={handleCourseChange}
                   allowClear
                 >
@@ -239,16 +259,15 @@ const ScheduleModalForm: React.FC<ScheduleModalProps> = ({
                   ))}
                 </Select>
               </Form.Item>
-            </div>
 
-            <div className="w-1/2 flex flex-col gap-1">
-              <label htmlFor="batchId" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-                Batch (Optional)
-              </label>
-              <Form.Item name="batchId">
+              <Form.Item
+                name="batchId"
+                label={<span className="text-xs font-semibold text-slate-700">Batch (Optional)</span>}
+                className="!mb-0"
+              >
                 <Select
                   placeholder="Select Batch"
-                  className="w-full h-[46px] rounded-[8px]"
+                  className="w-full !h-[42px]"
                   disabled={batches.length === 0}
                   allowClear
                 >
@@ -260,39 +279,31 @@ const ScheduleModalForm: React.FC<ScheduleModalProps> = ({
                 </Select>
               </Form.Item>
             </div>
-          </div>
 
-          {/* Date Picker */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="date" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-              Date
-            </label>
-            <Form.Item
-              name="date"
-              rules={[{ required: true, message: "Please select a date" }]}
-            >
-              <DatePicker
-                suffixIcon={<CalendarIcon2 />}
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px] w-full focus:!border-secondary"
-                format="DD/MM/YYYY"
-              />
-            </Form.Item>
-          </div>
+            {/* Date & Time Slot */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <Form.Item
+                name="date"
+                label={<span className="text-xs font-semibold text-slate-700">Date</span>}
+                rules={[{ required: true, message: "Please select a date" }]}
+                className="!mb-0"
+              >
+                <DatePicker
+                  suffixIcon={<CalendarOutlined />}
+                  className="w-full !h-[42px] !rounded-xl"
+                  format="DD/MM/YYYY"
+                />
+              </Form.Item>
 
-          {/* Time pickers */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="startTime" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-              Time Slot
-            </label>
-            <div className="flex gap-4">
               <Form.Item
                 name="startTime"
-                className="w-1/2"
+                label={<span className="text-xs font-semibold text-slate-700">Start Time</span>}
                 rules={[{ required: true, message: "Start time required" }]}
+                className="!mb-0"
               >
                 <TimePicker
-                  suffixIcon={<ClockWheelIcon color="#818B9A" />}
-                  className="!p-3 !border-[#C8C8C8] !rounded-[8px] w-full focus:!border-secondary"
+                  suffixIcon={<ClockCircleOutlined />}
+                  className="w-full !h-[42px] !rounded-xl"
                   format="HH:mm"
                   placeholder="Start Time"
                 />
@@ -300,41 +311,50 @@ const ScheduleModalForm: React.FC<ScheduleModalProps> = ({
 
               <Form.Item
                 name="endTime"
-                className="w-1/2"
+                label={<span className="text-xs font-semibold text-slate-700">End Time</span>}
                 rules={[{ required: true, message: "End time required" }]}
+                className="!mb-0"
               >
                 <TimePicker
-                  suffixIcon={<ClockWheelIcon color="#818B9A" />}
-                  className="!p-3 !border-[#C8C8C8] !rounded-[8px] w-full focus:!border-secondary"
+                  suffixIcon={<ClockCircleOutlined />}
+                  className="w-full !h-[42px] !rounded-xl"
                   format="HH:mm"
                   placeholder="End Time"
                 />
               </Form.Item>
             </div>
-          </div>
 
-          {/* Meeting/Live Lesson Link */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="meetingLink" className="plus-jakarta-sans font-medium text-sm text-gray-700">
-              Platform Meeting/Live Call Link (Optional)
-            </label>
-            <Form.Item name="meetingLink">
+            {/* Meeting Link */}
+            <Form.Item
+              name="meetingLink"
+              label={<span className="text-xs font-semibold text-slate-700">Meeting Link (Optional)</span>}
+              className="!mb-0"
+            >
               <Input
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px] focus:!border-secondary"
-                placeholder="Enter Zoom, Meet, or live call URL"
+                prefix={<LinkOutlined className="text-slate-400" />}
+                className="!h-[42px] !rounded-xl text-sm"
+                placeholder="https://meet.google.com/xyz or Zoom URL"
               />
             </Form.Item>
           </div>
 
-          <Form.Item className="!mb-0">
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
             <CommonButton
               text={editData ? "Update Schedule" : "Schedule Event"}
               loading={loading}
               disable={loading}
               type="submit"
-              className="!bg-secondary text-white w-full !h-[50px] !rounded-[8px] text-base font-semibold"
+              className="!bg-[#315CFF] text-white !py-2.5 !px-6 !rounded-xl font-semibold text-sm shadow-xs"
             />
-          </Form.Item>
+          </div>
         </Form>
       </div>
     </Modal>

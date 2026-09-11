@@ -18,6 +18,7 @@ import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { Dropdown } from "antd";
 import type { MenuProps } from "antd";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemePicker from "./ThemePicker";
 import { useTranslation } from "@/context/I18nContext";
 
 const Header = () => {
@@ -188,8 +189,9 @@ const Header = () => {
           )}
         </div>
 
-        {/* Right: Language Selector, Auth Buttons & Mobile Menu Toggle */}
-        <div className="flex items-center gap-3 shrink-0">
+        {/* Right: Theme Picker, Language Selector, Auth Buttons & Mobile Menu Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <ThemePicker variant="header" />
           <LanguageSwitcher variant="header" />
 
           <div className="hidden sm:block border-l border-slate-200 h-5" />

@@ -126,8 +126,26 @@
   --dash-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.03);
 }
 
-/* Light Mode Explicit */
+/* Light Mode Explicit (Default) */
 [data-theme="light"] {
+  --primary: #315CFF;
+  --primary-hover: #274BD1;
+  --primary-light: #EBF0FF;
+  --primary-subtle: #F5F7FF;
+  --secondary: #315CFF;
+  --accent: #00D084;
+  --bg: #F4F6FA;
+  --bg-gradient: linear-gradient(180deg, #F8FAFD 0%, #EEF2F7 100%);
+  --surface: #FFFFFF;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #F8FAFC;
+  --surface-hover: #F1F5F9;
+  --text-primary: #101828;
+  --text-secondary: #475467;
+  --text-muted: #667085;
+  --border: #E4E7EC;
+  --border-strong: #D0D5DD;
+
   --dash-bg: #F4F6FA;
   --dash-surface: #FFFFFF;
   --dash-surface-card: #FFFFFF;
@@ -158,6 +176,198 @@
 
   --dash-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.02);
   --dash-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.03);
+}
+
+/* ============================================
+   Palette 1: Terracotta & Warm Beige
+   Primary: Terracotta #C7654A | Secondary: Peach #F3C7B7
+   Accent: Mustard #D5A63A | Bg: Warm Beige #F8F3ED
+   Text: Charcoal #292929 | Muted: #77716B
+   ============================================ */
+[data-theme="terracotta"] {
+  --primary: #C7654A;
+  --primary-hover: #B3563D;
+  --primary-light: #FDF1EE;
+  --primary-subtle: #FAF0EC;
+  --secondary: #F3C7B7;
+  --accent: #D5A63A;
+
+  --bg: #F8F3ED;
+  --bg-gradient: linear-gradient(180deg, #F8F3ED 0%, #F1E9DF 100%);
+  --surface: #FFFFFF;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #F3ECE3;
+  --surface-hover: #ECE4DA;
+
+  --text-primary: #292929;
+  --text-secondary: #54504C;
+  --text-muted: #77716B;
+  --text-inverse: #FFFFFF;
+
+  --border: #E8DFD5;
+  --border-strong: #D8CEBF;
+  --border-subtle: rgba(232, 223, 213, 0.85);
+
+  --dash-bg: #F8F3ED;
+  --dash-surface: #FFFFFF;
+  --dash-surface-card: #FFFFFF;
+  --dash-surface-subtle: #F3ECE3;
+  --dash-surface-hover: #ECE4DA;
+  --dash-surface-elevated: #FFFFFF;
+  --dash-border: #E8DFD5;
+  --dash-border-subtle: #F3ECE3;
+  --dash-border-strong: #D8CEBF;
+
+  --dash-text-primary: #292929;
+  --dash-text-secondary: #54504C;
+  --dash-text-muted: #77716B;
+  --dash-text-inverse: #FFFFFF;
+
+  --dash-primary: #C7654A;
+  --dash-primary-hover: #B3563D;
+  --dash-primary-light: #FDF1EE;
+
+  --dash-sidebar-bg: #FFFFFF;
+  --dash-sidebar-border: #E8DFD5;
+  --dash-sidebar-text: #292929;
+  --dash-sidebar-active-bg: #FDF1EE;
+  --dash-sidebar-active-text: #C7654A;
+
+  --dash-header-bg: #FFFFFF;
+  --dash-header-border: #E8DFD5;
+
+  --sidebar-item-active-bg: #FDF1EE;
+  --sidebar-item-active-text: #C7654A;
+  --sidebar-border: #E8DFD5;
+  --header-border: #E8DFD5;
+}
+
+/* ============================================
+   Palette 2: Forest Green & Sage
+   Primary: Forest Green #245C4A | Secondary: Sage #A8C3B5
+   Accent: Terracotta #D98262 | Bg: Cream #F7F4EC
+   Text: Dark Green #20352E | Muted: #718078
+   ============================================ */
+[data-theme="forest"] {
+  --primary: #245C4A;
+  --primary-hover: #1B4A3B;
+  --primary-light: #EAF2EE;
+  --primary-subtle: #F0F6F3;
+  --secondary: #A8C3B5;
+  --accent: #D98262;
+
+  --bg: #F7F4EC;
+  --bg-gradient: linear-gradient(180deg, #F7F4EC 0%, #EFEADE 100%);
+  --surface: #FFFFFF;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #ECE8DD;
+  --surface-hover: #E2DDD0;
+
+  --text-primary: #20352E;
+  --text-secondary: #4A5F56;
+  --text-muted: #718078;
+  --text-inverse: #FFFFFF;
+
+  --border: #DFD9CC;
+  --border-strong: #CDC4B4;
+  --border-subtle: rgba(223, 217, 204, 0.85);
+
+  --dash-bg: #F7F4EC;
+  --dash-surface: #FFFFFF;
+  --dash-surface-card: #FFFFFF;
+  --dash-surface-subtle: #ECE8DD;
+  --dash-surface-hover: #E2DDD0;
+  --dash-surface-elevated: #FFFFFF;
+  --dash-border: #DFD9CC;
+  --dash-border-subtle: #ECE8DD;
+  --dash-border-strong: #CDC4B4;
+
+  --dash-text-primary: #20352E;
+  --dash-text-secondary: #4A5F56;
+  --dash-text-muted: #718078;
+  --dash-text-inverse: #FFFFFF;
+
+  --dash-primary: #245C4A;
+  --dash-primary-hover: #1B4A3B;
+  --dash-primary-light: #EAF2EE;
+
+  --dash-sidebar-bg: #FFFFFF;
+  --dash-sidebar-border: #DFD9CC;
+  --dash-sidebar-text: #20352E;
+  --dash-sidebar-active-bg: #EAF2EE;
+  --dash-sidebar-active-text: #245C4A;
+
+  --dash-header-bg: #FFFFFF;
+  --dash-header-border: #DFD9CC;
+
+  --sidebar-item-active-bg: #EAF2EE;
+  --sidebar-item-active-text: #245C4A;
+  --sidebar-border: #DFD9CC;
+  --header-border: #DFD9CC;
+}
+
+/* ============================================
+   Palette 3: Deep Plum & Lavender
+   Primary: Deep Plum #5B3A70 | Primary Light: Lavender #EDE5F3
+   Accent: Coral #E9826E | Bg: Warm Off-White #F8F7F5
+   Text: Charcoal #29252D | Muted: #77717D | Border: #E5E1E7
+   ============================================ */
+[data-theme="plum"] {
+  --primary: #5B3A70;
+  --primary-hover: #4A2E5D;
+  --primary-light: #EDE5F3;
+  --primary-subtle: #F7F2FA;
+  --secondary: #EDE5F3;
+  --accent: #E9826E;
+
+  --bg: #F8F7F5;
+  --bg-gradient: linear-gradient(180deg, #F8F7F5 0%, #EFECE8 100%);
+  --surface: #FFFFFF;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #F1EDF5;
+  --surface-hover: #E7E0ED;
+
+  --text-primary: #29252D;
+  --text-secondary: #564F5B;
+  --text-muted: #77717D;
+  --text-inverse: #FFFFFF;
+
+  --border: #E5E1E7;
+  --border-strong: #D3CCD6;
+  --border-subtle: rgba(229, 225, 231, 0.85);
+
+  --dash-bg: #F8F7F5;
+  --dash-surface: #FFFFFF;
+  --dash-surface-card: #FFFFFF;
+  --dash-surface-subtle: #F1EDF5;
+  --dash-surface-hover: #E7E0ED;
+  --dash-surface-elevated: #FFFFFF;
+  --dash-border: #E5E1E7;
+  --dash-border-subtle: #F1EDF5;
+  --dash-border-strong: #D3CCD6;
+
+  --dash-text-primary: #29252D;
+  --dash-text-secondary: #564F5B;
+  --dash-text-muted: #77717D;
+  --dash-text-inverse: #FFFFFF;
+
+  --dash-primary: #5B3A70;
+  --dash-primary-hover: #4A2E5D;
+  --dash-primary-light: #EDE5F3;
+
+  --dash-sidebar-bg: #FFFFFF;
+  --dash-sidebar-border: #E5E1E7;
+  --dash-sidebar-text: #29252D;
+  --dash-sidebar-active-bg: #EDE5F3;
+  --dash-sidebar-active-text: #5B3A70;
+
+  --dash-header-bg: #FFFFFF;
+  --dash-header-border: #E5E1E7;
+
+  --sidebar-item-active-bg: #EDE5F3;
+  --sidebar-item-active-text: #5B3A70;
+  --sidebar-border: #E5E1E7;
+  --header-border: #E5E1E7;
 }
 
 /* Dark Mode (Available if toggled) */
@@ -811,4 +1021,87 @@ button {
 ::selection {
   background-color: var(--primary-light);
   color: var(--primary);
+}
+
+/* ============================================
+   Dynamic Theme Overrides Across Entire App
+   Ensures hardcoded color utilities adapt to the active theme
+   ============================================ */
+
+/* Primary backgrounds, text, and borders */
+[data-theme="terracotta"] .bg-\[\#315CFF\],
+[data-theme="forest"] .bg-\[\#315CFF\],
+[data-theme="plum"] .bg-\[\#315CFF\],
+[data-theme="terracotta"] .bg-\[\#4F46E5\],
+[data-theme="forest"] .bg-\[\#4F46E5\],
+[data-theme="plum"] .bg-\[\#4F46E5\] {
+  background-color: var(--primary) !important;
+}
+
+[data-theme="terracotta"] .text-\[\#315CFF\],
+[data-theme="forest"] .text-\[\#315CFF\],
+[data-theme="plum"] .text-\[\#315CFF\],
+[data-theme="terracotta"] .text-\[\#4F46E5\],
+[data-theme="forest"] .text-\[\#4F46E5\],
+[data-theme="plum"] .text-\[\#4F46E5\] {
+  color: var(--primary) !important;
+}
+
+[data-theme="terracotta"] .border-\[\#315CFF\],
+[data-theme="forest"] .border-\[\#315CFF\],
+[data-theme="plum"] .border-\[\#315CFF\],
+[data-theme="terracotta"] .border-\[\#4F46E5\],
+[data-theme="forest"] .border-\[\#4F46E5\],
+[data-theme="plum"] .border-\[\#4F46E5\] {
+  border-color: var(--primary) !important;
+}
+
+/* Hover variants */
+[data-theme="terracotta"] .hover\:bg-\[\#274BD1\]:hover,
+[data-theme="terracotta"] .hover\:bg-\[\#4338CA\]:hover {
+  background-color: var(--primary-hover) !important;
+}
+[data-theme="forest"] .hover\:bg-\[\#274BD1\]:hover,
+[data-theme="forest"] .hover\:bg-\[\#4338CA\]:hover {
+  background-color: var(--primary-hover) !important;
+}
+[data-theme="plum"] .hover\:bg-\[\#274BD1\]:hover,
+[data-theme="plum"] .hover\:bg-\[\#4338CA\]:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+/* Light accents / soft pills */
+[data-theme="terracotta"] .bg-blue-50,
+[data-theme="forest"] .bg-blue-50,
+[data-theme="plum"] .bg-blue-50,
+[data-theme="terracotta"] .bg-indigo-50,
+[data-theme="forest"] .bg-indigo-50,
+[data-theme="plum"] .bg-indigo-50 {
+  background-color: var(--primary-light) !important;
+}
+
+/* Page and Section Backgrounds */
+[data-theme="terracotta"] .bg-\[\#F4F6FA\],
+[data-theme="terracotta"] .bg-\[\#F8F9FB\],
+[data-theme="terracotta"] .bg-\[\#F9F9FB\],
+[data-theme="terracotta"] .bg-\[\#F3F6FC\],
+[data-theme="forest"] .bg-\[\#F4F6FA\],
+[data-theme="forest"] .bg-\[\#F8F9FB\],
+[data-theme="forest"] .bg-\[\#F9F9FB\],
+[data-theme="forest"] .bg-\[\#F3F6FC\],
+[data-theme="plum"] .bg-\[\#F4F6FA\],
+[data-theme="plum"] .bg-\[\#F8F9FB\],
+[data-theme="plum"] .bg-\[\#F9F9FB\],
+[data-theme="plum"] .bg-\[\#F3F6FC\] {
+  background-color: var(--bg) !important;
+}
+
+/* Soft Borders */
+[data-theme="terracotta"] .border-\[\#E4E7EC\],
+[data-theme="terracotta"] .border-\[\#EAECF0\],
+[data-theme="forest"] .border-\[\#E4E7EC\],
+[data-theme="forest"] .border-\[\#EAECF0\],
+[data-theme="plum"] .border-\[\#E4E7EC\],
+[data-theme="plum"] .border-\[\#EAECF0\] {
+  border-color: var(--border) !important;
 }

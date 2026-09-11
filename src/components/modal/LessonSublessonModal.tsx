@@ -1,9 +1,16 @@
-import { CloseIcon } from "@/utils/icons";
+"use client";
+
 import { Checkbox, Input, Modal, Upload, UploadFile, UploadProps } from "antd";
 import React from "react";
 import CommonButton from "../CommonButton";
-import { FileIcon } from "@/utils/icons";
 import QuillEditor from "@/components/QuillEditor";
+import {
+  CloseOutlined,
+  BookOutlined,
+  InboxOutlined,
+  FileTextOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 export interface LessonSublessonModalProps {
   addLessonModalStatus: boolean;
@@ -42,135 +49,169 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
   handleSave,
   handleSubLessonSave,
 }) => {
+  const modalTitle = addLessonModalStatus
+    ? isEditing ? "Edit Lesson" : "Add Lesson"
+    : isEditing ? "Edit Sub-Topic" : "Add Sub-Topic";
+
+  const wordCount = (() => {
+    const text = description?.replace(/<[^>]+>/g, "")?.replace(/&nbsp;/g, " ").trim();
+    return text ? text.split(/\s+/).filter(Boolean).length : 0;
+  })();
+
   return (
     <Modal
       open={addLessonModalStatus || addSubLessonModalStatus}
       footer={null}
       onCancel={onClose}
       closable={false}
-      width={900}
+      width={780}
+      centered
+      destroyOnClose
     >
-      <button
-        onClick={onClose}
-        className="cursor-pointer absolute w-[27px] h-[27px] bg-primary rounded-full flex items-center justify-center -top-[10px] -right-[10px] text-sm"
-      >
-        <CloseIcon color="black" />
-      </button>
-      <div className="text-xl font-semibold flex justify-center">
-        {addLessonModalStatus ? "Add Lesson" : "Add Sub Topic"}
-      </div>
-      <div className="flex flex-col gap-1">
-        <div className="flex flex-col items-start gap-1">
-          <label className="plus-jakarta-sans text-[16px]">
-            {addLessonModalStatus ? "Lesson Name" : "Sub Topic Name"}
-          </label>
-          <Input
-            placeholder={
-              addLessonModalStatus
-                ? "Enter lesson name"
-                : "Enter sub topic name"
-            }
-            value={lessonName}
-            onChange={(e) => setLessonName(e.target.value)}
-            className="!h-12"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1 w-full">
-          <label className="plus-jakarta-sans text-[16px]">Description</label>
-          <div className="w-full">
-            <QuillEditor
-              placeholder="Enter text here..."
-              value={description}
-              onChange={(val) => setDescription(val)}
-            />
-          </div>
-          {(() => {
-            const text = description?.replace(/<[^>]+>/g, '')?.replace(/&nbsp;/g, ' ').trim();
-            const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-            return (
-              <div className="flex justify-end w-full mt-1">
-                <span className={`text-sm ${words > 300 ? 'text-red-500' : 'text-gray-500'}`}>
-                  {words} / 300 words
-                </span>
-              </div>
-            );
-          })()}
-        </div>
-
-        <div className="grid gap-2">
-          <label className="plus-jakarta-sans text-[16px]">
-            Study Material
-          </label>
-          <Upload.Dragger
-            {...uploadProps}
-            showUploadList={false}
-            style={{
-              padding: 8,
-              backgroundColor: "transparent",
-              width: "100%",
-            }}
-          >
-            <div className="flex flex-col items-center justify-center w-full gap-1">
-              <p className="ant-upload-text !font-bold !text-secondary">
-                Click to Upload Study Material
-              </p>
-              <p className="ant-upload-hint !font-bold">
-                Max. File size: 25 MB
+      <div className="relative p-1">
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-slate-100 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/60 flex items-center justify-center text-[#315CFF]">
+              <BookOutlined className="text-lg" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                {modalTitle}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Configure curriculum topics, rich descriptions, and resources
               </p>
             </div>
-          </Upload.Dragger>
-          <div className="grid grid-cols-3 gap-3">
-            {fileList.map((file, index) => (
-              <div
-                key={index}
-                className="border border-[#ccc] rounded-[8px] p-3 flex items-center justify-between flex-grow"
-              >
-                <FileIcon color="var(--secondary)" />
-                <div className="ml-4 flex-1">
-                  <div className="text-sm">
-                    {file.name.length > 15
-                      ? file.name.slice(0, 12) + "..."
-                      : file.name}
-                  </div>
-                  <div className="text-[#9A9A9A] font-xs">
-                    PDF • {(file?.size || 0 / 1024).toFixed(0)} KB
-                  </div>
-                </div>
-                <div
-                  className="bg-[#FB4A49] rounded-full w-5 h-5 flex items-center justify-center cursor-pointer"
-                  onClick={() => removeFile(index)}
-                >
-                  <CloseIcon />
-                </div>
-              </div>
-            ))}
           </div>
+          <button
+            onClick={onClose}
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <CloseOutlined className="text-xs" />
+          </button>
         </div>
 
-        {addLessonModalStatus && (
-          <Checkbox
-            prefixCls="custom-checkbox"
-            checked={unlockAfterPrevious}
-            onChange={(e) => setUnlockAfterPrevious(e.target.checked)}
-            className="plus-jakarta-sans !text-[16px]"
-          >
-            Unlock this course after completing the previous one.
-          </Checkbox>
-        )}
+        {/* Form Body */}
+        <div className="max-h-[65vh] overflow-y-auto pr-1 scrollbar-thin flex flex-col gap-4">
+          {/* Name Input */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-700">
+              {addLessonModalStatus ? "Lesson Title" : "Sub-Topic Title"}
+            </label>
+            <Input
+              placeholder={
+                addLessonModalStatus ? "e.g. Introduction to Financial Statements" : "e.g. Balance Sheets & Income"
+              }
+              value={lessonName}
+              onChange={(e) => setLessonName(e.target.value)}
+              className="!h-[42px] !rounded-xl text-sm"
+            />
+          </div>
 
-        <div className="flex items-center justify-end">
+          {/* Description with Quill */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-slate-700">Lesson Description</label>
+              <span className={`text-xs font-medium ${wordCount > 300 ? "text-red-500 font-bold" : "text-slate-400"}`}>
+                {wordCount} / 300 words
+              </span>
+            </div>
+            <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <QuillEditor
+                placeholder="Write a clear overview and instructions for students..."
+                value={description}
+                onChange={(val) => setDescription(val)}
+              />
+            </div>
+          </div>
+
+          {/* Study Material Upload */}
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold text-slate-700">Study Materials & Attachments</label>
+            <Upload.Dragger
+              {...uploadProps}
+              showUploadList={false}
+              className="!border-dashed !border-slate-300 hover:!border-[#315CFF] !bg-slate-50/50 !rounded-xl !p-4"
+            >
+              <div className="flex flex-col items-center justify-center gap-1.5 py-2">
+                <div className="w-10 h-10 rounded-full bg-blue-50 text-[#315CFF] flex items-center justify-center">
+                  <InboxOutlined className="text-xl" />
+                </div>
+                <p className="text-sm font-semibold text-slate-800">
+                  Click or drag files here to upload
+                </p>
+                <p className="text-xs text-slate-400">
+                  Supports PDF, DOCX, ZIP (Max file size: 25 MB)
+                </p>
+              </div>
+            </Upload.Dragger>
+
+            {/* Uploaded Files Grid */}
+            {fileList.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                {fileList.map((file, index) => (
+                  <div
+                    key={index}
+                    className="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-3 shadow-2xs"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#315CFF] flex items-center justify-center shrink-0">
+                        <FileTextOutlined className="text-base" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-slate-800 truncate">
+                          {file.name}
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          {((file?.size || 0) / 1024).toFixed(0)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                    >
+                      <DeleteOutlined className="text-xs" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sequential Unlock Checkbox */}
+          {addLessonModalStatus && (
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <Checkbox
+                checked={unlockAfterPrevious}
+                onChange={(e) => setUnlockAfterPrevious(e.target.checked)}
+                className="text-xs font-medium text-slate-700"
+              >
+                Require completion of previous lesson before unlocking this lesson
+              </Checkbox>
+            </div>
+          )}
+        </div>
+
+        {/* Footer Actions */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
           <CommonButton
             type="button"
             loading={loading}
-            className="!bg-secondary text-white w-[20%]"
+            className="!bg-[#315CFF] text-white !py-2.5 !px-6 !rounded-xl font-semibold text-sm shadow-xs"
             onClick={addLessonModalStatus ? handleSave : handleSubLessonSave}
-            text={isEditing ? "Update" : addLessonModalStatus ? "Save" : "Add"}
-            disable={(() => {
-              const text = description?.replace(/<[^>]+>/g, '')?.replace(/&nbsp;/g, ' ').trim();
-              const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-              return words > 300;
-            })()}
+            text={isEditing ? "Update" : addLessonModalStatus ? "Save Lesson" : "Add Sub-Topic"}
+            disable={wordCount > 300}
           />
         </div>
       </div>
