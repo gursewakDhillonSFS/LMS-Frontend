@@ -29,6 +29,7 @@ import { toast } from "@/utils/toast";
 import ConfirmationModal from "@/components/modal/ConfirmationModal";
 import { InviteTeacherModal } from "@/components/modal/InviteTeacherModal";
 import UserAvatarDisplay from "@/components/UserAvatarDisplay";
+import CustomDropdown from "@/components/CustomDropdown";
 
 export const TeachersManagerView: React.FC = () => {
   const router = useRouter();
@@ -203,25 +204,7 @@ export const TeachersManagerView: React.FC = () => {
       />
 
       <div className="w-full flex flex-col gap-6 pb-12 animate-fadeIn">
-        {/* 1. Header Row: Subtitle + Primary CTA */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-          <div className="flex flex-col gap-1">
-            <p className="text-xs sm:text-sm text-[#667085] leading-relaxed">
-              Manage faculty members, track course assignments, view qualifications, and invite new instructors.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setOpenInviteModal(true)}
-            className="self-start sm:self-auto px-4 sm:px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#254BD1] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-[0_2px_8px_rgba(49,92,255,0.25)] transition-all cursor-pointer shrink-0"
-          >
-            <PlusOutlined className="text-xs" />
-            <span>Invite Teacher</span>
-          </button>
-        </div>
-
-        {/* 2. 4 KPI Statistics Cards */}
+        {/* 1. 4 KPI Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           {kpis.map((card, idx) => (
             <div
@@ -266,10 +249,10 @@ export const TeachersManagerView: React.FC = () => {
           ))}
         </div>
 
-        {/* 3. Main Data Container */}
+        {/* 2. Main Data Container */}
         <div className="w-full bg-white rounded-2xl border border-[#E4E7EC] shadow-xs overflow-hidden flex flex-col">
           {/* Toolbar Header */}
-          <div className="p-4 sm:p-5 border-b border-[#F2F4F7] flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="p-4 sm:p-5 border-b border-[#F2F4F7] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {/* Left: Section Title & Count Badge */}
             <div className="flex items-center gap-2.5">
               <h2 className="text-base sm:text-lg font-bold text-[#101828] tracking-tight">
@@ -280,10 +263,10 @@ export const TeachersManagerView: React.FC = () => {
               </span>
             </div>
 
-            {/* Right: Search, Filter Dropdown, and View Switcher */}
+            {/* Right: Search, Filter Dropdown, View Switcher, and + Invite Teacher CTA */}
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Instant Search Bar */}
-              <div className="relative flex items-center min-w-[200px] sm:min-w-[240px]">
+              <div className="relative flex items-center min-w-[190px] sm:min-w-[220px]">
                 <SearchOutlined className="absolute left-3 text-[#98A2B3] text-sm pointer-events-none" />
                 <input
                   type="text"
@@ -294,16 +277,16 @@ export const TeachersManagerView: React.FC = () => {
                 />
               </div>
 
-              {/* Status Filter */}
-              <select
+              {/* Custom Popup Status Filter */}
+              <CustomDropdown
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="h-9 px-3 text-xs sm:text-sm rounded-xl border border-[#E4E7EC] bg-white text-[#475467] font-medium focus:outline-none focus:border-[#315CFF] transition-all shadow-xs cursor-pointer"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+                onChange={(val) => setStatusFilter(val as any)}
+                options={[
+                  { label: "All Status", value: "all" },
+                  { label: "Active", value: "active" },
+                  { label: "Inactive", value: "inactive" },
+                ]}
+              />
 
               {/* View Mode Toggle: Auto / Table / Cards */}
               <div className="flex items-center bg-[#F8FAFC] border border-[#E4E7EC] rounded-xl p-0.5">
@@ -334,6 +317,16 @@ export const TeachersManagerView: React.FC = () => {
                   <span className="hidden sm:inline">Cards</span>
                 </button>
               </div>
+
+              {/* Primary Action Button: + Invite Teacher */}
+              <button
+                type="button"
+                onClick={() => setOpenInviteModal(true)}
+                className="h-9 px-4 rounded-xl bg-[#315CFF] hover:bg-[#254BD1] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-[0_2px_8px_rgba(49,92,255,0.25)] transition-all cursor-pointer shrink-0"
+              >
+                <PlusOutlined className="text-xs" />
+                <span>Invite Teacher</span>
+              </button>
             </div>
           </div>
 

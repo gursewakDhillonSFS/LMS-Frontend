@@ -19,6 +19,7 @@ import {
 
 import { getAllCoursesApi, getStudentsListApi } from "@/services/collections";
 import UserAvatarDisplay from "@/components/UserAvatarDisplay";
+import CustomDropdown from "@/components/CustomDropdown";
 
 interface BatchItem {
   _id: string;
@@ -228,16 +229,7 @@ export const StudentsManagerView: React.FC<StudentsManagerViewProps> = ({
 
   return (
     <div className="w-full flex flex-col gap-6 pb-12 animate-fadeIn">
-      {/* 1. Header Row: Subtitle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-        <div className="flex flex-col gap-1">
-          <p className="text-xs sm:text-sm text-[#667085] leading-relaxed">
-            Monitor student enrollment, course progress, batch assignments, and performance across all classes.
-          </p>
-        </div>
-      </div>
-
-      {/* 2. 4 KPI Statistics Cards */}
+      {/* 1. 4 KPI Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
         {kpis.map((card, idx) => (
           <div
@@ -280,7 +272,7 @@ export const StudentsManagerView: React.FC<StudentsManagerViewProps> = ({
         ))}
       </div>
 
-      {/* 3. Main Students Container */}
+      {/* 2. Main Students Container */}
       <div className="w-full bg-white rounded-2xl border border-[#E4E7EC] shadow-xs overflow-hidden flex flex-col">
         {/* Toolbar Header */}
         <div className="p-4 sm:p-5 border-b border-[#F2F4F7] flex flex-col xl:flex-row xl:items-center justify-between gap-4">
@@ -308,51 +300,45 @@ export const StudentsManagerView: React.FC<StudentsManagerViewProps> = ({
               />
             </div>
 
-            {/* Course Filter Dropdown */}
-            <select
+            {/* Custom Popup Course Filter Dropdown */}
+            <CustomDropdown
               value={selectedCourseFilter}
-              onChange={(e) => handleCourseFilterChange(e.target.value)}
-              className="h-9 px-3 text-xs sm:text-sm rounded-xl border border-[#E4E7EC] bg-white text-[#475467] font-medium focus:outline-none focus:border-[#315CFF] transition-all shadow-xs cursor-pointer max-w-[170px] truncate"
-            >
-              <option value="">All Courses</option>
-              {courses.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.course_name}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => handleCourseFilterChange(val)}
+              placeholder="All Courses"
+              options={[
+                { label: "All Courses", value: "" },
+                ...courses.map((c) => ({ label: c.course_name, value: c._id })),
+              ]}
+            />
 
-            {/* Batch Filter Dropdown */}
-            <select
+            {/* Custom Popup Batch Filter Dropdown */}
+            <CustomDropdown
               value={selectedBatchFilter}
-              onChange={(e) => {
-                setSelectedBatchFilter(e.target.value);
+              onChange={(val) => {
+                setSelectedBatchFilter(val);
                 setPage(1);
               }}
               disabled={!selectedCourseFilter || batches.length === 0}
-              className="h-9 px-3 text-xs sm:text-sm rounded-xl border border-[#E4E7EC] bg-white text-[#475467] font-medium focus:outline-none focus:border-[#315CFF] transition-all shadow-xs cursor-pointer max-w-[150px] truncate disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <option value="">All Batches</option>
-              {batches.map((b) => (
-                <option key={b._id} value={b._id}>
-                  {b.batchName}
-                </option>
-              ))}
-            </select>
+              placeholder="All Batches"
+              options={[
+                { label: "All Batches", value: "" },
+                ...batches.map((b) => ({ label: b.batchName, value: b._id })),
+              ]}
+            />
 
-            {/* Status Filter */}
-            <select
+            {/* Custom Popup Status Filter Dropdown */}
+            <CustomDropdown
               value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value as any);
+              onChange={(val) => {
+                setStatusFilter(val as any);
                 setPage(1);
               }}
-              className="h-9 px-3 text-xs sm:text-sm rounded-xl border border-[#E4E7EC] bg-white text-[#475467] font-medium focus:outline-none focus:border-[#315CFF] transition-all shadow-xs cursor-pointer"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+              options={[
+                { label: "All Status", value: "all" },
+                { label: "Active", value: "active" },
+                { label: "Inactive", value: "inactive" },
+              ]}
+            />
 
             {/* View Mode Switcher */}
             <div className="flex items-center bg-[#F8FAFC] border border-[#E4E7EC] rounded-xl p-0.5">

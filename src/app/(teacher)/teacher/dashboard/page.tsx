@@ -7,8 +7,6 @@ import {
   getAllCoursesApi,
   getAnnouncementsByInstructorApi,
 } from "@/services/collections";
-import { useDashboardTheme } from "@/context/DashboardThemeContext";
-import DashboardWelcomeBanner from "@/components/dashboard/DashboardWelcomeBanner";
 import DashboardKpiCards, {
   DashboardKpiStats,
 } from "@/components/dashboard/DashboardKpiCards";
@@ -23,7 +21,6 @@ import RecentActivityFeed, {
 } from "@/components/dashboard/RecentActivityFeed";
 
 const TeacherDashboard: React.FC = () => {
-  const { theme, toggleTheme } = useDashboardTheme();
   const userData = useSelector((state: RootState) => state?.userdata);
   const fullName =
     userData?.full_name ||
@@ -122,15 +119,7 @@ const TeacherDashboard: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-12 w-full max-w-[1600px] mx-auto animate-fadeIn">
-      {/* 1. Header Greeting & Controls */}
-      <DashboardWelcomeBanner
-        userName={fullName}
-        theme={theme}
-        onToggleTheme={toggleTheme}
-        dateRangeLabel="Last 30 days"
-      />
-
-      {/* 2. Top 4 Primary KPI Cards */}
+      {/* 1. Top 4 Primary KPI Cards */}
       <DashboardKpiCards stats={stats} rolePrefix="/teacher" />
 
       {/* 3. Main 2-Column Responsive Layout */}

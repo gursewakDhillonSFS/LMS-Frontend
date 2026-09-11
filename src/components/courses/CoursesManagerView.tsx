@@ -45,6 +45,7 @@ import { toast } from "@/utils/toast";
 import ConfirmationModal from "@/components/modal/ConfirmationModal";
 import UserAvatarDisplay from "@/components/UserAvatarDisplay";
 import { RequestedDemoCard } from "@/modules/instructorcourses/InstructorCoursesCards";
+import CustomDropdown from "@/components/CustomDropdown";
 
 const scheduleData: RequestedDemoProp[] = [
   {
@@ -351,45 +352,7 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
       )}
 
       <div className="w-full flex flex-col gap-6 pb-12 animate-fadeIn">
-        {/* 1. Header Row: Subtitle + "+ Create Course" CTA */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("courses")}
-              className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === "courses"
-                  ? "bg-[#315CFF] text-white shadow-xs"
-                  : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
-                }`}
-            >
-              Courses
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("requested_demo")}
-              className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === "requested_demo"
-                  ? "bg-[#315CFF] text-white shadow-xs"
-                  : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
-                }`}
-            >
-              Requested Demo
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              dispatch(resetCreateCourse());
-              router.push(createCoursePath);
-            }}
-            className="self-start sm:self-auto px-4 sm:px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#254BD1] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-[0_2px_8px_rgba(49,92,255,0.25)] transition-all cursor-pointer shrink-0"
-          >
-            <PlusOutlined className="text-xs" />
-            <span>Create Course</span>
-          </button>
-        </div>
-
-        {/* 3. 4 KPI Statistics Cards */}
+        {/* 1. 4 KPI Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           {kpis.map((card, idx) => (
             <div
@@ -433,11 +396,35 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
           ))}
         </div>
 
-        {/* 4. Tab Content */}
+        {/* 2. Top Pill Switcher: Courses | Requested Demo */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab("courses")}
+            className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === "courses"
+                ? "bg-[#315CFF] text-white shadow-xs"
+                : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
+              }`}
+          >
+            Courses
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("requested_demo")}
+            className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === "requested_demo"
+                ? "bg-[#315CFF] text-white shadow-xs"
+                : "bg-white text-[#475467] hover:bg-[#F8FAFC] border border-[#E4E7EC]"
+              }`}
+          >
+            Requested Demo
+          </button>
+        </div>
+
+        {/* 3. Tab Content */}
         {activeTab === "courses" && (
           <div className="w-full bg-white rounded-2xl border border-[#E4E7EC] shadow-xs overflow-hidden flex flex-col">
             {/* Toolbar Header */}
-            <div className="p-4 sm:p-5 border-b border-[#F2F4F7] flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="p-4 sm:p-5 border-b border-[#F2F4F7] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               {/* Left: Section Title & Count Badge */}
               <div className="flex items-center gap-2.5">
                 <h2 className="text-base sm:text-lg font-bold text-[#101828] tracking-tight">
@@ -448,10 +435,10 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                 </span>
               </div>
 
-              {/* Right: Search, Filter Dropdown, and View Switcher */}
+              {/* Right: Search, Filter Dropdown, View Switcher, and + Create Course CTA */}
               <div className="flex flex-wrap items-center gap-2.5">
                 {/* Instant Search Bar */}
-                <div className="relative flex items-center min-w-[200px] sm:min-w-[240px]">
+                <div className="relative flex items-center min-w-[190px] sm:min-w-[220px]">
                   <SearchOutlined className="absolute left-3 text-[#98A2B3] text-sm pointer-events-none" />
                   <input
                     type="text"
@@ -462,16 +449,16 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                   />
                 </div>
 
-                {/* Status Dropdown */}
-                <select
+                {/* Custom Popup Status Dropdown */}
+                <CustomDropdown
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as any)}
-                  className="h-9 px-3 text-xs sm:text-sm rounded-xl border border-[#E4E7EC] bg-white text-[#475467] font-medium focus:outline-none focus:border-[#315CFF] transition-all shadow-xs cursor-pointer"
-                >
-                  <option value="all">All Status</option>
-                  <option value="published">Published</option>
-                  <option value="draft">Draft / Unpublish</option>
-                </select>
+                  onChange={(val) => setStatusFilter(val as any)}
+                  options={[
+                    { label: "All Status", value: "all" },
+                    { label: "Published", value: "published" },
+                    { label: "Draft / Unpublish", value: "draft" },
+                  ]}
+                />
 
                 {/* View Mode Toggle */}
                 <div className="flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E4E7EC]">
@@ -500,6 +487,19 @@ export const CoursesManagerView: React.FC<CoursesManagerViewProps> = ({
                     <AppstoreOutlined className="text-sm" />
                   </button>
                 </div>
+
+                {/* Primary Action: + Create Course */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch(resetCreateCourse());
+                    router.push(createCoursePath);
+                  }}
+                  className="h-9 px-4 rounded-xl bg-[#315CFF] hover:bg-[#254BD1] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-[0_2px_8px_rgba(49,92,255,0.25)] transition-all cursor-pointer shrink-0"
+                >
+                  <PlusOutlined className="text-xs" />
+                  <span>Create Course</span>
+                </button>
               </div>
             </div>
 
