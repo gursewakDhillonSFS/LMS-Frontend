@@ -3,6 +3,7 @@ import { getApi } from "@/services/methods";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import Link from "next/link";
 
 const AdminPanel = () => {
   const { t } = useTranslation();
@@ -42,6 +43,12 @@ const AdminPanel = () => {
           {t("dashboard.admin.title", { defaultValue: "Admin Administration Panel" })}
         </h1>
         <div className="flex items-center gap-3">
+          <Link
+            href="/admin/finance"
+            className="text-xs bg-indigo-600 text-white hover:bg-indigo-700 px-3.5 py-1.5 rounded-full font-semibold transition-all shadow-xs"
+          >
+            Finance & Earnings →
+          </Link>
           <LanguageSwitcher variant="header" />
           <span className="text-xs bg-slate-100 text-[var(--text-secondary)] px-3 py-1 rounded-full font-medium border border-[var(--border)]">
             {t("dashboard.admin.overview", { defaultValue: "System Overview" })}

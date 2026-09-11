@@ -37,6 +37,7 @@ export enum InstructorSettingEnum {
   PROFILE = "profile",
   ORGANISATION = "organisation",
   NOTIFICATIONS = "notifications",
+  PAYMENTS = "payments",
 }
 
 export enum QuizDetailTabEnum {
@@ -79,7 +80,6 @@ export enum RoutePaths {
   Browse = "/browse",
   Homepage = "/",
   Onboarding = "/onboarding",
-  Subscription = "/subscription",
 
   // User Routes
   Dashboard = "/dashboard",
@@ -90,9 +90,11 @@ export enum RoutePaths {
   MySettings = "/my-settings",
   SavedCourses = "/saved-courses",
   Checkout = "/checkout",
+  PurchaseHistory = "/my-courses/purchases",
 
   // Admin
   AdminPanel = "/admin",
+  AdminFinance = "/admin/finance",
 
   // Instructor Routes
   Announcements = "/announcements",
@@ -105,6 +107,7 @@ export enum RoutePaths {
   Settings = "/settings",
   Students = "/students",
   Teachers = "/teachers",
+  InstructorPayments = "/settings/payments",
 
   // Teacher Routes
   TeacherDashboard = "/teacher/dashboard",
@@ -115,6 +118,7 @@ export enum RoutePaths {
   TeacherQuizzes = "/teacher/quizzes",
   TeacherLiveClasses = "/teacher/live-classes",
   TeacherSettings = "/teacher/settings",
+  TeacherEarnings = "/teacher/earnings",
 }
 
 export enum ChatTabEnum {

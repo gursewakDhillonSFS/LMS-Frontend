@@ -142,7 +142,7 @@ export function getCourseSchema(params: CourseSchemaParams, baseUrl: string = "h
     offers: [
       {
         "@type": "Offer",
-        category: "Subscription",
+        category: "PaidCourse",
         price: params.price ? params.price.toString() : "0",
         priceCurrency: params.currency || "USD",
         url: fullCourseUrl,

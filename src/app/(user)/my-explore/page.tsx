@@ -6,12 +6,10 @@ import NoDataFound from "@/components/NoDataFound";
 import Pagination from "@/components/Pagination";
 import SearchInput from "@/components/SearchInput";
 import useCategories from "@/hooks/useCategories";
-import { setCartCount, setCourseData } from "@/redux/slices/CourseDataSlice";
+import { setCourseData } from "@/redux/slices/CourseDataSlice";
 import {
-  addToCart,
   addToFavorite,
   getAllCoursesApi,
-  removeFromCart,
   removeFromFavorite,
 } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
@@ -115,51 +113,7 @@ const MyExplore = () => {
     }
   };
 
-  const handleAddCart = async (id: string) => {
-    if (id) {
-      const payload = {
-        course_ids: id,
-      };
-      try {
-        const res = await addToCart(payload);
-        if (res.status) {
-          toast.success(res.message);
-          setCourses((prev) =>
-            prev.map((item) =>
-              item.course_id === id ? { ...item, cart_status: true } : item
-            )
-          );
-          dispatch(setCartCount(res?.data?.total_courses));
-        } else {
-          toast.warning(res.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
-  const handleRemoveCart = async (id: string) => {
-    if (id) {
-      try {
-        const res = await removeFromCart(id);
-        if (res.status) {
-          console.log(res);
-          toast.success(res.message);
-          setCourses((prev) =>
-            prev.map((item) =>
-              item.course_id === id ? { ...item, cart_status: false } : item
-            )
-          );
-          dispatch(setCartCount(res?.data?.total_courses));
-        } else {
-          toast.warning(res.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
   const handleRedirect = (data: courseData) => {
     dispatch(setCourseData(data));
@@ -246,8 +200,6 @@ const MyExplore = () => {
                   handleRemoveFavorite={handleRemoveFavorite}
                   handleRedirect={handleRedirect}
                   veiwDetail={veiwDetail}
-                  handleAddCart={handleAddCart}
-                  handleRemoveCart={handleRemoveCart}
                 />
               ))}
             </div>

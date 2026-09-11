@@ -17,9 +17,9 @@ const faqsLeft: FAQItem[] = [
       "Simply browse our course catalog, choose your preferred course, and click 'Enroll Now'. If you don't have an account yet, you'll be prompted to create one in seconds.",
   },
   {
-    question: "Can I get a refund for my subscription?",
+    question: "Can I get a refund for a course purchase?",
     answer:
-      "Yes, we offer a 30-day money-back guarantee for all new subscriptions if you're not completely satisfied with your learning experience.",
+      "Yes! We offer a full 2-day money-back guarantee on course purchases if you're not completely satisfied with your learning experience.",
   },
   {
     question: "Do you provide certificates?",
@@ -35,9 +35,9 @@ const faqsLeft: FAQItem[] = [
 
 const faqsRight: FAQItem[] = [
   {
-    question: "Is there a free trial available?",
+    question: "How do course purchases and batches work?",
     answer:
-      "Absolutely! We offer a 7-day full-access free trial so you can explore premium courses, projects, and learning paths before any commitment.",
+      "When you buy a course, you get lifetime access to all learning materials, recorded lessons, and resources. You can also join live batches for interactive sessions with expert teachers.",
   },
   {
     question: "Can I access courses on mobile?",

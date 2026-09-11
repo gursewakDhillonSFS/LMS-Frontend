@@ -21,8 +21,6 @@ interface UserState {
   instructor_id: string;
   teacherId?: string;
   teacher_id?: string;
-  subscription_status: string;
-  subscription_id: string;
 }
 
 const initialState: UserState | null = null;
@@ -39,10 +37,8 @@ const userDataSlice = createSlice({
         topics,
         education_level,
         organization_id,
-        subscription_status,
         instructor_id,
       } = action.payload;
-      console.log(subscription_status);
       Cookies.set("token", access_token);
       Cookies.set("role_name", role_name);
       if (career === null) {
@@ -61,7 +57,6 @@ const userDataSlice = createSlice({
       } else {
         Cookies.set("instructor_onboarding", "undefined");
       }
-      // Cookies.set("subscription_status", subscription_status);
       return action.payload;
     },
     updateUser: (state, action: PayloadAction<Partial<UserState>>) => {
@@ -74,7 +69,6 @@ const userDataSlice = createSlice({
       Cookies.remove("token");
       Cookies.remove("role_name");
       Cookies.remove("user_onboarding");
-      // Cookies.remove("subscription_status");
       Cookies.remove("instructor_onboarding");
       return null;
     },
@@ -83,7 +77,6 @@ const userDataSlice = createSlice({
     builder.addCase(resetAllSlices, () => {
       Cookies.remove("token");
       Cookies.remove("role_name");
-      // Cookies.remove("subscription_status");
       Cookies.remove("user_onboarding");
       Cookies.remove("instructor_onboarding");
       return null;

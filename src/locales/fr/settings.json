@@ -10,13 +10,13 @@
     "success": "Profil mis à jour avec succès !"
   },
   "membership": {
-    "title": "Mon abonnement et mes souscriptions",
-    "currentPlan": "Forfait actuel",
-    "planName": "Skillora Pro",
-    "price": "99 $/mois",
-    "renewsOn": "Renouvellement le",
-    "changePlan": "Changer de forfait",
-    "cancelSubscription": "Résilier l'abonnement"
+    "title": "Historique des achats et factures",
+    "coursePurchased": "Cours achetés",
+    "purchaseDate": "Date",
+    "amount": "Montant",
+    "status": "Statut",
+    "invoice": "Reçu",
+    "noPurchases": "Aucun achat de cours pour le moment."
   },
   "notifications": {
     "title": "Préférences de notifications",

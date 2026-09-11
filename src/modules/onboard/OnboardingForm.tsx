@@ -15,10 +15,11 @@ import { RootState } from "@/redux/store";
 import { educationOptions, goalOptions } from "@/utils/constant";
 import { OnboardingFormValues } from "@/utils/interface";
 import useCategories from "@/hooks/useCategories";
+import { useRouter } from "next/navigation";
+import { RoutePaths } from "@/utils/enums";
 
-const OnboardingForm: React.FC<{ setSubscription: () => void }> = ({
-  setSubscription,
-}) => {
+const OnboardingForm: React.FC = () => {
+  const router = useRouter();
   const [form] = Form.useForm<OnboardingFormValues>();
   const [step, setStep] = useState<number>(0);
   const [selected, setSelected] = useState<string>("");
@@ -79,7 +80,7 @@ const OnboardingForm: React.FC<{ setSubscription: () => void }> = ({
 
       if (step === 2) {
         toast.success("Form submitted successfully!");
-        setSubscription();
+        router.push(RoutePaths?.Dashboard || "/dashboard");
       } else {
         setStep((prev) => prev + 1);
       }

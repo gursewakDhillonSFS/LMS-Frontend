@@ -7,12 +7,10 @@ import { MyCoursesCard } from "@/components/MyCourseCard";
 import NoDataFound from "@/components/NoDataFound";
 import Pagination from "@/components/Pagination";
 import SkeletonCard from "@/components/SkeletonCard";
-import { setCartCount, setCourseData } from "@/redux/slices/CourseDataSlice";
+import { setCourseData } from "@/redux/slices/CourseDataSlice";
 import {
-  addToCart,
   addToFavorite,
   getAllCoursesApi,
-  removeFromCart,
   removeFromFavorite,
   userCourseList,
   getAnnouncementsByCoursesApi,
@@ -205,50 +203,7 @@ const UserDashboard = () => {
     }
   };
 
-  const handleAddCart = async (id: string) => {
-    if (id) {
-      const payload = {
-        course_ids: id,
-      };
-      try {
-        const res = await addToCart(payload);
-        if (res.status) {
-          toast.success(res.message);
-          setCourses((prev) =>
-            prev.map((item) =>
-              item.course_id === id ? { ...item, cart_status: true } : item
-            )
-          );
-          dispatch(setCartCount(res?.data?.total_courses));
-        } else {
-          toast.warning(res.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
-  const handleRemoveCart = async (id: string) => {
-    if (id) {
-      try {
-        const res = await removeFromCart(id);
-        if (res.status) {
-          toast.success(res.message);
-          setCourses((prev) =>
-            prev.map((item) =>
-              item.course_id === id ? { ...item, cart_status: false } : item
-            )
-          );
-          dispatch(setCartCount(res?.data?.total_courses));
-        } else {
-          toast.warning(res.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
   useEffect(() => {
     getUserCourseData();
@@ -507,8 +462,6 @@ const UserDashboard = () => {
                   key={course.course_id}
                   handleAddFavorite={handleAddFavorite}
                   handleRemoveFavorite={handleRemoveFavorite}
-                  handleAddCart={handleAddCart}
-                  handleRemoveCart={handleRemoveCart}
                   courseData={course}
                   veiwDetail={veiwDetail}
                 />

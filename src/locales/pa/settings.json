@@ -10,13 +10,13 @@
     "success": "ਪ੍ਰੋਫਾਈਲ ਸਫਲਤਾਪੂਰਵਕ ਅੱਪਡੇਟ ਕੀਤੀ ਗਈ!"
   },
   "membership": {
-    "title": "ਮੇਰੀ ਮੈਂਬਰਸ਼ਿਪ ਅਤੇ ਗਾਹਕੀ",
-    "currentPlan": "ਮੌਜੂਦਾ ਪਲਾਨ",
-    "planName": "ਸਕਿੱਲੋਰਾ ਪ੍ਰੋ",
-    "price": "$99/ਮਹੀਨਾ",
-    "renewsOn": "ਨਵਿਆਉਣ ਦੀ ਮਿਤੀ",
-    "changePlan": "ਪਲਾਨ ਬਦਲੋ",
-    "cancelSubscription": "ਮੈਂਬਰਸ਼ਿਪ ਰੱਦ ਕਰੋ"
+    "title": "ਖ਼ਰੀਦਦਾਰੀ ਇਤਿਹਾਸ ਅਤੇ ਰਸੀਦਾਂ",
+    "coursePurchased": "ਖ਼ਰੀਦੇ ਗਏ ਕੋਰਸ",
+    "purchaseDate": "ਮਿਤੀ",
+    "amount": "ਰਕਮ",
+    "status": "ਸਥਿਤੀ",
+    "invoice": "ਰਸੀਦ",
+    "noPurchases": "ਅਜੇ ਤੱਕ ਕੋਈ ਕੋਰਸ ਨਹੀਂ ਖ਼ਰੀਦਿਆ ਗਿਆ।"
   },
   "notifications": {
     "title": "ਸੂਚਨਾ ਤਰਜੀਹਾਂ",

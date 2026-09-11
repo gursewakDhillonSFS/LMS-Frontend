@@ -20,7 +20,6 @@ export function middleware(request: NextRequest) {
     "/browse",
     "/homepage",
     "/onboarding",
-    "/subscription",
     "/setup-password",
   ];
 
@@ -149,7 +148,6 @@ export const config = {
     "/browse/:path*",
     "/homepage/:path*",
     "/onboarding",
-    "/subscription/:path*",
     "/setup-password",
     "/dashboard/:path*",
     "/my-certificate/:path*",

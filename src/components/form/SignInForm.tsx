@@ -6,12 +6,11 @@ import CommonLink from "../CommonLink";
 import { AppleIcon, GoogleIcon } from "@/utils/icons";
 import { useRouter } from "next/navigation";
 import { Role, RoutePaths } from "@/utils/enums";
-import { cartList, loginApi, socialAuth } from "@/services/collections";
+import { loginApi, socialAuth } from "@/services/collections";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/slices/UserDataSlice";
 import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
-import { setCartCount } from "@/redux/slices/CourseDataSlice";
 import { useTranslation } from "@/context/I18nContext";
 
 const authOptions = [
@@ -55,11 +54,6 @@ const SignInForm: React.FC<SignInFormProps> = ({
           })
         );
         if (response?.data?.role_name === Role?.STUDENT) {
-          const res = await cartList();
-          if (res.status) {
-            if (res?.data?.course_items)
-              dispatch(setCartCount(res?.data?.course_items?.length));
-          }
           router.push(RoutePaths?.Dashboard);
         } else if (response?.data.role_name === Role?.INSTRUCTOR) {
           router.push(RoutePaths?.InstructorPanel);

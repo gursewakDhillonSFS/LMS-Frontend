@@ -16,7 +16,7 @@ import {
   SettingIcon,
   StudentIcon,
 } from "@/utils/icons";
-import { NotificationOutlined } from "@ant-design/icons";
+import { NotificationOutlined, DollarCircleOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -47,6 +47,7 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
       "assignments",
       "quizzes",
       "announcements",
+      "earnings",
       "settings",
     ];
 
@@ -150,6 +151,12 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
                 icon: <NotificationOutlined style={{ fontSize: "20px" }} />,
                 label: t("dashboard.tabs.announcements", { defaultValue: "Announcements" }),
                 onClick: () => router.push("/teacher/announcements"),
+              },
+              {
+                key: "earnings",
+                icon: <DollarCircleOutlined style={{ fontSize: "20px" }} />,
+                label: "Earnings",
+                onClick: () => router.push("/teacher/earnings"),
               },
               {
                 key: "settings",

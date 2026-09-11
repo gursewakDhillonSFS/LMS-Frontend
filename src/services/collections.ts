@@ -5,7 +5,6 @@ import {
   CreateCoursePayloadStep3,
   CreateCoursePayloadStep4,
   CreateIntructorProp,
-  OnBoardingSubscription,
   OnBoardingUser,
   SignupPayload,
   updateCourseStatusProp,
@@ -51,8 +50,6 @@ const CREATE_USER = "/auth/user/v1/create";
 const USER_ONBOARDING_STEP1 = "/auth/user/v1/user-onboarding/career";
 const USER_ONBOARDING_STEP2 = "/auth/user/v1/user-onboarding/topics";
 const USER_ONBOARDING_STEP3 = "/auth/user/v1/user-onboarding/education-level";
-const USER_ONBOARDING_SUBSCRIPTION =
-  "/auth/user/v1/user-onboarding/subscription";
 const Login = "/auth/user/v1/login";
 const CREATE_ORGANISATION = "/auth/user/v1/organization/create";
 const FORGET_PASSWORD = "/auth/user/v1/forget-password";
@@ -87,9 +84,7 @@ export const onboardingStep2 = (payload: OnBoardingUser) => {
 export const onboardingStep3 = (payload: OnBoardingUser) => {
   return patchApi(USER_ONBOARDING_STEP3, payload);
 };
-export const onboardingSubscription = (payload: OnBoardingSubscription) => {
-  return postApi(USER_ONBOARDING_SUBSCRIPTION, payload);
-};
+
 export const loginApi = (payload: { email: string; password: string }) => {
   return postApi(Login, payload);
 };
@@ -127,7 +122,6 @@ const CREATE_COURSE_STEP3 = "/auth/course/v1/create/course-step-3";
 const CREATE_COURSE_FINALSTEP = "/auth/course/v1/create/course-final-step";
 const CREATE_LESSON = "/auth/course/v1/lesson/create";
 const CREATE_SUBLESSON = "/auth/course/v1/Sublesson/create";
-const COURSE_PURCHASE = "/auth/course/v1/course/purchase";
 const USER_COURSE_LIST = "/auth/course/v1/get-enrolled-courses";
 const COURSE_SUBLESSON_UPDATE = "/auth/course/v1/Sublesson/update";
 const COURSE_LESSON_UPDATE = "/auth/course/v1/lesson/update";
@@ -135,11 +129,8 @@ const COURSE_SUBLESSON_DELETE = "/auth/course/v1/sublesson/delete";
 const COURSE_LESSON_DELETE = "/auth/course/v1/lesson/delete";
 const ALL_LESSON = "/auth/course/v1/get-sublesson-lesson";
 const GET_ORGANISATION = "/auth/user/v1/organization";
-const ADD_TO_CART = "/auth/course/v1/add-to-cart";
-const CART_LIST = "/auth/course/v1/add-to-cart/list";
 const ADD_TO_FAVORITE = "/auth/course/v1/add-to-favorite";
 const GET_FAVORITE_COURSES = "/auth/course/v1/get-favorite-courses";
-const REMOVE_FROM_CART = "/auth/course/v1/remove-from-cart";
 const REMOVE_FROM_FAVORITE = "/auth/course/v1/remove-from-favorite";
 const UPDATE_COURSE_STATUS = "/auth/course/v1/update-course";
 const UPDATE_COURSE_STEP_1 = "/auth/course/v1/update/course-step-1";
@@ -197,22 +188,11 @@ export const removeFromFavorite = (param: URLSearchParams) => {
   return deleteApi(`${REMOVE_FROM_FAVORITE}?${param}`);
 };
 
-export const removeFromCart = (course_id: string) => {
-  return deleteApi(`${REMOVE_FROM_CART}/${course_id}`);
-};
-
 export const addToFavorite = (payload: AddToFavoriteProp) => {
   return patchApi(ADD_TO_FAVORITE, payload);
 };
 export const getSavedCourses = () => {
   return getApi(GET_FAVORITE_COURSES);
-};
-export const cartList = () => {
-  return getApi(CART_LIST);
-};
-
-export const addToCart = (payload: { course_ids: string }) => {
-  return getApi(`${ADD_TO_CART}`, payload);
 };
 
 export const getOrganisation = (id: string) => {
@@ -269,17 +249,46 @@ export const createSubLesson = (payload: FormData) => {
   return postApi(CREATE_SUBLESSON, payload);
 };
 
-export const getCoursePurchaseData = (paylaod: object) => {
-  return postApi(COURSE_PURCHASE, paylaod);
-};
+export const purchaseCourseApi = (payload: { course_id: string; batch_id?: string }) =>
+  postApi("/auth/course/v1/purchase", payload);
 
-export const createCheckoutSessionApi = (payload: {
-  course_ids: string[];
-  batch_ids?: string[];
-}) => postApi("/auth/course/v1/checkout/create-session", payload);
+export const checkPurchaseAccessApi = (courseId: string) =>
+  getApi(`/auth/course/v1/purchase/${courseId}/access`);
+
+export const getStudentPurchasesApi = () =>
+  getApi("/auth/course/v1/purchases");
+
+export const getPurchaseDetailApi = (purchaseId: string) =>
+  getApi(`/auth/course/v1/purchases/${purchaseId}`);
 
 export const confirmCheckoutSessionApi = (sessionId: string) =>
   getApi(`/auth/course/v1/checkout/confirm?session_id=${sessionId}`);
+
+// ─── Stripe Connect APIs ──────────────────────────────────────────────────────
+export const createOrgConnectApi = () =>
+  postApi("/auth/course/v1/stripe/connect/organisation", {});
+
+export const getOrgConnectStatusApi = () =>
+  getApi("/auth/course/v1/stripe/connect/organisation/status");
+
+export const createTeacherConnectApi = () =>
+  postApi("/auth/course/v1/stripe/connect/teacher", {});
+
+export const getTeacherConnectStatusApi = () =>
+  getApi("/auth/course/v1/stripe/connect/teacher/status");
+
+// ─── Earnings APIs ────────────────────────────────────────────────────────────
+export const getOrgEarningsApi = () =>
+  getApi("/auth/course/v1/earnings/organisation");
+
+export const getTeacherEarningsApi = () =>
+  getApi("/auth/course/v1/earnings/teacher");
+
+export const getAdminEarningsApi = () =>
+  getApi("/auth/course/v1/earnings/admin");
+
+export const refundPurchaseApi = (purchaseId: string, payload?: { reason?: string }) =>
+  postApi(`/auth/course/v1/refund/${purchaseId}`, payload || {});
 
 export const userCourseList = (param: URLSearchParams) => {
   return getApi(`${USER_COURSE_LIST}?${param}`);

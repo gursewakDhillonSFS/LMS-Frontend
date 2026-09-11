@@ -3,11 +3,9 @@ import CourseCardSkeleton from "@/components/CourseCardSkeleton";
 import DashboardCourseCard from "@/components/DashboardCourseCard";
 import NoDataFound from "@/components/NoDataFound";
 import Pagination from "@/components/Pagination";
-import { setCartCount, setCourseData } from "@/redux/slices/CourseDataSlice";
+import { setCourseData } from "@/redux/slices/CourseDataSlice";
 import {
-  addToCart,
   getSavedCourses,
-  removeFromCart,
   removeFromFavorite,
 } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
@@ -65,50 +63,7 @@ const SavedCourses = () => {
     }
   };
 
-  const handleAddCart = async (id: string) => {
-    if (id) {
-      const payload = {
-        course_ids: id,
-      };
-      try {
-        const res = await addToCart(payload);
-        if (res.status) {
-          toast.success(res.message);
-          setCourses((prev) =>
-            prev.map((item) =>
-              item.course_id === id ? { ...item, cart_status: true } : item
-            )
-          );
-          dispatch(setCartCount(res?.data?.total_courses));
-        } else {
-          toast.warning(res.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
-  const handleRemoveCart = async (id: string) => {
-    if (id) {
-      try {
-        const res = await removeFromCart(id);
-        if (res.status) {
-          toast.success(res.message);
-          setCourses((prev) =>
-            prev.map((item) =>
-              item.course_id === id ? { ...item, cart_status: false } : item
-            )
-          );
-          dispatch(setCartCount(res?.data?.total_courses));
-        } else {
-          toast.warning(res.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
   const handleRedirect = (data: courseData) => {
     dispatch(setCourseData(data));
@@ -138,8 +93,6 @@ const SavedCourses = () => {
               <DashboardCourseCard
                 key={index}
                 courseData={course}
-                handleAddCart={handleAddCart}
-                handleRemoveCart={handleRemoveCart}
                 handleRemoveFavorite={handleRemoveFavorite}
                 handleRedirect={handleRedirect}
                 veiwDetail={veiwDetail}

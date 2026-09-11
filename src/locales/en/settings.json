@@ -10,13 +10,13 @@
     "success": "Profile updated successfully!"
   },
   "membership": {
-    "title": "My Membership & Subscriptions",
-    "currentPlan": "Current Plan",
-    "planName": "Skillora Pro",
-    "price": "$99/mo",
-    "renewsOn": "Renews on",
-    "changePlan": "Change Plan",
-    "cancelSubscription": "Cancel Membership"
+    "title": "Purchase History & Invoices",
+    "coursePurchased": "Course Purchased",
+    "purchaseDate": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "invoice": "Receipt",
+    "noPurchases": "No course purchases yet."
   },
   "notifications": {
     "title": "Notification Preferences",

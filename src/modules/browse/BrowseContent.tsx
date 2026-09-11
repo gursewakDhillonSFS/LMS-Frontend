@@ -403,10 +403,10 @@ const BrowseContent = () => {
 
               <button
                 type="button"
-                onClick={() => router.push(RoutePaths?.Subscription)}
-                className="bg-white/10 border border-white/20 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[8px] hover:bg-white/20 transition-all active:scale-95"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="bg-white/10 border border-white/20 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[8px] hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
               >
-                Start 7-day Free Trial
+                Explore Courses
               </button>
             </div>
 

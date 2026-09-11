@@ -10,8 +10,9 @@ import {
   addToFavorite,
   getCourseInfoApi,
   removeFromFavorite,
-  getCoursePurchaseData,
+  purchaseCourseApi,
 } from "@/services/collections";
+import PurchaseModal from "@/components/PurchaseModal";
 import { formatLabel, getImageUrl, isValidUrl, getCategoryName } from "@/utils/comman";
 import { RoutePaths } from "@/utils/enums";
 import { Fallback } from "@/utils/images";
@@ -57,6 +58,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
   const Subscribed = coursesInfo?.enrolled_status || false;
   const [loading, setLoading] = useState(false);
   const [batch, setBatch] = useState(false);
+  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -149,11 +151,10 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
     }
 
     try {
-      const payload: any = { course_ids: [coursesInfo?.course_id] };
-      if (batchId) {
-        payload.batch_ids = [batchId];
-      }
-      const res: any = await getCoursePurchaseData(payload);
+      const res: any = await purchaseCourseApi({
+        course_id: coursesInfo?.course_id || selectedCourseData?.course_id || "",
+        batch_id: batchId,
+      });
       if (res?.status) {
         toast.success(res?.message || "Successfully enrolled in the free course!");
         setBatch(false);
@@ -250,7 +251,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 {coursesInfo?.course_price === 0 || coursesInfo?.course_type === "Free" ? (
                   <CommonButton
-                    text={Subscribed ? "Start Course" : "Start for Free"}
+                    text={Subscribed ? "Start Course" : "Enroll for Free"}
                     className="!h-11 sm:!h-12 !px-6 !text-sm !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
                     onClick={
                       Subscribed
@@ -259,34 +260,22 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     }
                   />
                 ) : (
-                  <>
-                    <CommonButton
-                      text={
-                        Subscribed
-                          ? "Start Course"
-                          : `Buy at $${coursesInfo?.course_price ?? selectedCourseData?.course_price ?? 149}`
-                      }
-                      className="!h-11 sm:!h-12 !px-6 !text-sm !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
-                      onClick={
-                        Subscribed
-                          ? () => router.push(RoutePaths.MyCourses)
-                          : () => {
-                              if (isExplore) handleCheckoutRedirect?.();
-                              else dispatch(setSignin(true));
-                            }
-                      }
-                    />
-
-                    {!Subscribed && (
-                      <button
-                        onClick={() => router.push(RoutePaths?.Subscription)}
-                        className="h-11 sm:h-12 px-5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold shadow-xs hover:border-slate-400 transition-all flex items-center gap-2 cursor-pointer"
-                      >
-                        <PlayCircleFilled className="text-[#4F46E5] text-base" />
-                        <span>Start 7-day Free Trial</span>
-                      </button>
-                    )}
-                  </>
+                  <CommonButton
+                    text={
+                      Subscribed
+                        ? "Start Course"
+                        : `Buy Course — $${coursesInfo?.course_price ?? selectedCourseData?.course_price ?? 0}`
+                    }
+                    className="!h-11 sm:!h-12 !px-6 !text-sm !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
+                    onClick={
+                      Subscribed
+                        ? () => router.push(RoutePaths.MyCourses)
+                        : () => {
+                            if (isExplore) setPurchaseModalOpen(true);
+                            else dispatch(setSignin(true));
+                          }
+                    }
+                  />
                 )}
               </div>
 
@@ -754,14 +743,19 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 Learn at Your Own Pace
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Get lifetime access to all courses and certificates whenever you want.
+                Get lifetime access to this course and earn your certificate.
               </p>
-              <button
-                onClick={() => router.push(RoutePaths?.Subscription)}
-                className="w-full mt-2 py-2.5 px-4 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
-              >
-                Start Free Trial →
-              </button>
+              {!Subscribed && (
+                <button
+                  onClick={() => {
+                    if (isExplore) setPurchaseModalOpen(true);
+                    else dispatch(setSignin(true));
+                  }}
+                  className="w-full mt-2 py-2.5 px-4 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+                >
+                  Buy Course Now →
+                </button>
+              )}
             </div>
 
             {/* Card 4: You May Also Like */}
@@ -854,6 +848,12 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
           </div>
         </div>
       </section>
+
+      <PurchaseModal
+        open={purchaseModalOpen}
+        onClose={() => setPurchaseModalOpen(false)}
+        course={(coursesInfo as any) || (selectedCourseData as any)}
+      />
     </div>
   );
 };

@@ -12,8 +12,10 @@ import CommonLink from "@/components/CommonLink";
 import NotificationSettings from "@/modules/userSetting/NotificationSettings";
 import OrganisationProfile from "@/modules/userSetting/OrganisationProfile";
 import Profile from "@/modules/userSetting/Profile";
+import OrganisationPayments from "@/modules/userSetting/OrganisationPayments";
 import { InstructorSettingEnum } from "@/utils/enums";
 import { BellIcon, OrganisationIcon, ProfileIcon } from "@/utils/icons";
+import { DollarCircleOutlined } from "@ant-design/icons";
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -34,6 +36,11 @@ const Settings = () => {
       key: InstructorSettingEnum.ORGANISATION,
       icon: <OrganisationIcon />,
       label: "Organisation Profile",
+    },
+    {
+      key: InstructorSettingEnum.PAYMENTS,
+      icon: <DollarCircleOutlined className="text-lg" />,
+      label: "Payments & Stripe Connect",
     },
     {
       key: InstructorSettingEnum.NOTIFICATIONS,
@@ -139,6 +146,9 @@ const Settings = () => {
           )}
           {InstructorSettingEnum?.ORGANISATION === activeTab && (
             <OrganisationProfile />
+          )}
+          {InstructorSettingEnum?.PAYMENTS === activeTab && (
+            <OrganisationPayments />
           )}
         </div>
       </div>

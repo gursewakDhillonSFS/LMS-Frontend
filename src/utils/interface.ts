@@ -24,6 +24,7 @@ export interface CommonButtonProp {
   type?: "submit" | "reset" | "button" | undefined;
   loading?: boolean;
   disable?: boolean;
+  disabled?: boolean;
 }
 
 export interface Tab {
@@ -101,8 +102,6 @@ export interface CourseCardProps {
     | ((values: courseData) => Promise<void>);
   handleAddFavorite?: (value: string) => Promise<void>;
   handleRemoveFavorite?: (value: string) => Promise<void>;
-  handleAddCart?: (value: string) => Promise<void>;
-  handleRemoveCart?: (value: string) => Promise<void>;
   handleRedirect?:
     | (() => void | undefined)
     | ((data: courseData) => void)
@@ -112,13 +111,14 @@ export interface CourseCardProps {
 }
 
 export interface courseData {
+  _id?: string;
   course_id: string;
   category_id: string;
   user_id?: string;
   course_image_url?: string;
   course_url?: string;
-  cart_status?: boolean;
   enrolled_status?: boolean;
+  is_enrolled?: boolean;
   base_price?: number;
   favorite?: boolean;
   favorite_status?: boolean;
@@ -472,11 +472,7 @@ export interface OnBoardingUser {
   education_level?: string;
 }
 
-export interface OnBoardingSubscription {
-  user_id: string;
-  plan_type: string;
-  is_trial: boolean;
-}
+
 
 export interface OnboardingFormValues {
   goal: string;
@@ -644,4 +640,73 @@ export interface EditCourseFormValues {
   learning_points?: string[];
   skills_you_gain?: string[];
   organisation_id?: string;
+}
+
+export interface CoursePurchase {
+  _id: string;
+  studentId: string | { _id: string; full_name?: string; email?: string };
+  courseId: string | courseData;
+  batchId?: string;
+  organisationId: string;
+  teacherId?: string;
+  grossAmountCents: number;
+  platformFeePercent: number;
+  platformFeeCents: number;
+  organisationShareCents: number;
+  teacherShareCents: number;
+  teacherRevenuePercent: number;
+  currency: string;
+  status: "pending" | "paid" | "failed" | "refunded" | "cancelled";
+  purchasedAt?: string;
+  refundedAt?: string;
+  refundReason?: string;
+  createdAt?: string;
+}
+
+export interface OrganisationEarning {
+  _id: string;
+  organisationId: string;
+  courseId: string | { _id: string; course_name?: string };
+  purchaseId: string | CoursePurchase;
+  grossAmountCents: number;
+  platformFeeCents: number;
+  earningCents: number;
+  currency: string;
+  status: "pending" | "available" | "processing" | "paid" | "reversed";
+  createdAt?: string;
+}
+
+export interface TeacherEarning {
+  _id: string;
+  teacherId: string;
+  organisationId: string;
+  courseId: string | { _id: string; course_name?: string };
+  purchaseId: string | CoursePurchase;
+  earningCents: number;
+  currency: string;
+  status: "pending" | "available" | "processing" | "paid" | "reversed";
+  createdAt?: string;
+}
+
+export interface FinancialDocument {
+  _id: string;
+  type: "student_purchase" | "organisation_earning" | "teacher_earning" | "payout" | "refund";
+  referenceId: string;
+  ownerId: string;
+  ownerType: "student" | "organisation" | "teacher" | "admin";
+  amountCents: number;
+  currency: string;
+  description: string;
+  metadata?: Record<string, any>;
+  documentUrl?: string;
+  createdAt?: string;
+}
+
+export interface StripeConnectStatus {
+  connected: boolean;
+  connect_status: "pending" | "active" | "restricted" | "disabled";
+  account_id?: string;
+  details_submitted?: boolean;
+  charges_enabled?: boolean;
+  payouts_enabled?: boolean;
 }

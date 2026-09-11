@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import SearchInput from "./SearchInput";
 import {
-  CartIcon,
   ChatIcon,
   DownArrowIcon,
   EarPhoneIcon,
@@ -70,9 +69,6 @@ const UserHeader = () => {
   const [notificationDrawer, setNotificationDrawer] = useState(false);
   const [announcementDrawer, setAnnouncementDrawer] = useState(false);
   const dispatch = useDispatch();
-  const cartCount = useSelector(
-    (state: RootState) => state.courseData.cartCount
-  );
 
   const handleLogout = () => {
     setLogOutLoading(true);
@@ -182,14 +178,7 @@ const UserHeader = () => {
         >
           <ChatIcon />
         </button>
-        <Badge
-          count={cartCount}
-          onClick={() => route.push(RoutePaths?.Checkout)}
-        >
-          <button className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]">
-            <CartIcon />
-          </button>
-        </Badge>
+
         <LanguageSwitcher variant="header" />
         <div className="w-[1px] h-[24px] bg-[var(--border)]"></div>
         <Dropdown
