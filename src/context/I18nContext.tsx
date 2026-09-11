@@ -127,7 +127,7 @@ export const I18nProvider: React.FC<{
   }, [locale]);
 
   const t = useCallback(
-    (key: string, params?: Record<string, string | number>): string => {
+    (key: string, params?: Record<string, any>): string => {
       const parts = key.split(".");
       
       // Look in current locale dictionary
@@ -138,18 +138,28 @@ export const I18nProvider: React.FC<{
         resolved = resolveTranslation(translations[DEFAULT_LOCALE], parts);
       }
 
-      // If still not found, return key
+      // If not found and key does not start with "common.", try under common namespace
+      if (resolved === undefined && !key.startsWith("common.")) {
+        resolved = resolveTranslation(translations[locale], ["common", ...parts]);
+        if (resolved === undefined && locale !== DEFAULT_LOCALE) {
+          resolved = resolveTranslation(translations[DEFAULT_LOCALE], ["common", ...parts]);
+        }
+      }
+
+      // If still not found, return defaultValue if provided, or key
       if (resolved === undefined) {
-        return key;
+        return (params?.defaultValue as string) ?? key;
       }
 
       // Interpolate parameters {param}
       if (params) {
         Object.entries(params).forEach(([paramKey, paramValue]) => {
-          resolved = (resolved as string).replace(
-            new RegExp(`\\{${paramKey}\\}`, "g"),
-            String(paramValue)
-          );
+          if (paramKey !== "defaultValue") {
+            resolved = (resolved as string).replace(
+              new RegExp(`\\{${paramKey}\\}`, "g"),
+              String(paramValue)
+            );
+          }
         });
       }
 

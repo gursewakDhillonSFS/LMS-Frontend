@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import SearchInput from "./SearchInput";
 import {
   ChatIcon,
   DownArrowIcon,
@@ -14,7 +13,7 @@ import ConfirmationModal from "./modal/ConfirmationModal";
 import ChangePassword from "./modal/ChangePassword";
 import NotificationPanel from "./NotificationPanel";
 import AnnouncementPanel from "./AnnouncementPanel";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAllSlices } from "@/redux/resetSlice";
 import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
@@ -28,6 +27,7 @@ import ThemePicker from "./ThemePicker";
 
 const UserHeader = () => {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const full_name = useSelector(
     (state: RootState) => state.userdata?.full_name
   );
@@ -38,6 +38,35 @@ const UserHeader = () => {
   const profile_img = useSelector(
     (state: RootState) => state.userdata?.profile_img
   );
+
+  const getSectionTitle = () => {
+    if (pathname.includes("/my-courses")) {
+      return t("dashboard.tabs.myCourses", { defaultValue: "My Courses" });
+    }
+    if (pathname.includes("/my-explore")) {
+      return t("dashboard.tabs.exploreCourses", { defaultValue: "Explore Courses" });
+    }
+    if (pathname.includes("/my-schedule")) {
+      return t("dashboard.tabs.mySchedule", { defaultValue: "My Schedule" });
+    }
+    if (pathname.includes("/saved-courses")) {
+      return t("dashboard.tabs.savedCourses", { defaultValue: "Saved Courses" });
+    }
+    if (pathname.includes("/my-certificate")) {
+      return t("dashboard.tabs.myCertificate", { defaultValue: "Certificates" });
+    }
+    if (pathname.includes("/my-settings")) {
+      return t("dashboard.tabs.settings", { defaultValue: "Settings" });
+    }
+    if (pathname.includes("/chat")) {
+      return "Messages";
+    }
+    if (pathname.includes("/checkout")) {
+      return "Checkout";
+    }
+    return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
+  };
+
   const menuItems: MenuProps["items"] = [
     {
       key: "change-password",
@@ -62,7 +91,6 @@ const UserHeader = () => {
       },
     },
   ];
-  const [search, setSearch] = useState("");
   const [logoutModal, setLogOutModal] = useState(false);
   const [logoutLoading, setLogOutLoading] = useState(false);
   const route = useRouter();
@@ -101,8 +129,10 @@ const UserHeader = () => {
           description={t("common.modals.logoutConfirm", {
             defaultValue: "Are you sure you want to logout this account?",
           })}
+          cancelText={t("common.actions.no", { defaultValue: "Cancel" })}
+          submitText={t("common.modals.logoutConfirmBtn", { defaultValue: "Yes, Logout" })}
           iconBG="#FB4A49"
-          icon={<LogoutIcon />}
+          icon={<LogoutIcon color="#FB4A49" />}
           loading={logoutLoading}
         />
       )}
@@ -138,14 +168,13 @@ const UserHeader = () => {
           <AnnouncementPanel onClose={() => setAnnouncementDrawer(false)} />
         </Drawer>
       )}
-      <SearchInput
-        search={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="!max-w-[180px] xl:!max-w-[400px]"
-        placeholder={t("common.nav.searchPlaceholder", {
-          defaultValue: "Search...",
-        })}
-      />
+
+      {/* Left: Dynamic Section Title */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-lg lg:text-xl font-bold text-[#101828] tracking-tight m-0 leading-none">
+          {getSectionTitle()}
+        </h1>
+      </div>
 
       <div className="flex items-center gap-[8px] lg:gap-[12px]">
         <button

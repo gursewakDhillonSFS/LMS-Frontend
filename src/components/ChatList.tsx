@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useMemo } from "react";
 import Image from "next/image";
 import { ChatConversation, MessageProp } from "@/utils/interface";
 import SearchInput from "./SearchInput";
@@ -30,7 +30,16 @@ const ChatList: React.FC<ChatListProps> = ({
   const [active, setActive] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  console.log("chat", chat);
+  const filteredChat = useMemo(() => {
+    if (!chat) return [];
+    if (!search.trim()) return chat;
+    const q = search.toLowerCase();
+    return chat.filter(
+      (conv) =>
+        (conv.names || conv.name || "").toLowerCase().includes(q) ||
+        (conv.lastMessage?.message || "").toLowerCase().includes(q)
+    );
+  }, [chat, search]);
 
   return (
     <div
@@ -42,15 +51,15 @@ const ChatList: React.FC<ChatListProps> = ({
         <SearchInput
           search={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="!bg-[#F7F7F7]  !border-none "
+          className="!bg-[#F8FAFC] !border-[#E4E7EC] !rounded-xl"
         />
         {isChat && (
-          <PlusOutlined className="!bg-secondary !text-white p-3 !cursor-pointer !rounded-[12px]" />
+          <PlusOutlined className="!bg-[#315CFF] !text-white p-3 !cursor-pointer !rounded-[12px]" />
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-        {chat?.map((conv) => (
+      <div className="flex-1 overflow-y-auto space-y-1">
+        {filteredChat.map((conv) => (
           <div
             key={conv._id}
             onClick={() => {
@@ -63,32 +72,34 @@ const ChatList: React.FC<ChatListProps> = ({
                 setLastVisible(null as unknown as MessageProp);
               }
             }}
-            className={`flex items-center p-3 rounded-[12px] cursor-pointer relative my-2 ${
-              conv._id === active ? "bg-secondary" : "hover:bg-blue-50"
+            className={`flex items-center p-3 rounded-xl cursor-pointer relative transition-all ${
+              conv._id === active
+                ? "bg-[#315CFF] text-white shadow-xs"
+                : "hover:bg-[#F8FAFC] text-[#101828]"
             }`}
           >
-            <div className="relative">
+            <div className="relative shrink-0">
               <Image
                 src={conv?.avatar || "/fallback.png"}
                 alt="Profile"
                 width={40}
                 unoptimized
                 height={40}
-                className="rounded-full w-10 h-10 object-cover"
+                className="rounded-xl w-10 h-10 object-cover"
               />
             </div>
-            <div className="ml-3 flex-1">
-              <div className="flex justify-between">
+            <div className="ml-3 flex-1 min-w-0">
+              <div className="flex justify-between items-center mb-0.5">
                 <p
-                  className={`font-semibold text-sm ${
-                    conv._id === active ? "text-white" : "text-black"
+                  className={`font-semibold text-sm truncate ${
+                    conv._id === active ? "text-white" : "text-[#101828]"
                   }`}
                 >
                   {conv.names || conv.name}
                 </p>
                 <span
-                  className={`text-xs ${
-                    conv._id === active ? "text-white" : "text-gray-500"
+                  className={`text-[11px] shrink-0 ml-1 ${
+                    conv._id === active ? "text-white/80" : "text-[#98A2B3]"
                   }`}
                 >
                   {conv?.lastMessage?.message_time?.seconds &&
@@ -98,22 +109,15 @@ const ChatList: React.FC<ChatListProps> = ({
                 </span>
               </div>
               <p
-                className={`text-sm ${
-                  conv._id === active ? "text-white" : "text-gray-500"
-                } max-w-[160px] lg:max-w-[200px] truncate`}
+                className={`text-xs truncate ${
+                  conv._id === active ? "text-white/80" : "text-[#667085]"
+                }`}
               >
-                {conv.lastMessage?.message_type == "text"
+                {conv.lastMessage?.message_type === "text"
                   ? conv.lastMessage?.message
-                  : conv.lastMessage?.message_type}
+                  : conv.lastMessage?.message_type || "No messages yet"}
               </p>
             </div>
-            {/* {conv.unread_count?.[currentUser?._id] ? (
-              <span className="absolute right-4 top-8 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {conv.unread_count?.[currentUser?._id]}
-              </span>
-            ) : (
-              ""
-            )} */}
           </div>
         ))}
       </div>

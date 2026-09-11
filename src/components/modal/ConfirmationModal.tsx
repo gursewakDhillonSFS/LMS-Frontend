@@ -16,6 +16,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   icon,
   iconBG,
   loading = false,
+  cancelText,
+  submitText,
 }) => {
   const { t } = useTranslation();
 
@@ -75,7 +77,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onCancel}
             className="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-colors cursor-pointer"
           >
-            {t("actions.no", { defaultValue: "Cancel" })}
+            {cancelText || t("common.actions.no", { defaultValue: "Cancel" })}
           </button>
           <button
             type="button"
@@ -86,7 +88,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               backgroundColor: iconBG && iconBG !== "#00F3A2" ? iconBG : "#315CFF",
             }}
           >
-            {loading ? "Processing..." : t("actions.yes", { defaultValue: "Confirm" })}
+            {loading ? "Processing..." : submitText || t("common.actions.yes", { defaultValue: "Confirm" })}
           </button>
         </div>
       </div>

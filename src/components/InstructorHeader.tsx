@@ -154,8 +154,10 @@ const InstructorHeader = () => {
           description={t("common.modals.logoutConfirm", {
             defaultValue: "Are you sure you want to logout this account?",
           })}
+          cancelText={t("common.actions.no", { defaultValue: "Cancel" })}
+          submitText={t("common.modals.logoutConfirmBtn", { defaultValue: "Yes, Logout" })}
           iconBG="#FB4A49"
-          icon={<LogoutIcon />}
+          icon={<LogoutIcon color="#FB4A49" />}
         />
       )}
 

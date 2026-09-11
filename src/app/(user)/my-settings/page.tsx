@@ -5,13 +5,11 @@ import {
   UserOutlined,
   LockOutlined,
   BellOutlined,
-  BookOutlined,
 } from "@ant-design/icons";
 
 import SettingsLayout, { SettingsTabItem } from "@/components/settings/SettingsLayout";
 import Profile from "@/modules/userSetting/Profile";
 import NotificationSettings from "@/modules/userSetting/NotificationSettings";
-import Membership from "@/modules/userSetting/Membership";
 import ChangePasswordSettings from "@/modules/userSetting/ChangePasswordSettings";
 
 const STUDENT_SETTINGS_TABS: SettingsTabItem[] = [
@@ -33,12 +31,6 @@ const STUDENT_SETTINGS_TABS: SettingsTabItem[] = [
     description: "Class & homework alerts",
     icon: <BellOutlined />,
   },
-  {
-    key: "membership",
-    label: "Membership & Courses",
-    description: "Enrolled courses & invoices",
-    icon: <BookOutlined />,
-  },
 ];
 
 export default function StudentSettingsPage() {
@@ -54,7 +46,6 @@ export default function StudentSettingsPage() {
       {activeTab === "profile" && <Profile />}
       {activeTab === "security" && <ChangePasswordSettings />}
       {activeTab === "notifications" && <NotificationSettings />}
-      {activeTab === "membership" && <Membership />}
     </SettingsLayout>
   );
 }

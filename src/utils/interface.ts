@@ -79,6 +79,8 @@ export interface ConfirmationModalProps {
   icon?: React.ReactNode;
   iconBG?: string;
   loading?: boolean;
+  cancelText?: string;
+  submitText?: string;
 }
 
 export interface CourseCardProps {
