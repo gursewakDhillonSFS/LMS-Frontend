@@ -19,6 +19,7 @@ import {
   StudentIcon,
   TeacherIcon,
 } from "@/utils/icons";
+import { DollarCircleOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -52,6 +53,7 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       "assignments",
       "quizzes",
       "announcements",
+      "earnings",
       "settings",
     ];
 
@@ -161,6 +163,12 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                   icon: <EarPhoneIcon />,
                   label: t("dashboard.tabs.announcements", { defaultValue: "Announcement" }),
                   onClick: () => router.push("/announcements"),
+                },
+                {
+                  key: "earnings",
+                  icon: <DollarCircleOutlined style={{ fontSize: "20px" }} />,
+                  label: "Earnings",
+                  onClick: () => router.push("/earnings"),
                 },
                 {
                   key: "settings",

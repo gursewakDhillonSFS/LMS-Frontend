@@ -107,6 +107,7 @@ export enum RoutePaths {
   Settings = "/settings",
   Students = "/students",
   Teachers = "/teachers",
+  InstructorEarnings = "/earnings",
   InstructorPayments = "/settings/payments",
 
   // Teacher Routes

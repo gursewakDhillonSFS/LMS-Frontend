@@ -1,14 +1,22 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
-import { Form, Input, Collapse, Divider, Select } from "antd";
+import { Form, Input, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  LockOutlined,
+  UserOutlined,
+  MailOutlined,
+  GlobalOutlined,
+  CheckCircleFilled,
+  SafetyOutlined,
+} from "@ant-design/icons";
+
 import { toast } from "@/utils/toast";
 import { RootState } from "@/redux/store";
 import { updateUser } from "@/redux/slices/UserDataSlice";
 import { updateUserProfileApi, changePassword } from "@/services/collections";
-import CommonButton from "@/components/CommonButton";
-import { LockOutlined, UserOutlined, MailOutlined, GlobalOutlined } from "@ant-design/icons";
 import { useTranslation } from "@/context/I18nContext";
 
 const Profile = () => {
@@ -51,7 +59,7 @@ const Profile = () => {
       const res = await updateUserProfileApi(formData);
       if (res?.status) {
         dispatch(updateUser(res.data));
-        toast.success(t("settings.profile.success"));
+        toast.success(t("settings.profile.success", { defaultValue: "Profile updated successfully!" }));
         if (values.preferredLanguage && values.preferredLanguage !== locale) {
           await setLocale(values.preferredLanguage);
         }
@@ -99,197 +107,198 @@ const Profile = () => {
   };
 
   return (
-    <div className="w-full h-fit p-6 flex flex-col gap-6 bg-white rounded-xl">
-      <div>
-        <h2 className="text-[20px] font-bold plus-jakarta-sans pb-3 border-b border-[#C8C8C8]">
-          {t("settings.profile.title")}
-        </h2>
-        <p className="text-xs text-slate-500 mt-1">
-          {t("settings.profile.subtitle")}
-        </p>
+    <div className="space-y-8">
+      {/* SECTION 1: PERSONAL DETAILS */}
+      <div className="space-y-5">
+        <div className="pb-3 border-b border-[#F2F4F7]">
+          <h3 className="text-lg font-bold text-[#101828]">Personal Information</h3>
+          <p className="text-xs sm:text-sm text-[#667085] mt-0.5">
+            Update your account profile details and application language preferences.
+          </p>
+        </div>
+
+        <Form
+          form={profileForm}
+          requiredMark={false}
+          layout="vertical"
+          onFinish={handleUpdateProfile}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            <div>
+              <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                First Name <span className="text-red-500">*</span>
+              </label>
+              <Form.Item
+                name="fname"
+                rules={[{ required: true, message: "First name is required" }]}
+                className="mb-0"
+              >
+                <Input
+                  prefix={<UserOutlined className="text-slate-400 mr-1.5" />}
+                  placeholder="Enter your first name"
+                  className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
+                />
+              </Form.Item>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                Last Name <span className="text-red-500">*</span>
+              </label>
+              <Form.Item
+                name="lname"
+                rules={[{ required: true, message: "Last name is required" }]}
+                className="mb-0"
+              >
+                <Input
+                  prefix={<UserOutlined className="text-slate-400 mr-1.5" />}
+                  placeholder="Enter your last name"
+                  className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
+                />
+              </Form.Item>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                Email Address
+              </label>
+              <Form.Item name="email" className="mb-0">
+                <Input
+                  disabled
+                  prefix={<MailOutlined className="text-slate-400 mr-1.5" />}
+                  suffix={
+                    <span className="text-emerald-600 text-xs font-semibold flex items-center gap-1">
+                      <CheckCircleFilled className="text-[11px]" /> Verified
+                    </span>
+                  }
+                  className="!py-2.5 !px-3.5 !rounded-xl !border-[#E4E7EC] bg-[#F8FAFC] text-[#667085] cursor-not-allowed text-sm"
+                />
+              </Form.Item>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                Preferred Language
+              </label>
+              <Form.Item name="preferredLanguage" className="mb-0">
+                <Select
+                  size="large"
+                  prefix={<GlobalOutlined className="text-slate-400 mr-1.5" />}
+                  onChange={(val) => setLocale(val)}
+                  className="w-full !rounded-xl"
+                  options={[
+                    { value: "en", label: "🇬🇧 English" },
+                    { value: "pa", label: "🇮🇳 ਪੰਜਾਬੀ (Punjabi)" },
+                    { value: "fr", label: "🇫🇷 Français (French)" },
+                  ]}
+                />
+              </Form.Item>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-5">
+            <button
+              type="submit"
+              disabled={loadingProfile}
+              className="px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loadingProfile ? "Saving Changes..." : "Save Profile Details"}
+            </button>
+          </div>
+        </Form>
       </div>
 
-      <Form
-        form={profileForm}
-        requiredMark={false}
-        layout="vertical"
-        onFinish={handleUpdateProfile}
-      >
-        <div className="flex flex-col md:flex-row gap-4 justify-between">
-          <div className="flex flex-col gap-1 w-full">
-            <label htmlFor="fname" className="plus-jakarta-sans text-sm font-medium text-gray-700">
-              {t("settings.profile.firstName")}
-            </label>
-            <Form.Item
-              name="fname"
-              rules={[{ required: true, message: t("auth.validation.firstNameRequired") }]}
-            >
-              <Input
-                prefix={<UserOutlined className="text-gray-400" />}
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px]"
-                placeholder={t("settings.profile.firstName")}
-              />
-            </Form.Item>
+      {/* SECTION 2: SECURITY & PASSWORD */}
+      <div className="space-y-5 pt-6 border-t border-[#F2F4F7]">
+        <div className="pb-3 border-b border-[#F2F4F7] flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shrink-0">
+            <SafetyOutlined />
           </div>
-
-          <div className="flex flex-col gap-1 w-full">
-            <label htmlFor="lname" className="plus-jakarta-sans text-sm font-medium text-gray-700">
-              {t("settings.profile.lastName")}
-            </label>
-            <Form.Item
-              name="lname"
-              rules={[{ required: true, message: t("auth.validation.lastNameRequired") }]}
-            >
-              <Input
-                prefix={<UserOutlined className="text-gray-400" />}
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px]"
-                placeholder={t("settings.profile.lastName")}
-              />
-            </Form.Item>
+          <div>
+            <h3 className="text-lg font-bold text-[#101828]">Security & Credentials</h3>
+            <p className="text-xs sm:text-sm text-[#667085] mt-0.5">
+              Change your password and manage login credentials securely.
+            </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="plus-jakarta-sans text-sm font-medium text-gray-700">
-              {t("settings.profile.email")}
-            </label>
-            <Form.Item name="email">
-              <Input
-                disabled
-                prefix={<MailOutlined className="text-gray-400" />}
-                type="email"
-                className="!p-3 !border-[#C8C8C8] !rounded-[8px] bg-gray-50 text-gray-500 cursor-not-allowed"
-                placeholder={t("settings.profile.email")}
-              />
-            </Form.Item>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="preferredLanguage" className="plus-jakarta-sans text-sm font-medium text-gray-700">
-              {t("settings.profile.language")}
-            </label>
-            <Form.Item name="preferredLanguage">
-              <Select
-                size="large"
-                prefix={<GlobalOutlined className="text-gray-400 mr-1" />}
-                onChange={(val) => setLocale(val)}
-                className="w-full !rounded-[8px]"
-                options={[
-                  { value: "en", label: "🇬🇧 English" },
-                  { value: "pa", label: "🇮🇳 ਪੰਜਾਬੀ (Punjabi)" },
-                  { value: "fr", label: "🇫🇷 Français (French)" },
-                ]}
-              />
-            </Form.Item>
-          </div>
-        </div>
-
-        <Form.Item className="!flex !items-center !justify-end !pb-0 mb-0">
-          <CommonButton
-            text={t("settings.profile.save")}
-            loading={loadingProfile}
-            disable={loadingProfile}
-            type="submit"
-            className="!bg-secondary text-white !h-[48px] !px-6 !rounded-lg"
-          />
-        </Form.Item>
-      </Form>
-
-      <Divider className="my-2" />
-
-      {/* Security Section */}
-      <Collapse
-        ghost
-        className="w-full !bg-white"
-        expandIconPosition="end"
-        items={[
-          {
-            key: "security",
-            label: (
-              <span className="text-[18px] font-bold plus-jakarta-sans text-secondary">
-                🔑 Security & Password Changes
-              </span>
-            ),
-            children: (
-              <Form
-                form={passwordForm}
-                requiredMark={false}
-                layout="vertical"
-                onFinish={handleChangePassword}
-                className="pt-2"
+        <Form
+          form={passwordForm}
+          requiredMark={false}
+          layout="vertical"
+          onFinish={handleChangePassword}
+        >
+          <div className="space-y-4 max-w-xl">
+            <div>
+              <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                Current Password <span className="text-red-500">*</span>
+              </label>
+              <Form.Item
+                name="current_password"
+                rules={[{ required: true, message: "Please enter your current password" }]}
+                className="mb-0"
               >
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1">
-                    <label className="plus-jakarta-sans text-sm font-medium text-gray-700">
-                      Current Password
-                    </label>
-                    <Form.Item
-                      name="current_password"
-                      rules={[{ required: true, message: "Please enter your current password" }]}
-                    >
-                      <Input.Password
-                        prefix={<LockOutlined className="text-gray-400" />}
-                        className="!p-3 !border-[#C8C8C8] !rounded-[8px]"
-                        placeholder="Enter current password"
-                      />
-                    </Form.Item>
-                  </div>
+                <Input.Password
+                  prefix={<LockOutlined className="text-slate-400 mr-1.5" />}
+                  placeholder="Enter current password"
+                  className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
+                />
+              </Form.Item>
+            </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1">
-                      <label className="plus-jakarta-sans text-sm font-medium text-gray-700">
-                        New Password
-                      </label>
-                      <Form.Item
-                        name="new_password"
-                        rules={[
-                          { required: true, message: "Please enter your new password" },
-                          { min: 6, message: "Password must be at least 6 characters" },
-                        ]}
-                      >
-                        <Input.Password
-                          prefix={<LockOutlined className="text-gray-400" />}
-                          className="!p-3 !border-[#C8C8C8] !rounded-[8px]"
-                          placeholder="Enter new password"
-                        />
-                      </Form.Item>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <label className="plus-jakarta-sans text-sm font-medium text-gray-700">
-                        Confirm New Password
-                      </label>
-                      <Form.Item
-                        name="confirm_new_password"
-                        rules={[
-                          { required: true, message: "Please confirm your new password" },
-                        ]}
-                      >
-                        <Input.Password
-                          prefix={<LockOutlined className="text-gray-400" />}
-                          className="!p-3 !border-[#C8C8C8] !rounded-[8px]"
-                          placeholder="Confirm new password"
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end mt-4">
-                  <CommonButton
-                    text={"Update Password"}
-                    loading={loadingPassword}
-                    disable={loadingPassword}
-                    type="submit"
-                    className="!bg-primary text-black !h-[48px] !px-6 !rounded-lg"
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                  New Password <span className="text-red-500">*</span>
+                </label>
+                <Form.Item
+                  name="new_password"
+                  rules={[
+                    { required: true, message: "Please enter new password" },
+                    { min: 6, message: "Must be at least 6 characters" },
+                  ]}
+                  className="mb-0"
+                >
+                  <Input.Password
+                    prefix={<LockOutlined className="text-slate-400 mr-1.5" />}
+                    placeholder="New password"
+                    className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
                   />
-                </div>
-              </Form>
-            ),
-          },
-        ]}
-      />
+                </Form.Item>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#344054] mb-1.5">
+                  Confirm Password <span className="text-red-500">*</span>
+                </label>
+                <Form.Item
+                  name="confirm_new_password"
+                  rules={[
+                    { required: true, message: "Please confirm new password" },
+                  ]}
+                  className="mb-0"
+                >
+                  <Input.Password
+                    prefix={<LockOutlined className="text-slate-400 mr-1.5" />}
+                    placeholder="Confirm new password"
+                    className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loadingPassword}
+                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loadingPassword ? "Updating Password..." : "Update Password"}
+              </button>
+            </div>
+          </div>
+        </Form>
+      </div>
     </div>
   );
 };

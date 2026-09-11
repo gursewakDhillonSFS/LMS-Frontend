@@ -1,69 +1,173 @@
 "use client";
+
 import React, { useState } from "react";
 import { Switch } from "antd";
+import {
+  BellOutlined,
+  NotificationOutlined,
+  VideoCameraOutlined,
+  FileTextOutlined,
+  QuestionCircleOutlined,
+  StarOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import { toast } from "@/utils/toast";
 
-const steps = [
-  { key: "All", value: "Receive All Notifications", desc: "Get all educational content and platform updates." },
-  { key: "Announcement", value: "Class Announcements", desc: "Hear about latest course announcements from instructors." },
-  { key: "LiveClasses", value: "Live Classes Scheduled", desc: "Receive immediate links when a live session is set up." },
-  { key: "NewAssignments", value: "New Assignments Posted", desc: "Stay informed as soon as a new task is added." },
-  { key: "AssignmentsReminder", value: "Assignments Reminders", desc: "Receive a friendly reminder before task deadlines." },
-  { key: "NewQuizzes", value: "New Quizzes Published", desc: "Be alerted the second a test becomes active." },
-  { key: "QuizzesReminder", value: "Quizzes Reminders", desc: "Get warned before quizzes close or expire." },
-  { key: "Evaluations", value: "Evaluations & Feedback", desc: "Get notified when grades and comments are released." },
-  { key: "Recommendation", value: "Personalized Recommendations", desc: "Smart topics suggestions based on your interests." },
+interface NotificationCategory {
+  title: string;
+  description: string;
+  items: {
+    key: string;
+    label: string;
+    desc: string;
+    icon: React.ReactNode;
+  }[];
+}
+
+const NOTIFICATION_SECTIONS: NotificationCategory[] = [
+  {
+    title: "Course & Cohort Updates",
+    description: "Stay informed about class announcements, tests, and new homework.",
+    items: [
+      {
+        key: "Announcement",
+        label: "Class Announcements",
+        desc: "Receive immediate updates when an instructor posts in your course.",
+        icon: <NotificationOutlined className="text-[#315CFF]" />,
+      },
+      {
+        key: "NewAssignments",
+        label: "New Assignments",
+        desc: "Get notified as soon as an instructor assigns new project work.",
+        icon: <FileTextOutlined className="text-amber-600" />,
+      },
+      {
+        key: "NewQuizzes",
+        label: "New Quizzes",
+        desc: "Be alerted the moment a new quiz or assessment becomes available.",
+        icon: <QuestionCircleOutlined className="text-purple-600" />,
+      },
+    ],
+  },
+  {
+    title: "Live Sessions & Due Dates",
+    description: "Never miss a live cohort broadcast or assignment deadline.",
+    items: [
+      {
+        key: "LiveClasses",
+        label: "Live Classes Scheduled",
+        desc: "Receive meeting links and schedule alerts for upcoming live lectures.",
+        icon: <VideoCameraOutlined className="text-emerald-600" />,
+      },
+      {
+        key: "AssignmentsReminder",
+        label: "Assignment Due Reminders",
+        desc: "Get a notification 24 hours before your project submissions close.",
+        icon: <FileTextOutlined className="text-amber-600" />,
+      },
+      {
+        key: "QuizzesReminder",
+        label: "Quiz Expiry Reminders",
+        desc: "Receive timely warnings before tests expire.",
+        icon: <QuestionCircleOutlined className="text-purple-600" />,
+      },
+    ],
+  },
+  {
+    title: "Evaluation & Platform Insights",
+    description: "Feedback reports, grading notifications, and platform recommendations.",
+    items: [
+      {
+        key: "Evaluations",
+        label: "Grades & Evaluation Feedback",
+        desc: "Be notified as soon as teachers evaluate your submissions with notes.",
+        icon: <StarOutlined className="text-amber-500" />,
+      },
+      {
+        key: "Recommendation",
+        label: "Personalized Recommendations",
+        desc: "Curated learning paths and new courses based on your topics of interest.",
+        icon: <MailOutlined className="text-[#315CFF]" />,
+      },
+      {
+        key: "All",
+        label: "Global Activity Summary",
+        desc: "Receive daily digest emails with a summary of all LMS activity.",
+        icon: <BellOutlined className="text-slate-600" />,
+      },
+    ],
+  },
 ];
 
 const NotificationSettings = () => {
-  const [emailSteps, setEmailSteps] = useState<string[]>(["All", "Announcement", "LiveClasses", "NewAssignments"]);
+  const [enabledKeys, setEnabledKeys] = useState<string[]>([
+    "Announcement",
+    "LiveClasses",
+    "NewAssignments",
+    "Evaluations",
+    "All",
+  ]);
 
-  const handleToggle = (key: string) => {
-    setEmailSteps((prev) => {
-      let nextSteps;
-      if (prev.includes(key)) {
-        nextSteps = prev.filter((item) => item !== key);
-        toast.info(`Disabled notifications for ${steps.find(s => s.key === key)?.value}`);
+  const handleToggle = (key: string, label: string) => {
+    setEnabledKeys((prev) => {
+      const isEnabled = prev.includes(key);
+      const next = isEnabled ? prev.filter((k) => k !== key) : [...prev, key];
+      if (isEnabled) {
+        toast.info(`Disabled alerts for ${label}`);
       } else {
-        nextSteps = [...prev, key];
-        toast.success(`Enabled notifications for ${steps.find(s => s.key === key)?.value}`);
+        toast.success(`Enabled alerts for ${label}`);
       }
-      return nextSteps;
+      return next;
     });
   };
 
   return (
-    <div className="w-full p-6 h-fit flex flex-col gap-4 bg-white rounded-xl">
-      <div>
-        <h2 className="text-[20px] font-bold plus-jakarta-sans pb-3 border-b border-[#C8C8C8]">
-          Notification Settings
-        </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          Control how and when you receive email alerts, learning updates, and reminders from the LMS.
+    <div className="space-y-8">
+      <div className="pb-3 border-b border-[#F2F4F7]">
+        <h3 className="text-lg font-bold text-[#101828]">Notification Preferences</h3>
+        <p className="text-xs sm:text-sm text-[#667085] mt-0.5">
+          Choose what notifications you receive about your courses, live classes, and evaluations.
         </p>
       </div>
 
-      <div className="w-full flex flex-col gap-4 mt-2">
-        {steps.map((step, index) => (
-          <div
-            key={step.key}
-            className={`flex justify-between items-center py-4 ${
-              index !== steps.length - 1 ? "border-b border-[#F0F0F0]" : ""
-            }`}
-          >
-            <div className="flex flex-col gap-1 pr-4">
-              <span className="font-semibold text-gray-800 text-[15px]">
-                {step.value}
-              </span>
-              <span className="text-xs text-gray-400">
-                {step.desc}
-              </span>
+      <div className="space-y-8">
+        {NOTIFICATION_SECTIONS.map((section, sIdx) => (
+          <div key={sIdx} className="space-y-4">
+            <div>
+              <h4 className="text-sm font-bold text-[#101828]">{section.title}</h4>
+              <p className="text-xs text-[#667085]">{section.description}</p>
             </div>
-            <div className="cursor-pointer">
-              <Switch
-                checked={emailSteps.includes(step.key)}
-                onChange={() => handleToggle(step.key)}
-              />
+
+            <div className="bg-[#F8FAFC] rounded-2xl border border-[#E4E7EC] divide-y divide-[#E4E7EC] overflow-hidden">
+              {section.items.map((item) => {
+                const isChecked = enabledKeys.includes(item.key);
+                return (
+                  <div
+                    key={item.key}
+                    className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-white transition-colors"
+                  >
+                    <div className="flex items-start gap-3.5 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-white border border-[#E4E7EC] flex items-center justify-center text-base shrink-0 shadow-2xs">
+                        {item.icon}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-semibold text-sm text-[#101828] block truncate">
+                          {item.label}
+                        </span>
+                        <span className="text-xs text-[#667085] line-clamp-1">
+                          {item.desc}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Switch
+                      checked={isChecked}
+                      onChange={() => handleToggle(item.key, item.label)}
+                      className={isChecked ? "!bg-[#315CFF]" : ""}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}

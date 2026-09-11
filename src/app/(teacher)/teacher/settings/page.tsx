@@ -1,138 +1,88 @@
 "use client";
-import CommonLink from "@/components/CommonLink";
-import NotificationSettings from "@/modules/userSetting/NotificationSettings";
-import Profile from "@/modules/userSetting/Profile";
-import { InstructorSettingEnum } from "@/utils/enums";
-import { BellIcon, ProfileIcon } from "@/utils/icons";
-import { EditOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Button, Image, Upload, Spin } from "antd";
+
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { updateUser } from "@/redux/slices/UserDataSlice";
-import { updateUserProfileApi } from "@/services/collections";
-import { toast } from "@/utils/toast";
+import { useRouter } from "next/navigation";
+import {
+  UserOutlined,
+  DollarCircleOutlined,
+  BellOutlined,
+  ArrowRightOutlined,
+  BankOutlined,
+} from "@ant-design/icons";
 
-const TeacherSettings = () => {
-  const [activeTab, setActiveTab] = useState<string>(
-    InstructorSettingEnum.PROFILE
-  );
-  const dispatch = useDispatch();
-  const userData = useSelector((state: RootState) => state.userdata);
-  const [uploading, setUploading] = useState(false);
+import SettingsLayout, { SettingsTabItem } from "@/components/settings/SettingsLayout";
+import Profile from "@/modules/userSetting/Profile";
+import NotificationSettings from "@/modules/userSetting/NotificationSettings";
 
-  const handleUpload = async (file: File) => {
-    try {
-      setUploading(true);
-      const formData = new FormData();
-      formData.append("photo", file);
-      formData.append("firstName", userData?.first_name || userData?.full_name?.split(" ")[0] || "");
-      formData.append("lastName", userData?.last_name || userData?.full_name?.split(" ").slice(1).join(" ") || "");
+const TEACHER_SETTINGS_TABS: SettingsTabItem[] = [
+  {
+    key: "profile",
+    label: "My Profile",
+    description: "Account credentials & details",
+    icon: <UserOutlined />,
+  },
+  {
+    key: "notifications",
+    label: "Notification Settings",
+    description: "Email & assignment alerts",
+    icon: <BellOutlined />,
+  },
+  {
+    key: "earnings",
+    label: "Earnings & Payouts",
+    description: "Manage bank account & payout receipts",
+    icon: <DollarCircleOutlined />,
+  },
+];
 
-      const res = await updateUserProfileApi(formData);
-      if (res?.status) {
-        dispatch(updateUser(res.data));
-        toast.success("Profile picture updated successfully!");
-      } else {
-        toast.error(res?.message || "Failed to update profile picture");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("An error occurred while uploading profile picture");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const currentProfileImg = userData?.profile_img ?? 
-    "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740";
-
-  const menuItems = [
-    {
-      key: InstructorSettingEnum.PROFILE,
-      icon: <ProfileIcon />,
-      label: "My Profile",
-    },
-    {
-      key: InstructorSettingEnum.NOTIFICATIONS,
-      icon: <BellIcon />,
-      label: "Notification Settings",
-    },
-  ];
+export default function TeacherSettingsPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("profile");
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-[32px] font-[700] text-[#0E0E0E]">Settings</h1>
+    <SettingsLayout
+      role="teacher"
+      tabs={TEACHER_SETTINGS_TABS}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    >
+      {activeTab === "profile" && <Profile />}
+      {activeTab === "notifications" && <NotificationSettings />}
+      {activeTab === "earnings" && (
+        <div className="space-y-6">
+          <div className="pb-3 border-b border-[#F2F4F7]">
+            <h3 className="text-lg font-bold text-[#101828]">Teaching Earnings & Payouts</h3>
+            <p className="text-xs sm:text-sm text-[#667085] mt-0.5">
+              Manage your direct Stripe payout account and view batch revenue shares.
+            </p>
+          </div>
 
-      <div className="w-full flex flex-col lg:flex-row gap-3">
-        <div className="lg:w-[25%] h-fit bg-white rounded-[16px] p-6">
-          <div className="w-full text-center flex flex-col gap-5">
-            <div className="flex flex-col gap-3 items-center justify-center">
-              <div className="relative group w-[180px] h-[180px] rounded-full overflow-hidden border-2 border-gray-150">
-                {uploading && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10 rounded-full">
-                    <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: "#fff" }} spin />} />
-                  </div>
-                )}
-                <Image
-                  width={"180px"}
-                  height={"180px"}
-                  src={currentProfileImg}
-                  alt="Profile"
-                  preview={false}
-                  className="rounded-full object-cover w-[180px] h-[180px]"
-                />
+          <div className="p-6 rounded-2xl bg-[#F8FAFC] border border-[#E4E7EC] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#315CFF]/10 text-[#315CFF] flex items-center justify-center text-xl shrink-0">
+                <BankOutlined />
               </div>
-
-              <Upload
-                showUploadList={false}
-                maxCount={1}
-                accept="image/*"
-                beforeUpload={(file) => {
-                  handleUpload(file);
-                  return false;
-                }}
-              >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 mt-2">
-                  <CommonLink
-                    className="!plus-jakarta-sans !text-[16px] font-[500]"
-                    text={"Edit Profile Picture"}
-                  />{" "}
-                  <EditOutlined className="!text-secondary cursor-pointer" />
-                </div>
-              </Upload>
+              <div className="space-y-1">
+                <h4 className="text-base font-bold text-[#101828]">
+                  Dedicated Teaching Earnings Dashboard
+                </h4>
+                <p className="text-xs sm:text-sm text-[#667085] max-w-lg">
+                  Access your full revenue reports, bank transfer history, and Stripe Express account settings in the dedicated Earnings portal.
+                </p>
+              </div>
             </div>
 
-            <div className="border-t border-[#D8D8D8] w-full" />
-
-            <div className="flex flex-row lg:flex-col gap-2">
-              {menuItems.map((item) => (
-                <Button
-                  key={item.key}
-                  type="text"
-                  icon={item.icon}
-                  className={`w-full !p-5 !flex !justify-start !text-[14px] !font-[500] !items-center !rounded-[8px] ${
-                    activeTab === item.key
-                      ? "!bg-primary text-black"
-                      : "text-[#002333] hover:bg-gray-100"
-                  }`}
-                  onClick={() => setActiveTab(item.key)}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </div>
+            <button
+              type="button"
+              onClick={() => router.push("/teacher/earnings")}
+              className="px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-sm font-semibold flex items-center gap-2 shadow-xs hover:shadow-md transition-all cursor-pointer shrink-0"
+            >
+              <span>Go to Earnings</span>
+              <ArrowRightOutlined className="text-xs" />
+            </button>
           </div>
         </div>
-        <div className="lg:w-[75%] h-fit bg-white rounded-[16px]">
-          {InstructorSettingEnum?.PROFILE === activeTab && <Profile />}
-          {InstructorSettingEnum?.NOTIFICATIONS === activeTab && (
-            <NotificationSettings />
-          )}
-        </div>
-      </div>
-    </div>
+      )}
+    </SettingsLayout>
   );
-};
-
-export default TeacherSettings;
+}
