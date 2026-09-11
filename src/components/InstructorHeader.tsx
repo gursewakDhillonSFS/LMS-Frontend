@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import SearchInput from "./SearchInput";
 import {
   ChatIcon,
   DownArrowIcon,
@@ -14,7 +13,7 @@ import NotificationPanel from "./NotificationPanel";
 import AnnouncementPanel from "./AnnouncementPanel";
 import ChangePassword from "./modal/ChangePassword";
 import ConfirmationModal from "./modal/ConfirmationModal";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAllSlices } from "@/redux/resetSlice";
 import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
@@ -26,6 +25,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 
 const InstructorHeader = () => {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const full_name = useSelector(
     (state: RootState) => state.userdata?.full_name
   );
@@ -36,6 +36,58 @@ const InstructorHeader = () => {
   const profile_img = useSelector(
     (state: RootState) => state.userdata?.profile_img
   );
+
+  const getSectionTitle = () => {
+    if (!pathname) return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
+    if (
+      pathname.includes("/instructor-panel") ||
+      pathname === "/teacher/dashboard" ||
+      pathname === "/teacher"
+    ) {
+      return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
+    }
+    if (pathname.includes("/create-course")) {
+      return t("dashboard.tabs.createCourse", { defaultValue: "Create Course" });
+    }
+    if (pathname.includes("/course-details") || pathname.includes("/course-detail")) {
+      return t("dashboard.tabs.courseDetails", { defaultValue: "Course Details" });
+    }
+    if (pathname.includes("/courses")) {
+      return t("dashboard.tabs.courses", { defaultValue: "Courses" });
+    }
+    if (pathname.includes("/teachers")) {
+      return t("dashboard.tabs.teachers", { defaultValue: "Teachers" });
+    }
+    if (pathname.includes("/students")) {
+      return t("dashboard.tabs.students", { defaultValue: "Students" });
+    }
+    if (pathname.includes("/live-classes")) {
+      return t("dashboard.tabs.liveClasses", { defaultValue: "Live Classes" });
+    }
+    if (pathname.includes("/schedule")) {
+      return t("dashboard.tabs.mySchedule", { defaultValue: "My Schedule" });
+    }
+    if (pathname.includes("/assignments")) {
+      return t("dashboard.tabs.assignments", { defaultValue: "Assignments" });
+    }
+    if (pathname.includes("/quizzes")) {
+      return t("dashboard.tabs.quizzes", { defaultValue: "Quizzes" });
+    }
+    if (pathname.includes("/announcements")) {
+      return t("dashboard.tabs.announcements", { defaultValue: "Announcements" });
+    }
+    if (pathname.includes("/earnings")) {
+      return "Earnings";
+    }
+    if (pathname.includes("/settings")) {
+      return t("dashboard.tabs.settings", { defaultValue: "Settings" });
+    }
+    if (pathname.includes("/instructor-chat") || pathname.includes("/chat")) {
+      return "Messages";
+    }
+    return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
+  };
+
   const menuItems: MenuProps["items"] = [
     {
       key: "change-password",
@@ -60,7 +112,6 @@ const InstructorHeader = () => {
       },
     },
   ];
-  const [search, setSearch] = useState("");
   const [logoutModal, setLogOutModal] = useState(false);
   const route = useRouter();
   const [changePassword, setChangePassword] = useState(false);
@@ -91,7 +142,7 @@ const InstructorHeader = () => {
     }
   };
   return (
-    <div className="w-full flex items-center justify-between px-[16px] lg:px-[24px] py-[12px]">
+    <div className="w-full h-[64px] flex items-center justify-between px-[16px] lg:px-[24px]">
       {logoutModal && (
         <ConfirmationModal
           open={logoutModal}
@@ -138,14 +189,13 @@ const InstructorHeader = () => {
           <AnnouncementPanel onClose={() => setAnnouncementDrawer(false)} />
         </Drawer>
       )}
-      <SearchInput
-        search={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="!max-w-[180px] xl:!max-w-[400px]"
-        placeholder={t("common.nav.searchPlaceholder", {
-          defaultValue: "Search courses, students, topics...",
-        })}
-      />
+
+      {/* Left: Dynamic Section Title */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-lg lg:text-xl font-bold text-[#101828] tracking-tight m-0 leading-none">
+          {getSectionTitle()}
+        </h1>
+      </div>
 
       <div className="flex items-center gap-[8px] lg:gap-[12px]">
         <button

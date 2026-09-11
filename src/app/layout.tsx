@@ -153,7 +153,7 @@ export default async function RootLayout({
   const websiteSchema = getWebSiteSchema(baseUrl);
 
   return (
-    <html lang={initialLocale}>
+    <html lang={initialLocale} data-theme="light">
       <head>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="any" />

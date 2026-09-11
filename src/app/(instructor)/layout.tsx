@@ -93,12 +93,12 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           >
             <div
               onClick={() => setCollapsed((prev) => !prev)}
-              className="bg-[var(--dash-sidebar-bg)] cursor-pointer flex items-center justify-center py-[16px] px-[16px] border-b border-[var(--dash-sidebar-border)] sticky top-0 z-50 transition-colors"
+              className="bg-white cursor-pointer flex items-center justify-center h-[64px] min-h-[64px] max-h-[64px] px-[16px] border-b border-[#E4E7EC] sticky top-0 z-50 transition-colors"
             >
               {collapsed ? (
                 <HeaderSmallLogo />
               ) : (
-                <HeaderLogoIcon textColor="#0B192C" />
+                <HeaderLogoIcon height="36" textColor="#0B192C" />
               )}
             </div>
             <Menu
