@@ -61,6 +61,7 @@ const ProfileSetup = () => {
   const organization_id = useSelector(
     (state: RootState) => state?.userdata?.organization_id
   );
+  const userData = useSelector((state: RootState) => state?.userdata);
   const category = useSelector(
     (state: RootState) => state?.categories?.categories
   );
@@ -151,6 +152,7 @@ const ProfileSetup = () => {
     const dobString = values?.dob ? dayjs(values.dob).format("YYYY-MM-DD") : "";
     const payload = {
       ...values,
+      email: values?.email || userData?.email || "",
       dob: dobString,
       user_id,
     };
@@ -252,6 +254,16 @@ const ProfileSetup = () => {
     };
     loadCategories();
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userData?.email) {
+      form1.setFieldsValue({
+        First_name: form1.getFieldValue("First_name") || userData.first_name,
+        Last_name: form1.getFieldValue("Last_name") || userData.last_name,
+        email: userData.email,
+      });
+    }
+  }, [userData, form1]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -572,7 +584,7 @@ const ProfileSetup = () => {
                     <Form.Item
                       label={
                         <span className="text-xs font-bold text-slate-700">
-                          Professional Email Address <span className="text-rose-500">*</span>
+                          Instructor Account Email <span className="text-rose-500">*</span>
                         </span>
                       }
                       name="email"
@@ -583,8 +595,9 @@ const ProfileSetup = () => {
                     >
                       <Input
                         type="email"
+                        disabled
                         placeholder="instructor@youracademy.com"
-                        className="!h-11 !rounded-xl !border-slate-300 text-sm"
+                        className="!h-11 !rounded-xl !border-slate-300 text-sm bg-slate-50 text-slate-600 cursor-not-allowed"
                       />
                     </Form.Item>
                   </Col>
