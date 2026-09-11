@@ -63,18 +63,18 @@ const ActiveStudentsBarChart: React.FC<ActiveStudentsBarChartProps> = ({
   const studentsUrl = rolePrefix ? `${rolePrefix}/students` : "/students";
 
   return (
-    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-[var(--dash-surface-card)] border border-[var(--dash-border)] shadow-xs w-full">
+    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-white border border-[#E4E7EC] shadow-xs w-full">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
             <UserOutlined className="text-lg" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-base sm:text-lg font-bold text-[var(--dash-text-primary)] tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-[#101828] tracking-tight">
               Active Students
             </h2>
-            <p className="text-xs text-[var(--dash-text-muted)]">
+            <p className="text-xs text-[#667085]">
               Students actively learning in your courses
             </p>
           </div>
@@ -82,7 +82,7 @@ const ActiveStudentsBarChart: React.FC<ActiveStudentsBarChartProps> = ({
 
         <Link
           href={studentsUrl}
-          className="text-xs font-bold text-[var(--dash-primary)] hover:underline flex items-center gap-1"
+          className="text-xs font-bold text-[#315CFF] hover:underline flex items-center gap-1"
         >
           View All
         </Link>
@@ -98,27 +98,27 @@ const ActiveStudentsBarChart: React.FC<ActiveStudentsBarChartProps> = ({
             <defs>
               <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#60A5FA" />
-                <stop offset="100%" stopColor="#3B66FF" />
+                <stop offset="100%" stopColor="#315CFF" />
               </linearGradient>
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
-              stroke="var(--dash-border)"
-              opacity={0.6}
+              stroke="#F2F4F7"
+              opacity={1}
             />
             <XAxis
               dataKey="month"
               axisLine={false}
               tickLine={false}
               tickMargin={12}
-              tick={{ fontSize: 11, fill: "var(--dash-text-muted)" }}
+              tick={{ fontSize: 11, fill: "#98A2B3" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               tickMargin={12}
-              tick={{ fontSize: 11, fill: "var(--dash-text-muted)" }}
+              tick={{ fontSize: 11, fill: "#98A2B3" }}
             />
             <Tooltip content={<CustomBarTooltip />} />
             <Bar

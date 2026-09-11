@@ -18,16 +18,19 @@ const DashboardThemeContext = createContext<DashboardThemeContextType>({
 export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [theme, setThemeState] = useState<ThemeMode>("dark");
+  const [theme, setThemeState] = useState<ThemeMode>("light");
 
   useEffect(() => {
-    // Check saved preference or system preference, default to dark charcoal
+    // Default to clean white/light theme as requested
     const saved = localStorage.getItem("dashboard_theme");
-    if (saved === "light" || saved === "dark") {
-      setThemeState(saved);
-      document.documentElement.setAttribute("data-theme", saved);
+    if (saved === "dark") {
+      // If user specifically requests dark in future, but default clean white now
+      setThemeState("light");
+      localStorage.setItem("dashboard_theme", "light");
+      document.documentElement.setAttribute("data-theme", "light");
     } else {
-      document.documentElement.setAttribute("data-theme", "dark");
+      setThemeState("light");
+      document.documentElement.setAttribute("data-theme", "light");
     }
   }, []);
 

@@ -93,7 +93,75 @@
   --header-bg: #FFFFFF;
   --header-border: #E4E7EC;
 
-  /* Dashboard Theme Tokens (Dark-Neutral Default) */
+  /* Dashboard Theme Tokens (Clean Modern White / Light SaaS Theme - Default) */
+  --dash-bg: #F4F6FA;
+  --dash-surface: #FFFFFF;
+  --dash-surface-card: #FFFFFF;
+  --dash-surface-subtle: #F8FAFC;
+  --dash-surface-hover: #F1F5F9;
+  --dash-surface-elevated: #FFFFFF;
+  --dash-border: #E4E7EC;
+  --dash-border-subtle: #F1F5F9;
+  --dash-border-strong: #D0D5DD;
+
+  --dash-text-primary: #101828;
+  --dash-text-secondary: #475467;
+  --dash-text-muted: #667085;
+  --dash-text-inverse: #FFFFFF;
+
+  --dash-primary: #315CFF;
+  --dash-primary-hover: #274BD1;
+  --dash-primary-light: #EBF0FF;
+
+  --dash-sidebar-bg: #FFFFFF;
+  --dash-sidebar-border: #E4E7EC;
+  --dash-sidebar-text: #344054;
+  --dash-sidebar-active-bg: #EBF0FF;
+  --dash-sidebar-active-text: #315CFF;
+
+  --dash-header-bg: #FFFFFF;
+  --dash-header-border: #E4E7EC;
+
+  --dash-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.02);
+  --dash-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.03);
+}
+
+/* Light Mode Explicit */
+[data-theme="light"] {
+  --dash-bg: #F4F6FA;
+  --dash-surface: #FFFFFF;
+  --dash-surface-card: #FFFFFF;
+  --dash-surface-subtle: #F8FAFC;
+  --dash-surface-hover: #F1F5F9;
+  --dash-surface-elevated: #FFFFFF;
+  --dash-border: #E4E7EC;
+  --dash-border-subtle: #F1F5F9;
+  --dash-border-strong: #D0D5DD;
+
+  --dash-text-primary: #101828;
+  --dash-text-secondary: #475467;
+  --dash-text-muted: #667085;
+  --dash-text-inverse: #FFFFFF;
+
+  --dash-primary: #315CFF;
+  --dash-primary-hover: #274BD1;
+  --dash-primary-light: #EBF0FF;
+
+  --dash-sidebar-bg: #FFFFFF;
+  --dash-sidebar-border: #E4E7EC;
+  --dash-sidebar-text: #344054;
+  --dash-sidebar-active-bg: #EBF0FF;
+  --dash-sidebar-active-text: #315CFF;
+
+  --dash-header-bg: #FFFFFF;
+  --dash-header-border: #E4E7EC;
+
+  --dash-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.02);
+  --dash-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.03);
+}
+
+/* Dark Mode (Available if toggled) */
+[data-theme="dark"] {
   --dash-bg: #0B0F19;
   --dash-surface: #111827;
   --dash-surface-card: #131B2E;
@@ -124,40 +192,6 @@
 
   --dash-shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
   --dash-shadow-hover: 0 12px 30px -4px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Light / Slate Dashboard Mode */
-[data-theme="light"] {
-  --dash-bg: #EEF2F8;
-  --dash-surface: #FFFFFF;
-  --dash-surface-card: #FFFFFF;
-  --dash-surface-subtle: #F1F5F9;
-  --dash-surface-hover: #E2E8F0;
-  --dash-surface-elevated: #FFFFFF;
-  --dash-border: #E2E8F0;
-  --dash-border-subtle: #F1F5F9;
-  --dash-border-strong: #CBD5E1;
-
-  --dash-text-primary: #0F172A;
-  --dash-text-secondary: #475569;
-  --dash-text-muted: #64748B;
-  --dash-text-inverse: #FFFFFF;
-
-  --dash-primary: #315CFF;
-  --dash-primary-hover: #274BD1;
-  --dash-primary-light: #EBF0FF;
-
-  --dash-sidebar-bg: #FFFFFF;
-  --dash-sidebar-border: #E2E8F0;
-  --dash-sidebar-text: #344054;
-  --dash-sidebar-active-bg: #EBF0FF;
-  --dash-sidebar-active-text: #315CFF;
-
-  --dash-header-bg: #FFFFFF;
-  --dash-header-border: #E2E8F0;
-
-  --dash-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 4px 12px rgba(16, 24, 40, 0.05);
-  --dash-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 16px 32px -4px rgba(49, 92, 255, 0.1);
 }
 
 /* ============================================

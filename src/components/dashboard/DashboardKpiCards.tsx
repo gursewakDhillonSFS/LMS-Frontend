@@ -35,7 +35,7 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
       deltaType: "positive" as const,
       period: "vs. last 30 days",
       icon: <BookOutlined className="text-lg" />,
-      colorClasses: "text-[#3B66FF] bg-[#3B66FF]/10 border-[#3B66FF]/20",
+      colorClasses: "text-[#315CFF] bg-blue-50 border-blue-100",
       targetPath: `${rolePrefix}/courses` || "/courses",
     },
     {
@@ -45,7 +45,7 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
       deltaType: "positive" as const,
       period: "vs. last 30 days",
       icon: <TeamOutlined className="text-lg" />,
-      colorClasses: "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/20",
+      colorClasses: "text-emerald-600 bg-emerald-50 border-emerald-100",
       targetPath: rolePrefix ? `${rolePrefix}/students` : "/students",
     },
     {
@@ -55,7 +55,7 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
       deltaType: "positive" as const,
       period: "vs. last 30 days",
       icon: <VideoCameraOutlined className="text-lg" />,
-      colorClasses: "text-[#8B5CF6] bg-[#8B5CF6]/10 border-[#8B5CF6]/20",
+      colorClasses: "text-purple-600 bg-purple-50 border-purple-100",
       targetPath: rolePrefix ? `${rolePrefix}/live-classes` : "/live-classes",
     },
     {
@@ -65,7 +65,7 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
       deltaType: "neutral" as const,
       period: "vs. last 30 days",
       icon: <FileDoneOutlined className="text-lg" />,
-      colorClasses: "text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20",
+      colorClasses: "text-amber-600 bg-amber-50 border-amber-100",
       targetPath: rolePrefix ? `${rolePrefix}/assignments` : "/assignments",
     },
   ];
@@ -76,10 +76,10 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
         <div
           key={index}
           onClick={() => card.targetPath && router.push(card.targetPath)}
-          className="group relative flex flex-col justify-between p-5 rounded-2xl bg-[var(--dash-surface-card)] border border-[var(--dash-border)] shadow-xs hover:shadow-md hover:border-[var(--dash-border-strong)] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer overflow-hidden"
+          className="group relative flex flex-col justify-between p-5 rounded-2xl bg-white border border-[#E4E7EC] shadow-xs hover:shadow-md hover:border-[#D0D5DD] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer overflow-hidden"
         >
           {/* Subtle top surface accent line on hover */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--dash-primary)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#315CFF] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Top Row: Icon Squircle & Title */}
           <div className="flex items-center gap-3.5 mb-3">
@@ -88,14 +88,14 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
             >
               {card.icon}
             </div>
-            <span className="text-xs sm:text-sm font-semibold text-[var(--dash-text-secondary)] tracking-tight">
+            <span className="text-xs sm:text-sm font-semibold text-[#475467] tracking-tight">
               {card.title}
             </span>
           </div>
 
           {/* Bottom Row: Big Metric & Delta Badge */}
           <div className="flex items-baseline justify-between mt-1">
-            <div className="text-2xl sm:text-3xl font-black text-[var(--dash-text-primary)] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-black text-[#101828] tracking-tight">
               {card.value.toLocaleString()}
             </div>
 
@@ -104,8 +104,8 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
               <span
                 className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-md ${
                   card.deltaType === "positive"
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                    : "bg-slate-500/10 text-slate-400 border border-slate-500/20"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "bg-slate-100 text-slate-700 border border-slate-200"
                 }`}
               >
                 {card.deltaType === "positive" && (
@@ -113,7 +113,7 @@ const DashboardKpiCards: React.FC<DashboardKpiCardsProps> = ({
                 )}
                 {card.delta}
               </span>
-              <span className="text-[11px] text-[var(--dash-text-muted)] hidden xl:inline-block">
+              <span className="text-[11px] text-[#667085] hidden xl:inline-block">
                 {card.period}
               </span>
             </div>

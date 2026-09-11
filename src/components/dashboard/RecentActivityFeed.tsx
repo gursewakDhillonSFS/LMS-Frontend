@@ -69,39 +69,39 @@ const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
       case "student_enrolled":
         return {
           icon: <UserAddOutlined className="text-sm" />,
-          classes: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+          classes: "text-emerald-600 bg-emerald-50 border-emerald-100",
         };
       case "live_class":
         return {
           icon: <VideoCameraOutlined className="text-sm" />,
-          classes: "text-violet-400 bg-violet-500/10 border-violet-500/20",
+          classes: "text-purple-600 bg-purple-50 border-purple-100",
         };
       case "assignment_submitted":
         return {
           icon: <FileTextOutlined className="text-sm" />,
-          classes: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+          classes: "text-amber-600 bg-amber-50 border-amber-100",
         };
       case "review_received":
         return {
           icon: <StarOutlined className="text-sm" />,
-          classes: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+          classes: "text-blue-600 bg-blue-50 border-blue-100",
         };
     }
   };
 
   return (
-    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-[var(--dash-surface-card)] border border-[var(--dash-border)] shadow-xs w-full">
+    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-white border border-[#E4E7EC] shadow-xs w-full">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center shrink-0">
             <ClockCircleOutlined className="text-lg" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-base sm:text-lg font-bold text-[var(--dash-text-primary)] tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-[#101828] tracking-tight">
               Recent Activity
             </h2>
-            <p className="text-xs text-[var(--dash-text-muted)]">
+            <p className="text-xs text-[#667085]">
               Real-time updates across your courses
             </p>
           </div>
@@ -109,14 +109,14 @@ const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
 
         <Link
           href={viewAllUrl}
-          className="text-xs font-bold text-[var(--dash-primary)] hover:underline flex items-center gap-1"
+          className="text-xs font-bold text-[#315CFF] hover:underline flex items-center gap-1"
         >
           View All
         </Link>
       </div>
 
       {/* Activity List */}
-      <div className="flex flex-col divide-y divide-[var(--dash-border)] pt-1">
+      <div className="flex flex-col divide-y divide-[#F2F4F7] pt-1">
         {displayActivities.map((item) => {
           const style = getIcon(item.type);
           return (
@@ -131,16 +131,16 @@ const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
                   {style.icon}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-bold text-[var(--dash-text-primary)]">
+                  <span className="text-xs font-bold text-[#101828]">
                     {item.title}
                   </span>
-                  <span className="text-[11px] text-[var(--dash-text-secondary)] line-clamp-1 leading-snug">
+                  <span className="text-[11px] text-[#475467] line-clamp-1 leading-snug">
                     {item.detail}
                   </span>
                 </div>
               </div>
 
-              <span className="text-[10px] font-medium text-[var(--dash-text-muted)] shrink-0 pt-0.5">
+              <span className="text-[10px] font-medium text-[#98A2B3] shrink-0 pt-0.5">
                 {item.timeAgo}
               </span>
             </div>

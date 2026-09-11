@@ -98,7 +98,7 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               {collapsed ? (
                 <HeaderSmallLogo />
               ) : (
-                <HeaderLogoIcon textColor="var(--dash-text-primary)" />
+                <HeaderLogoIcon textColor="#0B192C" />
               )}
             </div>
             <Menu

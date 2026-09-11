@@ -91,18 +91,18 @@ const TopCoursesShowcase: React.FC<TopCoursesShowcaseProps> = ({
   const viewAllCoursesUrl = rolePrefix ? `${rolePrefix}/courses` : "/courses";
 
   return (
-    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-[var(--dash-surface-card)] border border-[var(--dash-border)] shadow-xs w-full">
+    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-white border border-[#E4E7EC] shadow-xs w-full">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#3B66FF]/10 text-[#3B66FF] border border-[#3B66FF]/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#315CFF] border border-blue-100 flex items-center justify-center shrink-0">
             <TrophyOutlined className="text-lg" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-base sm:text-lg font-bold text-[var(--dash-text-primary)] tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-[#101828] tracking-tight">
               Top Performing Courses
             </h2>
-            <p className="text-xs text-[var(--dash-text-muted)]">
+            <p className="text-xs text-[#667085]">
               Based on enrollment and completion rate
             </p>
           </div>
@@ -110,7 +110,7 @@ const TopCoursesShowcase: React.FC<TopCoursesShowcaseProps> = ({
 
         <Link
           href={viewAllCoursesUrl}
-          className="text-xs font-bold text-[var(--dash-primary)] hover:underline flex items-center gap-1"
+          className="text-xs font-bold text-[#315CFF] hover:underline flex items-center gap-1"
         >
           View All Courses
         </Link>
@@ -121,7 +121,7 @@ const TopCoursesShowcase: React.FC<TopCoursesShowcaseProps> = ({
         {displayCourses.slice(0, 4).map((course, idx) => (
           <div
             key={course.id || idx}
-            className="group flex flex-col rounded-xl overflow-hidden bg-[var(--dash-surface-subtle)] border border-[var(--dash-border)] hover:border-[var(--dash-border-strong)] hover:shadow-md transition-all duration-200 cursor-pointer"
+            className="group flex flex-col rounded-xl overflow-hidden bg-white border border-[#E4E7EC] hover:border-[#D0D5DD] hover:shadow-md transition-all duration-200 cursor-pointer"
           >
             {/* Image & Badge Overlay */}
             <div className="relative w-full h-36 bg-slate-900 overflow-hidden">
@@ -143,14 +143,14 @@ const TopCoursesShowcase: React.FC<TopCoursesShowcaseProps> = ({
 
             {/* Content Body */}
             <div className="p-3.5 flex flex-col justify-between flex-1 gap-2.5">
-              <h3 className="text-xs sm:text-sm font-bold text-[var(--dash-text-primary)] line-clamp-2 leading-snug group-hover:text-[var(--dash-primary)] transition-colors">
+              <h3 className="text-xs sm:text-sm font-bold text-[#101828] line-clamp-2 leading-snug group-hover:text-[#315CFF] transition-colors">
                 {course.title}
               </h3>
 
-              <div className="flex flex-col gap-2 pt-1 border-t border-[var(--dash-border)]">
+              <div className="flex flex-col gap-2 pt-1 border-t border-[#F2F4F7]">
                 {/* Author */}
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-[10px] shrink-0 font-bold overflow-hidden">
+                  <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px] shrink-0 font-bold overflow-hidden border border-[#E4E7EC]">
                     {course.instructorAvatar ? (
                       <Image
                         src={course.instructorAvatar}
@@ -162,20 +162,20 @@ const TopCoursesShowcase: React.FC<TopCoursesShowcaseProps> = ({
                       <UserOutlined />
                     )}
                   </div>
-                  <span className="text-xs text-[var(--dash-text-secondary)] font-medium truncate">
+                  <span className="text-xs text-[#475467] font-medium truncate">
                     {course.instructorName}
                   </span>
                 </div>
 
                 {/* Footer: Students + Star Rating */}
-                <div className="flex items-center justify-between text-xs text-[var(--dash-text-muted)] font-semibold">
+                <div className="flex items-center justify-between text-xs text-[#667085] font-semibold">
                   <div className="flex items-center gap-1.5">
-                    <TeamOutlined className="text-xs text-[var(--dash-text-muted)]" />
+                    <TeamOutlined className="text-xs text-[#667085]" />
                     <span>{course.studentsCount}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-amber-400">
+                  <div className="flex items-center gap-1 text-amber-500">
                     <StarFilled className="text-xs" />
-                    <span className="text-[var(--dash-text-primary)] font-bold">
+                    <span className="text-[#101828] font-bold">
                       {course.rating.toFixed(1)}
                     </span>
                   </div>

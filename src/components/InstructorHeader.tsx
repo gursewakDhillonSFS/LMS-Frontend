@@ -156,7 +156,7 @@ const InstructorHeader = () => {
               markAnnouncementsAsReadApi().catch(console.error);
             }
           }}
-          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[var(--dash-text-secondary)] hover:text-[var(--dash-text-primary)] hover:bg-[var(--dash-surface-subtle)] transition-all duration-[150ms] cursor-pointer"
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[#475467] hover:text-[#101828] hover:bg-[#F1F5F9] transition-all duration-[150ms] cursor-pointer"
         >
           <Badge
             count={unreadAnnouncementCount}
@@ -170,21 +170,21 @@ const InstructorHeader = () => {
 
         <button
           onClick={() => setNotificationDrawer(true)}
-          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[var(--dash-text-secondary)] hover:text-[var(--dash-text-primary)] hover:bg-[var(--dash-surface-subtle)] transition-all duration-[150ms] cursor-pointer"
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[#475467] hover:text-[#101828] hover:bg-[#F1F5F9] transition-all duration-[150ms] cursor-pointer"
         >
           <NotificationIcon />
         </button>
 
         <button
           onClick={() => route.push("/instructor-chat")}
-          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[var(--dash-text-secondary)] hover:text-[var(--dash-text-primary)] hover:bg-[var(--dash-surface-subtle)] transition-all duration-[150ms] cursor-pointer"
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[#475467] hover:text-[#101828] hover:bg-[#F1F5F9] transition-all duration-[150ms] cursor-pointer"
         >
           <ChatIcon />
         </button>
 
         <LanguageSwitcher variant="header" />
 
-        <div className="w-[1px] h-[24px] bg-[var(--dash-border)]"></div>
+        <div className="w-[1px] h-[24px] bg-[#E4E7EC]"></div>
 
         <Dropdown
           prefixCls="custom-dropdown-header"
@@ -192,7 +192,7 @@ const InstructorHeader = () => {
           trigger={["click"]}
           placement="bottomRight"
         >
-          <button className="flex items-center p-[4px] gap-[8px] h-[40px] rounded-[10px] bg-[var(--dash-surface-subtle)] hover:bg-[var(--dash-surface-hover)] border border-[var(--dash-border)] cursor-pointer transition-all duration-[150ms]">
+          <button className="flex items-center p-[4px] gap-[8px] h-[40px] rounded-[10px] bg-white hover:bg-[#F8FAFC] border border-[#E4E7EC] cursor-pointer transition-all duration-[150ms]">
             <Avatar
               key={profile_img || "avatar"}
               size={32}
@@ -203,15 +203,15 @@ const InstructorHeader = () => {
             />
 
             <div className="hidden sm:flex flex-col items-start justify-center pr-[4px]">
-              <div className="text-[13px] font-[600] whitespace-nowrap text-[var(--dash-text-primary)] leading-[140%]">
+              <div className="text-[13px] font-[600] whitespace-nowrap text-[#101828] leading-[140%]">
                 {full_name}
               </div>
-              <div className="capitalize text-[10px] font-[600] text-[var(--dash-primary)] leading-[14px]">
+              <div className="capitalize text-[10px] font-[600] text-[#315CFF] leading-[14px]">
                 {role}
               </div>
             </div>
             <span className="hidden sm:block pr-[8px]">
-              <DownArrowIcon color="var(--dash-text-muted)" />
+              <DownArrowIcon color="#667085" />
             </span>
           </button>
         </Dropdown>

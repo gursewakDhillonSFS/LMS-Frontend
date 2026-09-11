@@ -106,25 +106,25 @@ const RevenueOverviewChart: React.FC = () => {
   const data = timeRangeData[range];
 
   return (
-    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-[var(--dash-surface-card)] border border-[var(--dash-border)] shadow-xs w-full">
+    <div className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-white border border-[#E4E7EC] shadow-xs w-full">
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#3B66FF]/10 text-[#3B66FF] border border-[#3B66FF]/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#315CFF] border border-blue-100 flex items-center justify-center shrink-0">
             <DollarOutlined className="text-lg" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-base sm:text-lg font-bold text-[var(--dash-text-primary)] tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-[#101828] tracking-tight">
               Revenue Overview
             </h2>
-            <p className="text-xs text-[var(--dash-text-muted)]">
+            <p className="text-xs text-[#667085]">
               Monthly revenue from courses and learning + pro
             </p>
           </div>
         </div>
 
         {/* Time Filter Pills */}
-        <div className="flex items-center p-1 rounded-xl bg-[var(--dash-surface-subtle)] border border-[var(--dash-border)] self-start sm:self-auto">
+        <div className="flex items-center p-1 rounded-xl bg-[#F8FAFC] border border-[#E4E7EC] self-start sm:self-auto">
           {(["7D", "30D", "3M", "6M", "1Y"] as TimeRange[]).map((tab) => (
             <button
               key={tab}
@@ -132,8 +132,8 @@ const RevenueOverviewChart: React.FC = () => {
               onClick={() => setRange(tab)}
               className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                 range === tab
-                  ? "bg-[#3B66FF] text-white shadow-xs"
-                  : "text-[var(--dash-text-secondary)] hover:text-[var(--dash-text-primary)]"
+                  ? "bg-[#315CFF] text-white shadow-xs"
+                  : "text-[#667085] hover:text-[#101828]"
               }`}
             >
               {tab}
@@ -143,9 +143,9 @@ const RevenueOverviewChart: React.FC = () => {
       </div>
 
       {/* Legend Indicators */}
-      <div className="flex items-center justify-end gap-5 text-xs font-medium text-[var(--dash-text-secondary)] pt-1">
+      <div className="flex items-center justify-end gap-5 text-xs font-medium text-[#475467] pt-1">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#3B66FF]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#315CFF]" />
           <span>Course Prices</span>
         </div>
         <div className="flex items-center gap-2">
@@ -160,32 +160,32 @@ const RevenueOverviewChart: React.FC = () => {
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
             <defs>
               <linearGradient id="colorCoursePrices" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3B66FF" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#3B66FF" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#315CFF" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#315CFF" stopOpacity={0.0} />
               </linearGradient>
               <linearGradient id="colorLearningPro" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
+                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.25} />
                 <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
               </linearGradient>
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
-              stroke="var(--dash-border)"
-              opacity={0.6}
+              stroke="#F2F4F7"
+              opacity={1}
             />
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
               tickMargin={12}
-              tick={{ fontSize: 11, fill: "var(--dash-text-muted)" }}
+              tick={{ fontSize: 11, fill: "#98A2B3" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               tickMargin={12}
-              tick={{ fontSize: 11, fill: "var(--dash-text-muted)" }}
+              tick={{ fontSize: 11, fill: "#98A2B3" }}
               tickFormatter={(val) => `$${val.toLocaleString()}`}
             />
             <Tooltip content={<CustomChartTooltip />} />
@@ -200,7 +200,7 @@ const RevenueOverviewChart: React.FC = () => {
             <Area
               type="monotone"
               dataKey="coursePrices"
-              stroke="#3B66FF"
+              stroke="#315CFF"
               strokeWidth={2.5}
               fillOpacity={1}
               fill="url(#colorCoursePrices)"
