@@ -18,8 +18,13 @@ import {
   SafetyCertificateOutlined,
 } from "@ant-design/icons";
 import { Table, Tag } from "antd";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const OrganisationPayments: React.FC = () => {
+  const organization_id = useSelector(
+    (state: RootState) => state.userdata?.organization_id
+  );
   const [connectLoading, setConnectLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(true);
   const [connectStatus, setConnectStatus] = useState<{
@@ -37,8 +42,8 @@ const OrganisationPayments: React.FC = () => {
     try {
       setStatusLoading(true);
       const [statusRes, earningsRes] = await Promise.all([
-        getOrgConnectStatusApi(),
-        getOrgEarningsApi(),
+        getOrgConnectStatusApi(organization_id),
+        getOrgEarningsApi(organization_id),
       ]);
 
       if (statusRes?.status && statusRes.data) {
@@ -56,12 +61,14 @@ const OrganisationPayments: React.FC = () => {
 
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [organization_id]);
 
   const handleConnectStripe = async () => {
     try {
       setConnectLoading(true);
-      const res = await createOrgConnectApi();
+      const res = await createOrgConnectApi(
+        organization_id ? { organisationId: organization_id } : undefined
+      );
       if (res?.status && res.data?.onboarding_url) {
         window.location.href = res.data.onboarding_url;
       } else {

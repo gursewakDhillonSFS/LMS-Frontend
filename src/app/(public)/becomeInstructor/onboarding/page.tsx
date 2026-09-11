@@ -608,14 +608,16 @@ const ProfileSetup = () => {
                           borderRadius: "12px",
                           border: "1px solid #cbd5e1",
                           fontSize: "14px",
-                          paddingLeft: "48px",
+                          paddingLeft: "68px",
                         }}
                         buttonStyle={{
                           borderRadius: "12px 0 0 12px",
                           border: "1px solid #cbd5e1",
                           borderRight: "none",
                           backgroundColor: "#f8fafc",
+                          width: "50px",
                         }}
+                        inputClass="!pl-[68px]"
                         enableSearch={true}
                         containerClass="w-full"
                       />
@@ -646,17 +648,32 @@ const ProfileSetup = () => {
                     <Form.Item
                       label={
                         <span className="text-xs font-bold text-slate-700">
-                          Date of Birth <span className="text-rose-500">*</span>
+                          Date of Birth (18+ Required) <span className="text-rose-500">*</span>
                         </span>
                       }
                       name="dob"
-                      rules={[{ required: true, message: "Date of birth is required" }]}
+                      rules={[
+                        { required: true, message: "Date of birth is required" },
+                        {
+                          validator: (_, value) => {
+                            if (!value) return Promise.resolve();
+                            const eighteenYearsAgo = dayjs().subtract(18, "year").endOf("day");
+                            if (dayjs(value).isAfter(eighteenYearsAgo)) {
+                              return Promise.reject(new Error("Lead instructor must be at least 18 years old"));
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
                     >
                       <DatePicker
                         format="DD/MM/YYYY"
                         placeholder="DD/MM/YYYY"
                         className="w-full !h-11 !rounded-xl !border-slate-300 text-sm"
-                        disabledDate={(current) => current && current > dayjs().endOf("day")}
+                        disabledDate={(current) =>
+                          current && current > dayjs().subtract(18, "year").endOf("day")
+                        }
+                        defaultPickerValue={dayjs().subtract(18, "year")}
                       />
                     </Form.Item>
                   </Col>

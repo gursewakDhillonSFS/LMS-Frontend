@@ -265,24 +265,32 @@ export const confirmCheckoutSessionApi = (sessionId: string) =>
   getApi(`/auth/course/v1/checkout/confirm?session_id=${sessionId}`);
 
 // ─── Stripe Connect APIs ──────────────────────────────────────────────────────
-export const createOrgConnectApi = () =>
-  postApi("/auth/course/v1/stripe/connect/organisation", {});
+export const createOrgConnectApi = (payload?: { organisationId?: string }) =>
+  postApi("/auth/course/v1/stripe/connect/organisation", payload || {});
 
-export const getOrgConnectStatusApi = () =>
-  getApi("/auth/course/v1/stripe/connect/organisation/status");
+export const getOrgConnectStatusApi = (organisationId?: string) => {
+  const query = organisationId ? `?organisationId=${organisationId}` : "";
+  return getApi(`/auth/course/v1/stripe/connect/organisation/status${query}`);
+};
 
-export const createTeacherConnectApi = () =>
-  postApi("/auth/course/v1/stripe/connect/teacher", {});
+export const createTeacherConnectApi = (payload?: { teacherId?: string }) =>
+  postApi("/auth/course/v1/stripe/connect/teacher", payload || {});
 
-export const getTeacherConnectStatusApi = () =>
-  getApi("/auth/course/v1/stripe/connect/teacher/status");
+export const getTeacherConnectStatusApi = (teacherId?: string) => {
+  const query = teacherId ? `?teacherId=${teacherId}` : "";
+  return getApi(`/auth/course/v1/stripe/connect/teacher/status${query}`);
+};
 
 // ─── Earnings APIs ────────────────────────────────────────────────────────────
-export const getOrgEarningsApi = () =>
-  getApi("/auth/course/v1/earnings/organisation");
+export const getOrgEarningsApi = (organisationId?: string) => {
+  const query = organisationId ? `?organisationId=${organisationId}` : "";
+  return getApi(`/auth/course/v1/earnings/organisation${query}`);
+};
 
-export const getTeacherEarningsApi = () =>
-  getApi("/auth/course/v1/earnings/teacher");
+export const getTeacherEarningsApi = (teacherId?: string) => {
+  const query = teacherId ? `?teacherId=${teacherId}` : "";
+  return getApi(`/auth/course/v1/earnings/teacher${query}`);
+};
 
 export const getAdminEarningsApi = () =>
   getApi("/auth/course/v1/earnings/admin");
