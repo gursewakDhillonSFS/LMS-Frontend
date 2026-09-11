@@ -7,21 +7,6 @@ import { Tooltip } from "antd";
 import Image from "next/image";
 import React, { FC, useState } from "react";
 
-const BookmarkIcon = ({ active = false }: { active?: boolean }) => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill={active ? "var(--primary)" : "none"}
-    stroke="var(--primary)"
-    strokeWidth="2.2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-  </svg>
-);
-
 const ClockIcon = () => (
   <svg
     width="12"
@@ -70,7 +55,6 @@ const CourseCard: FC<CourseCardProps> = ({
 }) => {
   const [imgError, setImgError] = useState(false);
   const [teacherImgError, setTeacherImgError] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
 
   const courseImageUrl = getImageUrl(data?.course_image_url);
   const teacherImageUrl = getImageUrl(data?.head_teacher_image_url);
@@ -102,7 +86,7 @@ const CourseCard: FC<CourseCardProps> = ({
       className={`group cursor-pointer flex flex-col justify-between rounded-[12px] border border-[var(--border)] h-[375px] p-0 w-full overflow-hidden bg-white shadow-[0_1px_3px_rgba(16,24,40,0.04),0_4px_12px_rgba(16,24,40,0.05),inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-[200ms] hover:shadow-[0_8px_20px_rgba(16,24,40,0.08),0_16px_32px_-4px_rgba(49,92,255,0.12)] hover:-translate-y-1 hover:border-[#C7D7FE] ${className}`}
     >
       <div className="flex flex-col">
-        {/* Thumbnail with Bookmark Button */}
+        {/* Thumbnail */}
         <div className="w-full h-[160px] relative bg-[var(--surface-subtle)] overflow-hidden">
           <Image
             src={
@@ -116,18 +100,6 @@ const CourseCard: FC<CourseCardProps> = ({
             onError={() => setImgError(true)}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
-
-          {/* Bookmark Button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setBookmarked(!bookmarked);
-            }}
-            className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/95 backdrop-blur-xs flex items-center justify-center shadow-sm border border-black/5 hover:bg-white transition-transform active:scale-90"
-          >
-            <BookmarkIcon active={bookmarked} />
-          </button>
         </div>
 
         {/* Content Body */}

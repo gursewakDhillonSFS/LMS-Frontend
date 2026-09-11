@@ -7,7 +7,7 @@ import Image from "next/image";
 import { FC, useState } from "react";
 import CommonButton from "./CommonButton";
 import { getImageUrl, isValidUrl } from "@/utils/comman";
-import { HeartFilled } from "@ant-design/icons";
+import { HeartFilled, LoadingOutlined } from "@ant-design/icons";
 
 const DashboardCourseCard: FC<CourseCardProps> = ({
   bgColor = "#FFFFFF",
@@ -23,12 +23,33 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
 }) => {
   const [imgError, setImgError] = useState(false);
   const [teacherImgError, setTeacherImgError] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
 
   const courseImageUrl = getImageUrl(courseData?.course_image_url);
   const teacherImageUrl = getImageUrl(courseData?.head_teacher_image_url);
 
   const isFree = !courseData?.course_price || courseData.course_price === 0;
   const isEnrolled = courseData?.enrolled_status || courseData?.is_enrolled;
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (favLoading) return;
+    const courseId = courseData?.course_id;
+    if (!courseId) return;
+
+    try {
+      setFavLoading(true);
+      if (!courseData?.favorite) {
+        await handleAddFavorite?.(courseId);
+      } else {
+        await handleRemoveFavorite?.(courseId);
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite course:", error);
+    } finally {
+      setFavLoading(false);
+    }
+  };
 
   return (
     <div
@@ -52,22 +73,21 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
             className="object-cover"
           />
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!courseData?.favorite && courseData?.course_id) {
-                handleAddFavorite?.(courseData?.course_id);
-              } else {
-                if (courseData?.course_id)
-                  handleRemoveFavorite?.(courseData?.course_id);
-              }
-            }}
-            className="absolute top-[12px] right-[12px] w-[32px] h-[32px] rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-[var(--shadow-xs)] hover:bg-white transition-all duration-[150ms] z-10"
+            type="button"
+            onClick={handleFavoriteClick}
+            disabled={favLoading}
+            className="absolute top-[12px] right-[12px] w-[32px] h-[32px] rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-[var(--shadow-xs)] hover:bg-white transition-all duration-[150ms] z-10 disabled:cursor-wait"
+            title={courseData?.favorite ? "Remove from saved" : "Save course"}
           >
-            <HeartFilled
-              className={`!text-[16px] ${
-                courseData?.favorite ? "!text-[var(--error)]" : "!text-[var(--text-muted)]"
-              }`}
-            />
+            {favLoading ? (
+              <LoadingOutlined className="!text-[15px] !text-[#315CFF] animate-spin" />
+            ) : (
+              <HeartFilled
+                className={`!text-[16px] transition-colors ${
+                  courseData?.favorite ? "!text-[var(--error)]" : "!text-[var(--text-muted)] hover:!text-[var(--text-secondary)]"
+                }`}
+              />
+            )}
           </button>
         </div>
         <div className="flex flex-col gap-[8px] px-[16px]">

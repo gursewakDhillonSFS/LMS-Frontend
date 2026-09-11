@@ -31,6 +31,7 @@ import {
   TeamOutlined,
   CrownOutlined,
   CodeOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { Skeleton } from "antd";
 import Image from "next/image";
@@ -57,6 +58,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
   const [coursesInfo, setCoursesInfo] = useState<CourseInfoDataProp>();
   const Subscribed = coursesInfo?.enrolled_status || false;
   const [loading, setLoading] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
   const [batch, setBatch] = useState(false);
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const router = useRouter();
@@ -104,6 +106,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
         favorite: true,
       };
       try {
+        setFavLoading(true);
         const res = await addToFavorite(payload);
         if (res.status) {
           toast.success(res.message);
@@ -113,6 +116,8 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setFavLoading(false);
       }
     }
   };
@@ -122,6 +127,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
       const param = new URLSearchParams();
       param.append("course_id", selectedCourseData?.course_id);
       try {
+        setFavLoading(true);
         const res = await removeFromFavorite(param);
         if (res.status) {
           toast.success(res.message);
@@ -131,6 +137,8 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setFavLoading(false);
       }
     }
   };
@@ -210,14 +218,20 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
 
                 {isExplore && (
                   <button
+                    type="button"
                     onClick={coursesInfo?.favorite ? handleRemoveFavorite : handleAddFavorite}
+                    disabled={favLoading}
                     className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full transition-colors ${
                       coursesInfo?.favorite
                         ? "bg-rose-50 text-rose-600 border border-rose-200"
                         : "bg-white text-slate-600 border border-slate-200 hover:text-slate-900"
-                    }`}
+                    } ${favLoading ? "cursor-wait opacity-80" : ""}`}
                   >
-                    <HeartFilled className={coursesInfo?.favorite ? "text-rose-500" : "text-slate-400"} />
+                    {favLoading ? (
+                      <LoadingOutlined className="animate-spin text-xs" />
+                    ) : (
+                      <HeartFilled className={coursesInfo?.favorite ? "text-rose-500" : "text-slate-400"} />
+                    )}
                     <span>{coursesInfo?.favorite ? "Saved" : "Save Course"}</span>
                   </button>
                 )}
