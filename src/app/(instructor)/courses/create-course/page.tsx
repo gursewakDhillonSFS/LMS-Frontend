@@ -111,7 +111,7 @@ const CreateCourse = () => {
         const payload = {
           ...restValues,
           ...(restValues.course_type === 'free' ? {} : { course_price }),
-          course_id,
+          ...(course_id ? { course_id } : {}),
           organisation_id: organization_id || undefined,
           batch: validBatches,
         };

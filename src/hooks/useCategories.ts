@@ -14,9 +14,9 @@ const useCategories = () => {
         const response = await getAllCategoriesApi();
         const formattedCategories =
           response?.data?.map((cat: Category) => ({
+            ...cat,
             label: cat.category_name,
-            value: cat.category_id,
-            ...cat
+            value: cat.category_id || (cat as any)._id,
           })) || [];
         setData(formattedCategories || []);
       } catch (err) {
