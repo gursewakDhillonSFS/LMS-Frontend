@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import {
   UserOutlined,
+  LockOutlined,
   BellOutlined,
   BookOutlined,
 } from "@ant-design/icons";
@@ -11,13 +12,20 @@ import SettingsLayout, { SettingsTabItem } from "@/components/settings/SettingsL
 import Profile from "@/modules/userSetting/Profile";
 import NotificationSettings from "@/modules/userSetting/NotificationSettings";
 import Membership from "@/modules/userSetting/Membership";
+import ChangePasswordSettings from "@/modules/userSetting/ChangePasswordSettings";
 
 const STUDENT_SETTINGS_TABS: SettingsTabItem[] = [
   {
     key: "profile",
     label: "My Profile",
-    description: "Personal details & security",
+    description: "Personal details & language",
     icon: <UserOutlined />,
+  },
+  {
+    key: "security",
+    label: "Change Password",
+    description: "Account credentials & security",
+    icon: <LockOutlined />,
   },
   {
     key: "notifications",
@@ -44,6 +52,7 @@ export default function StudentSettingsPage() {
       onTabChange={setActiveTab}
     >
       {activeTab === "profile" && <Profile />}
+      {activeTab === "security" && <ChangePasswordSettings />}
       {activeTab === "notifications" && <NotificationSettings />}
       {activeTab === "membership" && <Membership />}
     </SettingsLayout>

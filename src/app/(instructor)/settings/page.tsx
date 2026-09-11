@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import {
   UserOutlined,
   BankOutlined,
-  DollarCircleOutlined,
+  LockOutlined,
   BellOutlined,
 } from "@ant-design/icons";
 
@@ -12,13 +12,13 @@ import SettingsLayout, { SettingsTabItem } from "@/components/settings/SettingsL
 import Profile from "@/modules/userSetting/Profile";
 import OrganisationProfile from "@/modules/userSetting/OrganisationProfile";
 import NotificationSettings from "@/modules/userSetting/NotificationSettings";
-import InstructorEarningsView from "@/components/earnings/InstructorEarningsView";
+import ChangePasswordSettings from "@/modules/userSetting/ChangePasswordSettings";
 
 const INSTRUCTOR_SETTINGS_TABS: SettingsTabItem[] = [
   {
     key: "profile",
     label: "My Profile",
-    description: "Account credentials & details",
+    description: "Account details & preferences",
     icon: <UserOutlined />,
   },
   {
@@ -28,10 +28,10 @@ const INSTRUCTOR_SETTINGS_TABS: SettingsTabItem[] = [
     icon: <BankOutlined />,
   },
   {
-    key: "earnings",
-    label: "Earnings & Stripe Connect",
-    description: "Sales revenue & payouts",
-    icon: <DollarCircleOutlined />,
+    key: "security",
+    label: "Change Password",
+    description: "Account credentials & security",
+    icon: <LockOutlined />,
   },
   {
     key: "notifications",
@@ -53,7 +53,7 @@ export default function InstructorSettingsPage() {
     >
       {activeTab === "profile" && <Profile />}
       {activeTab === "organisation" && <OrganisationProfile />}
-      {activeTab === "earnings" && <InstructorEarningsView />}
+      {activeTab === "security" && <ChangePasswordSettings />}
       {activeTab === "notifications" && <NotificationSettings />}
     </SettingsLayout>
   );

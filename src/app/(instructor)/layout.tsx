@@ -18,8 +18,8 @@ import {
   SettingIcon,
   StudentIcon,
   TeacherIcon,
+  EarningsNavIcon,
 } from "@/utils/icons";
-import { DollarCircleOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -166,7 +166,7 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                 },
                 {
                   key: "earnings",
-                  icon: <DollarCircleOutlined style={{ fontSize: "20px" }} />,
+                  icon: <EarningsNavIcon />,
                   label: "Earnings",
                   onClick: () => router.push("/earnings"),
                 },

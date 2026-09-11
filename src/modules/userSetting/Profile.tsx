@@ -5,29 +5,25 @@ import { Form, Input, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  LockOutlined,
   UserOutlined,
   MailOutlined,
   GlobalOutlined,
   CheckCircleFilled,
-  SafetyOutlined,
 } from "@ant-design/icons";
 
 import { toast } from "@/utils/toast";
 import { RootState } from "@/redux/store";
 import { updateUser } from "@/redux/slices/UserDataSlice";
-import { updateUserProfileApi, changePassword } from "@/services/collections";
+import { updateUserProfileApi } from "@/services/collections";
 import { useTranslation } from "@/context/I18nContext";
 
 const Profile = () => {
   const { locale, setLocale, t } = useTranslation();
   const [profileForm] = useForm();
-  const [passwordForm] = useForm();
   const user = useSelector((state: RootState) => state.userdata);
   const dispatch = useDispatch();
 
   const [loadingProfile, setLoadingProfile] = useState(false);
-  const [loadingPassword, setLoadingPassword] = useState(false);
 
   // Sync user details to form
   useEffect(() => {
@@ -71,38 +67,6 @@ const Profile = () => {
       toast.error("Something went wrong while updating profile");
     } finally {
       setLoadingProfile(false);
-    }
-  };
-
-  const handleChangePassword = async () => {
-    try {
-      setLoadingPassword(true);
-      const values = passwordForm.getFieldsValue();
-
-      if (values.new_password !== values.confirm_new_password) {
-        toast.error("New passwords do not match!");
-        return;
-      }
-
-      const payload = {
-        current_password: values.current_password,
-        new_password: values.new_password,
-      };
-
-      const res = await changePassword(payload);
-      if (res?.success) {
-        toast.success("Password changed successfully!");
-        passwordForm.resetFields();
-      } else {
-        toast.error(
-          res?.message || "Failed to change password. Please check your current password."
-        );
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong while changing password");
-    } finally {
-      setLoadingPassword(false);
     }
   };
 
@@ -204,98 +168,6 @@ const Profile = () => {
             >
               {loadingProfile ? "Saving Changes..." : "Save Profile Details"}
             </button>
-          </div>
-        </Form>
-      </div>
-
-      {/* SECTION 2: SECURITY & PASSWORD */}
-      <div className="space-y-5 pt-6 border-t border-[#F2F4F7]">
-        <div className="pb-3 border-b border-[#F2F4F7] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shrink-0">
-            <SafetyOutlined />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-[#101828]">Security & Credentials</h3>
-            <p className="text-xs sm:text-sm text-[#667085] mt-0.5">
-              Change your password and manage login credentials securely.
-            </p>
-          </div>
-        </div>
-
-        <Form
-          form={passwordForm}
-          requiredMark={false}
-          layout="vertical"
-          onFinish={handleChangePassword}
-        >
-          <div className="space-y-4 max-w-xl">
-            <div>
-              <label className="block text-xs font-semibold text-[#344054] mb-1.5">
-                Current Password <span className="text-red-500">*</span>
-              </label>
-              <Form.Item
-                name="current_password"
-                rules={[{ required: true, message: "Please enter your current password" }]}
-                className="mb-0"
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="text-slate-400 mr-1.5" />}
-                  placeholder="Enter current password"
-                  className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
-                />
-              </Form.Item>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#344054] mb-1.5">
-                  New Password <span className="text-red-500">*</span>
-                </label>
-                <Form.Item
-                  name="new_password"
-                  rules={[
-                    { required: true, message: "Please enter new password" },
-                    { min: 6, message: "Must be at least 6 characters" },
-                  ]}
-                  className="mb-0"
-                >
-                  <Input.Password
-                    prefix={<LockOutlined className="text-slate-400 mr-1.5" />}
-                    placeholder="New password"
-                    className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
-                  />
-                </Form.Item>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#344054] mb-1.5">
-                  Confirm Password <span className="text-red-500">*</span>
-                </label>
-                <Form.Item
-                  name="confirm_new_password"
-                  rules={[
-                    { required: true, message: "Please confirm new password" },
-                  ]}
-                  className="mb-0"
-                >
-                  <Input.Password
-                    prefix={<LockOutlined className="text-slate-400 mr-1.5" />}
-                    placeholder="Confirm new password"
-                    className="!py-2.5 !px-3.5 !rounded-xl !border-[#D0D5DD] hover:!border-[#315CFF] focus:!border-[#315CFF] text-sm"
-                  />
-                </Form.Item>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={loadingPassword}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loadingPassword ? "Updating Password..." : "Update Password"}
-              </button>
-            </div>
           </div>
         </Form>
       </div>
