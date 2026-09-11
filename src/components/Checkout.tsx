@@ -69,8 +69,9 @@ const CheckOut = () => {
           return;
         }
 
-        if (res.data?.session_url) {
-          window.location.href = res.data.session_url;
+        const checkoutUrl = res.data?.session_url || res.data?.url;
+        if (checkoutUrl) {
+          window.location.href = checkoutUrl;
         } else {
           toast.error("Checkout URL was not returned. Please try again.");
         }
@@ -175,6 +176,10 @@ const CheckOut = () => {
           <div className="flex items-center justify-between text-slate-600">
             <span>Platform Fee</span>
             <span className="text-emerald-600 font-medium">$0.00 (Included)</span>
+          </div>
+          <div className="flex items-center justify-between text-slate-600">
+            <span>Estimated Taxes</span>
+            <span className="font-semibold text-slate-900">$0.00</span>
           </div>
           <div className="w-full h-[1px] bg-slate-200 my-1" />
           <div className="flex items-center justify-between text-base font-bold text-slate-900">

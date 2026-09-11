@@ -79,9 +79,21 @@ export const Step1: React.FC<Step1Prop> = ({ batch, setBatch }) => {
       type: "input",
       prefix: <DollarIcon />,
       placeholder: "Enter price",
-      colSpan: 12,
+      colSpan: courseTypeValue === "paid" ? 6 : 12,
       disabled: courseTypeValue === "free",
     },
+    ...(courseTypeValue === "paid"
+      ? [
+          {
+            key: "teacher_revenue_percent",
+            label: "Teacher Share / Compensation (%)",
+            type: "input",
+            prefix: "%",
+            placeholder: "20",
+            colSpan: 6,
+          },
+        ]
+      : []),
     {
       key: "demo_class",
       label: "Would you like to offer a demo class for this course?",

@@ -98,7 +98,7 @@ const TeacherCreateCourse = () => {
       const values = await form.validateFields();
 
       if (currentStep === 0) {
-        const { course_price, ...restValues } = values;
+        const { course_price, teacher_revenue_percent, ...restValues } = values;
         const validBatches = batch.filter((item) => item?.batchName?.trim().length > 0);
         if (validBatches.length === 0) {
           toast.warning("Please add at least one batch before proceeding.");
@@ -107,7 +107,15 @@ const TeacherCreateCourse = () => {
 
         const payload = {
           ...restValues,
-          ...(restValues.course_type === 'free' ? {} : { course_price }),
+          ...(restValues.course_type === 'free'
+            ? {}
+            : {
+                course_price,
+                teacher_revenue_percent:
+                  teacher_revenue_percent !== undefined && teacher_revenue_percent !== null && teacher_revenue_percent !== ''
+                    ? Number(teacher_revenue_percent)
+                    : 20,
+              }),
           ...(course_id ? { course_id } : {}),
           organisation_id: organization_id || undefined,
           batch: validBatches,

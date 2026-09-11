@@ -79,8 +79,9 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
           return;
         }
 
-        if (res.data?.session_url) {
-          window.location.href = res.data.session_url;
+        const checkoutUrl = res.data?.session_url || res.data?.url;
+        if (checkoutUrl) {
+          window.location.href = checkoutUrl;
         } else {
           toast.error("Checkout session URL was not returned. Please try again.");
         }
@@ -178,9 +179,13 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
           <div className="flex items-center justify-between text-[13px] text-[var(--text-secondary)]">
             <span className="flex items-center gap-1.5">
               <span>Platform & Service Fee</span>
-              <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-mono">Included</span>
+              <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">Included</span>
             </span>
             <span className="font-[500] text-emerald-600">$0.00</span>
+          </div>
+          <div className="flex items-center justify-between text-[13px] text-[var(--text-secondary)]">
+            <span>Estimated Taxes</span>
+            <span className="font-[500] text-[var(--text-primary)]">$0.00</span>
           </div>
           <div className="w-full h-[1px] bg-[var(--border)] my-0.5" />
           <div className="flex items-center justify-between text-[16px] font-[700] text-[var(--text-primary)]">
