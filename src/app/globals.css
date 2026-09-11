@@ -92,6 +92,72 @@
   --header-height: 64px;
   --header-bg: #FFFFFF;
   --header-border: #E4E7EC;
+
+  /* Dashboard Theme Tokens (Dark-Neutral Default) */
+  --dash-bg: #0B0F19;
+  --dash-surface: #111827;
+  --dash-surface-card: #131B2E;
+  --dash-surface-subtle: #182236;
+  --dash-surface-hover: #1E2B45;
+  --dash-surface-elevated: #243452;
+  --dash-border: rgba(255, 255, 255, 0.08);
+  --dash-border-subtle: rgba(255, 255, 255, 0.04);
+  --dash-border-strong: rgba(255, 255, 255, 0.16);
+
+  --dash-text-primary: #F8FAFC;
+  --dash-text-secondary: #94A3B8;
+  --dash-text-muted: #64748B;
+  --dash-text-inverse: #0B0F19;
+
+  --dash-primary: #3B66FF;
+  --dash-primary-hover: #4F75FF;
+  --dash-primary-light: rgba(59, 102, 255, 0.15);
+
+  --dash-sidebar-bg: #0E1422;
+  --dash-sidebar-border: rgba(255, 255, 255, 0.07);
+  --dash-sidebar-text: #CBD5E1;
+  --dash-sidebar-active-bg: rgba(59, 102, 255, 0.16);
+  --dash-sidebar-active-text: #60A5FA;
+
+  --dash-header-bg: #0E1422;
+  --dash-header-border: rgba(255, 255, 255, 0.07);
+
+  --dash-shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --dash-shadow-hover: 0 12px 30px -4px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Light / Slate Dashboard Mode */
+[data-theme="light"] {
+  --dash-bg: #EEF2F8;
+  --dash-surface: #FFFFFF;
+  --dash-surface-card: #FFFFFF;
+  --dash-surface-subtle: #F1F5F9;
+  --dash-surface-hover: #E2E8F0;
+  --dash-surface-elevated: #FFFFFF;
+  --dash-border: #E2E8F0;
+  --dash-border-subtle: #F1F5F9;
+  --dash-border-strong: #CBD5E1;
+
+  --dash-text-primary: #0F172A;
+  --dash-text-secondary: #475569;
+  --dash-text-muted: #64748B;
+  --dash-text-inverse: #FFFFFF;
+
+  --dash-primary: #315CFF;
+  --dash-primary-hover: #274BD1;
+  --dash-primary-light: #EBF0FF;
+
+  --dash-sidebar-bg: #FFFFFF;
+  --dash-sidebar-border: #E2E8F0;
+  --dash-sidebar-text: #344054;
+  --dash-sidebar-active-bg: #EBF0FF;
+  --dash-sidebar-active-text: #315CFF;
+
+  --dash-header-bg: #FFFFFF;
+  --dash-header-border: #E2E8F0;
+
+  --dash-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 4px 12px rgba(16, 24, 40, 0.05);
+  --dash-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 16px 32px -4px rgba(49, 92, 255, 0.1);
 }
 
 /* ============================================
