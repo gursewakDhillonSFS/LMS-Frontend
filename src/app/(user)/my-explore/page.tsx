@@ -174,46 +174,49 @@ const MyExplore = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-16 max-w-7xl mx-auto">
-      {/* 1. Hero Exploration Banner */}
-      <div className="relative rounded-3xl bg-gradient-to-b from-[#101828] via-[#1E293B] to-[#0F172A] p-6 sm:p-10 text-white overflow-hidden shadow-md">
-        {/* Decorative blur elements */}
-        <div className="absolute -top-12 -right-12 w-80 h-80 rounded-full bg-[#315CFF]/20 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-blue-200 border border-white/10">
-            <CompassOutlined className="text-sm" />
-            <span>Discover Knowledge & Master In-Demand Skills</span>
+    <div className="flex flex-col gap-6 pb-16 max-w-7xl mx-auto">
+      {/* 1. Sleek Compact Exploration Header & Search */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+                Explore Courses
+              </h1>
+              {total > 0 && (
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-[var(--primary)] border border-blue-100">
+                  {total} {total === 1 ? "Course" : "Courses"}
+                </span>
+              )}
+            </div>
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
+              {submittedSearch
+                ? `Showing results for "${submittedSearch}"`
+                : activeTag
+                ? `Filtered by selected category`
+                : `Discover accredited programs, master in-demand skills, and advance your career`}
+            </p>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Explore Accredited Online Classes
-          </h1>
-
-          <p className="text-xs sm:text-base text-slate-300 max-w-2xl leading-relaxed">
-            Gain mastery in technology, design, and business with hands-on curriculums, live mentorship, and verified certificates recognized across the industry.
-          </p>
-
-          {/* Interactive Search Bar */}
+          {/* Compact Interactive Search Bar */}
           <form
             onSubmit={handleSearchSubmit}
-            className="w-full max-w-xl mt-3 flex items-center bg-white rounded-2xl p-1.5 shadow-lg border border-white/20"
+            className="flex items-center bg-white rounded-xl p-1 shadow-2xs border border-[var(--border)] w-full md:w-80 lg:w-96 focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/10 transition-all"
           >
-            <div className="relative flex-1 flex items-center pl-3">
-              <SearchOutlined className="text-slate-400 text-base mr-2 shrink-0" />
+            <div className="relative flex-1 flex items-center pl-2.5">
+              <SearchOutlined className="text-slate-400 text-sm mr-2 shrink-0" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search courses, skills, or instructors..."
-                className="w-full py-2 bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden"
+                placeholder="Search courses, skills, instructors..."
+                className="w-full py-1.5 bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden"
               />
               {search && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="p-1 text-slate-400 hover:text-slate-600 text-xs cursor-pointer mr-2"
+                  className="p-1 text-slate-400 hover:text-slate-600 text-xs cursor-pointer mr-1"
                 >
                   <CloseCircleFilled />
                 </button>
@@ -222,24 +225,27 @@ const MyExplore = () => {
 
             <button
               type="submit"
-              className="px-5 sm:px-6 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer shrink-0"
+              className="px-4 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer shrink-0"
             >
               Search
             </button>
           </form>
+        </div>
 
+        {/* Category Pills & Sorting Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[var(--border)]">
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 flex-wrap justify-center pt-2">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
             <button
               type="button"
               onClick={() => {
                 setActiveTag("");
                 setPage(1);
               }}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all duration-150 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
                 activeTag === ""
-                  ? "bg-white text-slate-900 shadow-xs font-bold"
-                  : "bg-white/10 hover:bg-white/20 text-slate-200 border border-white/10"
+                  ? "bg-[var(--primary)] text-white shadow-xs"
+                  : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
               }`}
             >
               All Categories
@@ -255,10 +261,10 @@ const MyExplore = () => {
                     setActiveTag(cat.category_id);
                     setPage(1);
                   }}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all duration-150 ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
                     isSelected
-                      ? "bg-white text-slate-900 shadow-xs font-bold"
-                      : "bg-white/10 hover:bg-white/20 text-slate-200 border border-white/10"
+                      ? "bg-[var(--primary)] text-white shadow-xs"
+                      : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
                   }`}
                 >
                   {cat.category_name}
@@ -266,34 +272,16 @@ const MyExplore = () => {
               );
             })}
           </div>
-        </div>
-      </div>
 
-      {/* 2. Catalog Section Header & Sorting Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#101828] tracking-tight">
-            Featured Courses For You
-          </h2>
-          <p className="text-xs sm:text-sm text-[#667085] mt-0.5">
-            {submittedSearch
-              ? `Results matching "${submittedSearch}"`
-              : activeTag
-              ? `Filtered by selected category`
-              : `Curated learning pathways recommended for your career goals`}
-          </p>
-        </div>
-
-        {/* Sort Controls */}
-        <div className="flex items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-end">
-          <div className="flex items-center gap-1.5 bg-[#F8FAFC] p-1 rounded-xl border border-[#E4E7EC]">
+          {/* Sort Controls */}
+          <div className="flex items-center gap-1.5 bg-[var(--surface-subtle)] p-1 rounded-xl border border-[var(--border)] shrink-0 self-end sm:self-auto">
             <button
               type="button"
               onClick={() => setSortBy("featured")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "featured"
-                  ? "bg-white text-[#101828] shadow-xs"
-                  : "text-[#667085] hover:text-[#101828]"
+                  ? "bg-white text-[var(--text-primary)] shadow-xs"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               Featured
@@ -301,10 +289,10 @@ const MyExplore = () => {
             <button
               type="button"
               onClick={() => setSortBy("rating")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "rating"
-                  ? "bg-white text-[#101828] shadow-xs"
-                  : "text-[#667085] hover:text-[#101828]"
+                  ? "bg-white text-[var(--text-primary)] shadow-xs"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               Top Rated
@@ -312,10 +300,10 @@ const MyExplore = () => {
             <button
               type="button"
               onClick={() => setSortBy("newest")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "newest"
-                  ? "bg-white text-[#101828] shadow-xs"
-                  : "text-[#667085] hover:text-[#101828]"
+                  ? "bg-white text-[var(--text-primary)] shadow-xs"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               Newest
@@ -324,7 +312,7 @@ const MyExplore = () => {
         </div>
       </div>
 
-      {/* 3. Course Grid */}
+      {/* 2. Course Catalog Grid - Immediately Visible */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
@@ -346,14 +334,14 @@ const MyExplore = () => {
         </div>
       ) : (
         /* Empty Search / Filter Results */
-        <div className="p-10 sm:p-14 rounded-3xl bg-white border border-[#E4E7EC] text-center shadow-xs flex flex-col items-center justify-center space-y-4 max-w-lg mx-auto">
-          <div className="w-16 h-16 rounded-3xl bg-[#F8FAFC] border border-[#E4E7EC] text-slate-400 flex items-center justify-center text-2xl">
+        <div className="p-10 sm:p-14 rounded-3xl bg-white border border-[var(--border)] text-center shadow-xs flex flex-col items-center justify-center space-y-4 max-w-lg mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-[var(--surface-subtle)] border border-[var(--border)] text-slate-400 flex items-center justify-center text-2xl">
             <SearchOutlined />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-lg font-bold text-[#101828]">No Courses Found</h3>
-            <p className="text-xs sm:text-sm text-[#667085] max-w-sm">
+            <h3 className="text-lg font-bold text-[var(--text-primary)]">No Courses Found</h3>
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-sm">
               We couldn't find any courses matching your search criteria or selected category.
             </p>
           </div>
@@ -361,7 +349,7 @@ const MyExplore = () => {
           <button
             type="button"
             onClick={handleResetFilters}
-            className="px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs cursor-pointer transition-all"
+            className="px-5 py-2.5 rounded-xl bg-[var(--primary)] hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs cursor-pointer transition-all"
           >
             <ReloadOutlined />
             <span>Reset All Filters</span>
@@ -369,15 +357,31 @@ const MyExplore = () => {
         </div>
       )}
 
-      {/* 4. Pagination */}
-      {total > limit && (
-        <div className="flex justify-center pt-4">
-          <Pagination
-            page={page}
-            limit={limit}
-            setPage={setPage}
-            total={total}
-          />
+      {/* 3. Proper Paginated Data Bar */}
+      {total > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[var(--border)]">
+          <p className="text-xs text-[var(--text-secondary)] font-medium">
+            Showing <span className="font-semibold text-[var(--text-primary)]">{(page - 1) * limit + 1}</span> to{" "}
+            <span className="font-semibold text-[var(--text-primary)]">
+              {Math.min(page * limit, total)}
+            </span>{" "}
+            of <span className="font-semibold text-[var(--text-primary)]">{total}</span> courses
+          </p>
+
+          {total > limit ? (
+            <div className="flex justify-center">
+              <Pagination
+                page={page}
+                limit={limit}
+                setPage={setPage}
+                total={total}
+              />
+            </div>
+          ) : (
+            <span className="text-xs text-[var(--text-muted)] bg-[var(--surface-subtle)] px-3 py-1 rounded-md">
+              Page 1 of 1
+            </span>
+          )}
         </div>
       )}
     </div>

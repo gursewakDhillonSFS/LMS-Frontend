@@ -76,35 +76,53 @@ export const MyCoursesCard: FC<MyCourseCardProp> = ({
         </div>
       </div>
 
-      <div className="flex justify-between items-center gap-4 pt-1 border-t border-[var(--border)]">
+      <div className="flex justify-between items-center gap-4 pt-2 border-t border-[var(--border)]">
         {demoClass ? (
           <div className="flex items-center text-xs text-[var(--text-secondary)] gap-1.5">
             <ClockWheelIcon />
             <span>6:00 PM - 6:45 PM</span>
           </div>
         ) : (
-          <div className="flex-1 flex items-center gap-2 max-w-[60%]">
+          <div className="flex-1 flex items-center gap-2.5 max-w-[60%]">
             <Progress
-              strokeColor="var(--primary)"
+              strokeColor={progress >= 100 ? "#10B981" : "var(--primary)"}
               percent={progress}
               showInfo={false}
               size="small"
               className="!m-0"
             />
-            <span className="text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap">
+            <span className={`text-xs font-semibold whitespace-nowrap ${
+              progress >= 100 ? "text-emerald-600" : "text-[var(--text-secondary)]"
+            }`}>
               {Number(progress)}%
             </span>
+            {progress >= 100 && (
+              <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Completed
+              </span>
+            )}
           </div>
         )}
-        <CommonButton
-          text={demoClass ? "Demo Class" : "Continue"}
-          onClick={
-            demoClass
-              ? () => {}
-              : () => route.push(`${RoutePaths?.MyCourses}/course-details?course_id=${course_id}${batch_id ? `&batch_id=${batch_id}` : ''}`)
-          }
-          className="!w-auto !px-4 !h-8 !text-xs !rounded-[6px]"
-        />
+        <div className="flex items-center gap-2 shrink-0">
+          {progress >= 100 && !demoClass && (
+            <button
+              type="button"
+              onClick={() => route.push(RoutePaths.MyCertificate)}
+              className="px-3 py-1.5 rounded-lg border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+            >
+              Certificate
+            </button>
+          )}
+          <CommonButton
+            text={demoClass ? "Demo Class" : progress >= 100 ? "Review" : "Continue"}
+            onClick={
+              demoClass
+                ? () => {}
+                : () => route.push(`${RoutePaths?.MyCourses}/course-details?course_id=${course_id}${batch_id ? `&batch_id=${batch_id}` : ''}`)
+            }
+            className="!w-auto !px-4 !h-8 !text-xs !rounded-lg"
+          />
+        </div>
       </div>
     </div>
   );
