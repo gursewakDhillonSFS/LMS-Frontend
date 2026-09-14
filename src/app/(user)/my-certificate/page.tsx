@@ -98,17 +98,11 @@ const MyCertificate = () => {
         {/* Subtle background decorative shapes */}
         <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 rounded-full bg-[#315CFF]/15 blur-3xl pointer-events-none" />
 
-        <div className="space-y-2 z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-blue-200 border border-white/10">
+        <div className="flex items-center gap-3 z-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-blue-200 border border-white/10">
             <TrophyOutlined className="text-amber-400" />
-            <span>Official Academic Credentials</span>
+            <span>Tamper-proof verified academic credentials earned upon 100% course completion</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white m-0">
-            My Course Certificates
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            All certificates earned upon 100% course completion. Each credential includes a tamper-proof verification ID that can be shared with employers or added to your professional portfolio.
-          </p>
         </div>
 
         {/* Quick Stats Widget */}

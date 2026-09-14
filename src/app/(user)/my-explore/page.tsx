@@ -175,33 +175,52 @@ const MyExplore = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-16 max-w-7xl mx-auto">
-      {/* 1. Sleek Compact Exploration Header & Search */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
-                Explore Courses
-              </h1>
-              {total > 0 && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-[var(--primary)] border border-blue-100">
-                  {total} {total === 1 ? "Course" : "Courses"}
-                </span>
-              )}
-            </div>
-            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-              {submittedSearch
-                ? `Showing results for "${submittedSearch}"`
-                : activeTag
-                ? `Filtered by selected category`
-                : `Discover accredited programs, master in-demand skills, and advance your career`}
-            </p>
-          </div>
+      {/* 1. Exploration Controls Toolbar (No redundant title/description) */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none flex-1">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTag("");
+              setPage(1);
+            }}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
+              activeTag === ""
+                ? "bg-[var(--primary)] text-white shadow-xs"
+                : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
+            }`}
+          >
+            All Categories
+          </button>
 
-          {/* Compact Interactive Search Bar */}
+          {categories?.map((cat) => {
+            const isSelected = activeTag === cat.category_id;
+            return (
+              <button
+                key={cat.category_id}
+                type="button"
+                onClick={() => {
+                  setActiveTag(cat.category_id);
+                  setPage(1);
+                }}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
+                  isSelected
+                    ? "bg-[var(--primary)] text-white shadow-xs"
+                    : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
+                }`}
+              >
+                {cat.category_name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Search Bar & Sort Controls */}
+        <div className="flex items-center gap-2 shrink-0">
           <form
             onSubmit={handleSearchSubmit}
-            className="flex items-center bg-white rounded-xl p-1 shadow-2xs border border-[var(--border)] w-full md:w-80 lg:w-96 focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/10 transition-all"
+            className="flex items-center bg-white rounded-xl p-1 shadow-2xs border border-[var(--border)] w-full sm:w-60 lg:w-72 focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/10 transition-all"
           >
             <div className="relative flex-1 flex items-center pl-2.5">
               <SearchOutlined className="text-slate-400 text-sm mr-2 shrink-0" />
@@ -209,7 +228,7 @@ const MyExplore = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search courses, skills, instructors..."
+                placeholder="Search courses, skills..."
                 className="w-full py-1.5 bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden"
               />
               {search && (
@@ -225,60 +244,18 @@ const MyExplore = () => {
 
             <button
               type="submit"
-              className="px-4 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer shrink-0"
+              className="px-3.5 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer shrink-0"
             >
               Search
             </button>
           </form>
-        </div>
-
-        {/* Category Pills & Sorting Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[var(--border)]">
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTag("");
-                setPage(1);
-              }}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
-                activeTag === ""
-                  ? "bg-[var(--primary)] text-white shadow-xs"
-                  : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
-              }`}
-            >
-              All Categories
-            </button>
-
-            {categories?.map((cat) => {
-              const isSelected = activeTag === cat.category_id;
-              return (
-                <button
-                  key={cat.category_id}
-                  type="button"
-                  onClick={() => {
-                    setActiveTag(cat.category_id);
-                    setPage(1);
-                  }}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
-                    isSelected
-                      ? "bg-[var(--primary)] text-white shadow-xs"
-                      : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
-                  }`}
-                >
-                  {cat.category_name}
-                </button>
-              );
-            })}
-          </div>
 
           {/* Sort Controls */}
-          <div className="flex items-center gap-1.5 bg-[var(--surface-subtle)] p-1 rounded-xl border border-[var(--border)] shrink-0 self-end sm:self-auto">
+          <div className="flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-xl border border-[var(--border)] shrink-0">
             <button
               type="button"
               onClick={() => setSortBy("featured")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "featured"
                   ? "bg-white text-[var(--text-primary)] shadow-xs"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -289,7 +266,7 @@ const MyExplore = () => {
             <button
               type="button"
               onClick={() => setSortBy("rating")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "rating"
                   ? "bg-white text-[var(--text-primary)] shadow-xs"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -300,7 +277,7 @@ const MyExplore = () => {
             <button
               type="button"
               onClick={() => setSortBy("newest")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "newest"
                   ? "bg-white text-[var(--text-primary)] shadow-xs"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"

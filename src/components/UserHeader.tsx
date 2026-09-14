@@ -119,7 +119,7 @@ const UserHeader = () => {
     }
   };
   return (
-    <div className="w-full flex items-center justify-between px-[16px] lg:px-[24px] py-[12px]">
+    <div className="w-full h-full flex items-center justify-between px-[16px] lg:px-[24px] box-border">
       {logoutModal && (
         <ConfirmationModal
           open={logoutModal}

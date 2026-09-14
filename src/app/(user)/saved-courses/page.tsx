@@ -78,8 +78,7 @@ const SavedCourses = () => {
     fetchCourseData();
   }, [fetchCourseData]);
   return (
-    <div className="w-full h-fit flex flex-col gap-3">
-      <h2 className="text-[32px] font-[700] text-[#0E0E0E]">Saved Courses</h2>
+    <div className="w-full h-fit flex flex-col gap-4">
       {loading || courses?.length > 0 ? (
         loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[12px]">

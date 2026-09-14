@@ -192,25 +192,9 @@ const MyCourses = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-8 pb-16 max-w-7xl mx-auto">
-      {/* 1. Header & Quick Metrics */}
+    <div className="w-full flex flex-col gap-6 pb-16 max-w-7xl mx-auto">
+      {/* 1. Overview Stat Cards */}
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
-              My Learning
-            </h1>
-            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-              Track your enrolled courses, monitor your completion progress, and review earned certificates.
-            </p>
-          </div>
-          <CommonButton
-            text="Explore Catalog"
-            onClick={() => router.push(RoutePaths.MyExplore)}
-            className="!bg-[var(--primary)] hover:!bg-blue-700 !text-white !h-9 !text-xs !px-4 !rounded-xl self-start sm:self-auto shadow-xs"
-          />
-        </div>
-
         {/* 4 Overview Stat Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-white border border-[var(--border)] rounded-2xl p-4 shadow-2xs flex items-center gap-3.5">
