@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import CommonButton from "@/components/CommonButton";
-import { getAdminEarningsApi, refundPurchaseApi } from "@/services/collections";
+import {
+  getAdminEarningsApi,
+  refundPurchaseApi,
+  retryAdminPayoutsApi,
+} from "@/services/collections";
 import { toast } from "@/utils/toast";
 import {
   DollarCircleOutlined,
@@ -19,6 +23,7 @@ import Link from "next/link";
 export default function AdminFinancePage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [processingPayouts, setProcessingPayouts] = useState(false);
   const [refundModal, setRefundModal] = useState<{ open: boolean; purchase: any | null }>({
     open: false,
     purchase: null,
@@ -64,6 +69,26 @@ export default function AdminFinancePage() {
       toast.error(err?.response?.data?.message || "Error processing refund");
     } finally {
       setRefundLoading(false);
+    }
+  };
+
+  const handleProcessPayouts = async () => {
+    try {
+      setProcessingPayouts(true);
+      const res: any = await retryAdminPayoutsApi();
+      if (res?.status) {
+        toast.success(res.message || "Processed pending payouts successfully");
+        fetchFinance();
+      } else {
+        toast.error(res?.message || "Failed to process payouts");
+      }
+    } catch (err: any) {
+      console.error("Payout retry error", err);
+      toast.error(
+        err?.response?.data?.message || "Error processing pending payouts"
+      );
+    } finally {
+      setProcessingPayouts(false);
     }
   };
 
@@ -184,13 +209,23 @@ export default function AdminFinancePage() {
             Real-time monitoring of course purchases, 5% platform fees, and organization / teacher distributions.
           </p>
         </div>
-        <button
-          onClick={fetchFinance}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer w-fit shadow-xs"
-        >
-          <SyncOutlined />
-          <span>Refresh Data</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleProcessPayouts}
+            disabled={processingPayouts}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#315CFF] text-white text-xs font-semibold hover:bg-[#274BD1] cursor-pointer shadow-xs transition-all disabled:opacity-60"
+          >
+            <BankOutlined />
+            <span>{processingPayouts ? "Processing Payouts..." : "Process Pending Payouts"}</span>
+          </button>
+          <button
+            onClick={fetchFinance}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer w-fit shadow-xs"
+          >
+            <SyncOutlined />
+            <span>Refresh Data</span>
+          </button>
+        </div>
       </div>
 
       {/* Summary KPI Cards */}

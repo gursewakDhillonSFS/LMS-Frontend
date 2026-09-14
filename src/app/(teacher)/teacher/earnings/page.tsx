@@ -13,13 +13,14 @@ import {
   SafetyCertificateOutlined,
   ExportOutlined,
 } from "@ant-design/icons";
-import { Table, Tag } from "antd";
+import { Table, Tag, Tooltip } from "antd";
 
 import {
   createTeacherConnectApi,
   getTeacherConnectStatusApi,
   getTeacherEarningsApi,
   getTeacherDashboardLinkApi,
+  syncTeacherPayoutsApi,
 } from "@/services/collections";
 import { toast } from "@/utils/toast";
 
@@ -66,6 +67,15 @@ export default function TeacherEarningsPage() {
   const handleRefreshStatus = async () => {
     try {
       setRefreshing(true);
+      // 1. Attempt on-demand payout sync for any pending transfers
+      let syncResult: any = null;
+      try {
+        syncResult = await syncTeacherPayoutsApi();
+      } catch (e) {
+        // Non-fatal if sync encounters error
+      }
+
+      // 2. Fetch fresh status & earnings
       const [statusRes, earningsRes] = await Promise.all([
         getTeacherConnectStatusApi(),
         getTeacherEarningsApi(),
@@ -73,17 +83,22 @@ export default function TeacherEarningsPage() {
 
       if (statusRes?.status && statusRes.data) {
         setConnectStatus(statusRes.data);
-        if (statusRes.data.connected) {
-          toast.success("Stripe Connect status refreshed: Direct Deposits Active");
-        } else {
-          toast.info("Stripe Connect status refreshed: Setup Required");
-        }
-      } else {
-        toast.info("Stripe Connect status refreshed");
       }
 
       if (earningsRes?.status && earningsRes.data) {
         setEarningsData(earningsRes.data);
+      }
+
+      if (syncResult?.data?.processed > 0) {
+        toast.success(
+          `Dispatched ${syncResult.data.processed} pending payout(s) ($${(
+            syncResult.data.transferredCents / 100
+          ).toFixed(2)} USD) to Stripe!`
+        );
+      } else if (statusRes?.data?.connected) {
+        toast.success("Stripe Connect status refreshed: Direct Deposits Active");
+      } else {
+        toast.info("Stripe Connect status refreshed");
       }
     } catch (err) {
       console.error("Failed to refresh teacher Stripe status", err);
@@ -217,14 +232,75 @@ export default function TeacherEarningsPage() {
       },
     },
     {
-      title: "Status",
+      title: "Payout Status",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => {
-        if (status === "paid") return <Tag color="success">Transferred to Bank</Tag>;
-        if (status === "available") return <Tag color="cyan">Available</Tag>;
-        if (status === "processing") return <Tag color="processing">Processing</Tag>;
-        return <Tag color="default">{status || "Completed"}</Tag>;
+      render: (status: string, record: any) => {
+        if (status === "paid" || record.stripeTransferId) {
+          return (
+            <Tooltip
+              title={
+                <div>
+                  <p className="font-semibold">Successfully transferred to Stripe Express</p>
+                  {record.stripeTransferId && (
+                    <p className="text-[11px] opacity-85">Transfer: {record.stripeTransferId}</p>
+                  )}
+                  {record.transferredAt && (
+                    <p className="text-[11px] opacity-85">
+                      Dispatched: {new Date(record.transferredAt).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              }
+            >
+              <Tag color="success" className="font-semibold px-2.5 py-0.5 rounded-full cursor-help">
+                ● Dispatched
+              </Tag>
+            </Tooltip>
+          );
+        }
+        if (status === "pending" || status === "available") {
+          return (
+            <Tooltip
+              title={
+                <div>
+                  <p className="font-semibold">Clearing with Banking Network</p>
+                  <p className="text-[11px] opacity-85">
+                    {record.failureReason ||
+                      "Card payment is clearing in Stripe. The background retry worker will auto-dispatch once settled."}
+                  </p>
+                </div>
+              }
+            >
+              <Tag color="warning" className="font-semibold px-2.5 py-0.5 rounded-full cursor-help">
+                ● Pending Clearance
+              </Tag>
+            </Tooltip>
+          );
+        }
+        if (status === "action_required") {
+          return (
+            <Tooltip title="Stripe account setup or verification is required above before funds can be transferred.">
+              <Tag color="orange" className="font-semibold px-2.5 py-0.5 rounded-full cursor-help">
+                ● Setup Required
+              </Tag>
+            </Tooltip>
+          );
+        }
+        if (status === "reversed") {
+          return (
+            <Tooltip title="This transaction was refunded to the student.">
+              <Tag color="default" className="font-semibold px-2.5 py-0.5 rounded-full cursor-help">
+                Refunded
+              </Tag>
+            </Tooltip>
+          );
+        }
+        return (
+          <Tag color="default" className="font-semibold px-2.5 py-0.5 rounded-full">
+            {status || "Queued"}
+          </Tag>
+        );
       },
     },
   ];

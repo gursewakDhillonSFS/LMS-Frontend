@@ -301,6 +301,15 @@ export const getTeacherEarningsApi = (teacherId?: string) => {
 export const getAdminEarningsApi = () =>
   getApi("/auth/course/v1/earnings/admin");
 
+export const syncTeacherPayoutsApi = (payload?: { teacherId?: string }) =>
+  postApi("/auth/course/v1/stripe/connect/teacher/sync-payouts", payload || {});
+
+export const syncOrgPayoutsApi = (payload?: { organisationId?: string }) =>
+  postApi("/auth/course/v1/stripe/connect/organisation/sync-payouts", payload || {});
+
+export const retryAdminPayoutsApi = () =>
+  postApi("/auth/course/v1/payment/admin/payouts/retry", {});
+
 export const refundPurchaseApi = (purchaseId: string, payload?: { reason?: string }) =>
   postApi(`/auth/course/v1/refund/${purchaseId}`, payload || {});
 
