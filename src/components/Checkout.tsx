@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import CommonButton from "@/components/CommonButton";
 import { RootState } from "@/redux/store";
 import { purchaseCourseApi } from "@/services/collections";
-import { getImageUrl, isValidUrl } from "@/utils/comman";
+import { getImageUrl, isValidUrl, formatDuration, formatLabel } from "@/utils/comman";
 import { RoutePaths } from "@/utils/enums";
 import { Fallback } from "@/utils/images";
 import Image from "next/image";
@@ -48,11 +48,9 @@ const CheckOut = () => {
     );
   }
 
-  const coursePrice = selectedCourseData?.course_price ?? selectedCourseData?.base_price ?? 0;
+  const coursePrice = selectedCourseData.course_price ?? selectedCourseData.base_price ?? 0;
   const isFree = coursePrice === 0;
-  const courseImage = getImageUrl(
-    selectedCourseData?.course_image_url || selectedCourseData?.course_url
-  );
+  const courseImage = getImageUrl(selectedCourseData?.course_image_url);
 
   const handleCheckout = async () => {
     try {
@@ -73,31 +71,32 @@ const CheckOut = () => {
         if (checkoutUrl) {
           window.location.href = checkoutUrl;
         } else {
-          toast.error("Checkout URL was not returned. Please try again.");
+          toast.error("Checkout session URL was not returned. Please try again.");
         }
       } else {
-        toast.error(res?.message || "Failed to start checkout");
+        toast.error(res?.message || "Failed to initiate checkout");
       }
-    } catch (err: any) {
-      console.error("Purchase error:", err);
-      toast.error(err?.response?.data?.message || "Something went wrong during checkout");
+    } catch (error: any) {
+      console.error("Purchase error:", error);
+      toast.error(error?.response?.data?.message || "Error starting checkout session");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full max-w-6xl mx-auto py-6">
-      {/* Left Column: Course Details & Batch */}
-      <div className="flex-1 flex flex-col gap-5 bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
-        <div className="flex items-center gap-2 text-sm text-slate-500 cursor-pointer hover:text-slate-800 transition-colors" onClick={() => router.back()}>
-          <ArrowLeftOutlined />
-          <span>Back</span>
+    <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+      {/* Left Column: Course Summary */}
+      <div className="flex-1 flex flex-col gap-6 bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <ArrowLeftOutlined />
+          </button>
+          <h2 className="text-xl font-bold text-slate-900">Checkout</h2>
         </div>
-
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Review Course Order
-        </h2>
 
         <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/70">
           <div className="w-full sm:w-[140px] h-[90px] relative rounded-lg overflow-hidden bg-slate-200 shrink-0">
@@ -114,16 +113,16 @@ const CheckOut = () => {
               {selectedCourseData.course_name}
             </h3>
             {selectedCourseData.head_teacher_name && (
-              <p className="text-xs text-slate-600 mt-1">
+              <p className="text-xs text-slate-600 mt-1 font-medium">
                 Instructor: {selectedCourseData.head_teacher_name}
               </p>
             )}
-            <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
+            <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500 font-medium">
               {selectedCourseData.course_duration && (
-                <span>⏱ {selectedCourseData.course_duration}</span>
+                <span>⏱ {formatDuration(selectedCourseData.course_duration)}</span>
               )}
               {selectedCourseData.course_level && (
-                <span className="capitalize">📊 {selectedCourseData.course_level}</span>
+                <span>📊 {formatLabel(selectedCourseData.course_level)}</span>
               )}
             </div>
           </div>
@@ -168,25 +167,20 @@ const CheckOut = () => {
 
         <div className="flex flex-col gap-3 text-sm">
           <div className="flex items-center justify-between text-slate-600">
-            <span>Course Price</span>
-            <span className="font-semibold text-slate-900">
+            <span className="font-medium">Course Price</span>
+            <span className="font-bold text-slate-900">
               {isFree ? "Free" : `$${coursePrice.toFixed(2)} USD`}
             </span>
           </div>
-          <div className="flex items-center justify-between text-slate-600">
-            <span>Platform Fee</span>
-            <span className="text-emerald-600 font-medium">$0.00 (Included)</span>
-          </div>
-          <div className="flex items-center justify-between text-slate-600">
-            <span>Estimated Taxes</span>
-            <span className="font-semibold text-slate-900">$0.00</span>
-          </div>
-          <div className="w-full h-[1px] bg-slate-200 my-1" />
+          <div className="w-full h-[1px] bg-slate-200/80 my-0.5" />
           <div className="flex items-center justify-between text-base font-bold text-slate-900">
             <span>Total Amount</span>
-            <span className="text-xl text-[#4F46E5]">
+            <span className="text-xl font-extrabold text-[#315CFF]">
               {isFree ? "Free" : `$${coursePrice.toFixed(2)} USD`}
             </span>
+          </div>
+          <div className="text-[11px] text-slate-500 text-right -mt-1 font-normal">
+            * Tax included, if any
           </div>
         </div>
 
@@ -200,7 +194,7 @@ const CheckOut = () => {
           }
           loading={loading}
           onClick={handleCheckout}
-          className="!w-full !h-12 !text-sm !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md transition-all"
+          className="!w-full !h-12 !text-sm !font-bold !rounded-xl !bg-[#315CFF] hover:!bg-[#274BD1] !text-white shadow-md transition-all"
         />
 
         <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 text-center">

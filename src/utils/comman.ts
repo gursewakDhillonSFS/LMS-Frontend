@@ -212,3 +212,32 @@ export const formatLabel = (val?: string | number | null) => {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 };
 
+export const formatDuration = (val?: string | number | null) => {
+  if (!val) return "";
+  const str = String(val).trim().toLowerCase();
+  const map: Record<string, string> = {
+    "1_week": "1 Week",
+    "1_weeks": "1 Week",
+    "2_week": "2 Weeks",
+    "2_weeks": "2 Weeks",
+    "3_week": "3 Weeks",
+    "3_weeks": "3 Weeks",
+    "4_week": "4 Weeks",
+    "4_weeks": "4 Weeks",
+    "1_month": "1 Month",
+    "1_months": "1 Month",
+    "2_month": "2 Months",
+    "2_months": "2 Months",
+    "3_month": "3 Months",
+    "3_months": "3 Months",
+    "6_month": "6 Months",
+    "6_months": "6 Months",
+    "12_month": "12 Months",
+    "12_months": "12 Months",
+    "1_year": "1 Year",
+  };
+  if (map[str]) return map[str];
+  return formatLabel(String(val));
+};
+
+

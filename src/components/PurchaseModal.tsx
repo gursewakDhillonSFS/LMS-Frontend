@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Modal, Select } from "antd";
 import Image from "next/image";
 import CommonButton from "./CommonButton";
-import { getImageUrl, isValidUrl } from "@/utils/comman";
+import { getImageUrl, isValidUrl, formatDuration, formatLabel } from "@/utils/comman";
 import { Fallback } from "@/utils/images";
 import { purchaseCourseApi } from "@/services/collections";
 import { toast } from "@/utils/toast";
@@ -108,23 +108,23 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
     >
       <div className="flex flex-col gap-5 pt-2 pb-1">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
           <div>
-            <span className="text-[11px] font-[600] uppercase tracking-wider text-[var(--primary)] bg-primary/10 px-2.5 py-1 rounded-full">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#315CFF] bg-[#315CFF]/10 px-2.5 py-1 rounded-full">
               Direct Course Purchase
             </span>
-            <h3 className="text-[20px] font-bold text-[var(--text-primary)] mt-1.5 leading-tight">
+            <h3 className="text-[20px] font-extrabold text-slate-900 mt-1.5 leading-tight tracking-tight">
               Confirm Your Purchase
             </h3>
           </div>
-          <div className="w-10 h-10 rounded-full bg-[var(--primary-subtle)] text-[var(--primary)] flex items-center justify-center text-lg">
+          <div className="w-10 h-10 rounded-full bg-blue-50 text-[#315CFF] flex items-center justify-center text-lg shrink-0">
             <LockOutlined />
           </div>
         </div>
 
         {/* Course Card Preview */}
-        <div className="flex gap-4 p-3.5 rounded-[12px] bg-[var(--surface-subtle)] border border-[var(--border)]">
-          <div className="w-[100px] h-[72px] relative rounded-[8px] overflow-hidden flex-shrink-0 bg-slate-200">
+        <div className="flex gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+          <div className="w-[100px] h-[72px] relative rounded-lg overflow-hidden flex-shrink-0 bg-slate-200 border border-slate-200/60">
             <Image
               src={isValidUrl(courseImage) ? courseImage : Fallback}
               alt={course.course_name || "Course"}
@@ -134,17 +134,21 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
             />
           </div>
           <div className="flex flex-col justify-center min-w-0 flex-1">
-            <h4 className="text-[15px] font-[600] text-[var(--text-primary)] truncate">
+            <h4 className="text-[15px] font-bold text-slate-900 truncate">
               {course.course_name}
             </h4>
             {course.head_teacher_name && (
-              <p className="text-[12px] text-[var(--text-secondary)] mt-0.5">
+              <p className="text-[12px] text-slate-600 mt-0.5 font-medium truncate">
                 Instructor: {course.head_teacher_name}
               </p>
             )}
-            <div className="flex items-center gap-3 mt-1 text-[11px] text-[var(--text-tertiary)]">
-              {course.course_duration && <span>⏱ {course.course_duration}</span>}
-              {course.course_level && <span className="capitalize">📊 {course.course_level}</span>}
+            <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-500 font-medium">
+              {course.course_duration && (
+                <span>⏱ {formatDuration(course.course_duration)}</span>
+              )}
+              {course.course_level && (
+                <span>📊 {formatLabel(course.course_level)}</span>
+              )}
             </div>
           </div>
         </div>
@@ -152,7 +156,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
         {/* Batch Selection (if batches exist) */}
         {course.batches && course.batches.length > 0 && (
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-[600] text-[var(--text-primary)]">
+            <label className="text-[13px] font-bold text-slate-800">
               Select Batch
             </label>
             <Select
@@ -169,42 +173,34 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
         )}
 
         {/* Price Breakdown */}
-        <div className="p-4 rounded-[12px] bg-slate-50 dark:bg-slate-900 border border-[var(--border)] flex flex-col gap-2.5">
-          <div className="flex items-center justify-between text-[13px] text-[var(--text-secondary)]">
-            <span>Course Price</span>
-            <span className="font-[500] text-[var(--text-primary)]">
+        <div className="p-4 rounded-xl bg-slate-50/90 border border-slate-200/90 flex flex-col gap-2.5">
+          <div className="flex items-center justify-between text-[13px]">
+            <span className="text-slate-600 font-medium">Course Price</span>
+            <span className="font-bold text-slate-900">
               {isFree ? "Free" : `$${price.toFixed(2)} USD`}
             </span>
           </div>
-          <div className="flex items-center justify-between text-[13px] text-[var(--text-secondary)]">
-            <span className="flex items-center gap-1.5">
-              <span>Platform & Service Fee</span>
-              <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">Included</span>
-            </span>
-            <span className="font-[500] text-emerald-600">$0.00</span>
-          </div>
-          <div className="flex items-center justify-between text-[13px] text-[var(--text-secondary)]">
-            <span>Estimated Taxes</span>
-            <span className="font-[500] text-[var(--text-primary)]">$0.00</span>
-          </div>
-          <div className="w-full h-[1px] bg-[var(--border)] my-0.5" />
-          <div className="flex items-center justify-between text-[16px] font-[700] text-[var(--text-primary)]">
-            <span>Total Due Today</span>
-            <span className="text-[18px] text-[var(--primary)]">
+          <div className="w-full h-[1px] bg-slate-200/80 my-0.5" />
+          <div className="flex items-center justify-between">
+            <span className="text-[15px] font-bold text-slate-900">Total Due Today</span>
+            <span className="text-[20px] font-extrabold text-[#315CFF]">
               {isFree ? "Free" : `$${price.toFixed(2)} USD`}
             </span>
+          </div>
+          <div className="text-[11px] text-slate-500 text-right -mt-1 font-normal">
+            * Tax included, if any
           </div>
         </div>
 
         {/* Guarantee & Confidence Badges */}
-        <div className="grid grid-cols-2 gap-2 text-[11px] text-[var(--text-secondary)]">
-          <div className="flex items-center gap-2 p-2.5 rounded-[8px] bg-emerald-50 text-emerald-800 border border-emerald-200">
-            <SafetyCertificateOutlined className="text-emerald-600 text-[16px]" />
-            <span className="font-[500] leading-tight">2-Day 100% Money-Back Guarantee</span>
+        <div className="grid grid-cols-2 gap-2 text-[11px]">
+          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/70">
+            <SafetyCertificateOutlined className="text-emerald-600 text-[16px] shrink-0" />
+            <span className="font-medium leading-tight">2-Day 100% Money-Back Guarantee</span>
           </div>
-          <div className="flex items-center gap-2 p-2.5 rounded-[8px] bg-blue-50 text-blue-800 border border-blue-200">
-            <ThunderboltFilled className="text-blue-600 text-[16px]" />
-            <span className="font-[500] leading-tight">Instant Lifetime Access Included</span>
+          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-blue-50 text-blue-800 border border-blue-200/70">
+            <ThunderboltFilled className="text-blue-600 text-[16px] shrink-0" />
+            <span className="font-medium leading-tight">Instant Lifetime Access Included</span>
           </div>
         </div>
 
@@ -214,7 +210,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
             text="Cancel"
             onClick={onClose}
             disabled={loading}
-            className="!w-1/3 !h-[44px] !bg-transparent border !border-[var(--border)] !text-[var(--text-primary)] hover:!bg-[var(--surface-subtle)]"
+            className="!w-1/3 !h-[44px] !bg-white border !border-slate-200 !text-slate-700 hover:!bg-slate-50 hover:!text-slate-900 font-medium rounded-xl"
           />
           <CommonButton
             text={
@@ -226,11 +222,11 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
             }
             loading={loading}
             onClick={handleCheckout}
-            className="!w-2/3 !h-[44px] !text-[15px] font-[600] shadow-sm"
+            className="!w-2/3 !h-[44px] !text-[15px] font-bold !bg-[#315CFF] hover:!bg-[#274BD1] !text-white shadow-sm rounded-xl"
           />
         </div>
 
-        <p className="text-[11px] text-center text-[var(--text-muted)] -mt-1 flex items-center justify-center gap-1">
+        <p className="text-[11px] text-center text-slate-500 -mt-1 flex items-center justify-center gap-1">
           <LockOutlined />
           Encrypted 256-bit SSL connection powered by Stripe Checkout.
         </p>
