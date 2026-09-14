@@ -13,11 +13,17 @@ import {
   TeamOutlined,
   ArrowUpOutlined,
   SearchOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import { Table, Tag } from "antd";
 
 import { RootState } from "@/redux/store";
-import { createOrgConnectApi, getOrgConnectStatusApi, getOrgEarningsApi } from "@/services/collections";
+import {
+  createOrgConnectApi,
+  getOrgConnectStatusApi,
+  getOrgEarningsApi,
+  getOrgDashboardLinkApi,
+} from "@/services/collections";
 import { toast } from "@/utils/toast";
 
 export default function InstructorEarningsView() {
@@ -26,6 +32,8 @@ export default function InstructorEarningsView() {
   );
 
   const [connectLoading, setConnectLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [connectStatus, setConnectStatus] = useState<{
@@ -64,6 +72,67 @@ export default function InstructorEarningsView() {
     fetchData();
   }, [organization_id]);
 
+  const handleRefreshStatus = async () => {
+    try {
+      setRefreshing(true);
+      const [statusRes, earningsRes] = await Promise.all([
+        getOrgConnectStatusApi(organization_id),
+        getOrgEarningsApi(organization_id),
+      ]);
+
+      if (statusRes?.status && statusRes.data) {
+        setConnectStatus(statusRes.data);
+        if (statusRes.data.connected) {
+          toast.success("Stripe Connect status refreshed: Direct Deposits Active");
+        } else {
+          toast.info("Stripe Connect status refreshed: Setup Required");
+        }
+      } else {
+        toast.info("Stripe Connect status refreshed");
+      }
+
+      if (earningsRes?.status && earningsRes.data) {
+        setEarningsData(earningsRes.data);
+      }
+    } catch (err) {
+      console.error("Failed to refresh Stripe status", err);
+      toast.error("Failed to refresh Stripe Connect status");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleManageStripeAccount = async () => {
+    try {
+      setDashboardLoading(true);
+      const res: any = await getOrgDashboardLinkApi(
+        organization_id ? { organisationId: organization_id } : undefined
+      );
+
+      const redirectUrl =
+        res?.url ||
+        res?.data?.url ||
+        res?.data?.onboarding_url ||
+        res?.onboarding_url;
+
+      if (redirectUrl) {
+        toast.success("Opening Stripe Express Dashboard...");
+        window.open(redirectUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // Fallback: try createOrgConnectApi
+      await handleConnectStripe();
+    } catch (err: any) {
+      console.error("Failed to open Stripe dashboard", err);
+      toast.error(
+        err?.response?.data?.message || "Could not open Stripe Express dashboard"
+      );
+    } finally {
+      setDashboardLoading(false);
+    }
+  };
+
   const handleConnectStripe = async () => {
     try {
       setConnectLoading(true);
@@ -78,8 +147,8 @@ export default function InstructorEarningsView() {
         res?.url;
 
       if (redirectUrl) {
-        toast.success("Redirecting to Stripe Connect setup...");
-        window.location.href = redirectUrl;
+        toast.success("Opening Stripe setup...");
+        window.open(redirectUrl, "_blank", "noopener,noreferrer");
         return;
       }
 
@@ -260,9 +329,20 @@ export default function InstructorEarningsView() {
         {/* Payout Account Status */}
         <div className="bg-white rounded-2xl p-5 border border-[#E4E7EC] shadow-xs flex items-center justify-between hover:shadow-md transition-shadow">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#667085]">
-              Stripe Direct Payouts
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#667085]">
+                Stripe Direct Payouts
+              </p>
+              <button
+                type="button"
+                onClick={handleRefreshStatus}
+                disabled={refreshing}
+                className="text-slate-400 hover:text-[#315CFF] text-xs cursor-pointer p-1 rounded-md hover:bg-slate-100 transition-colors"
+                title="Refresh Stripe Connect status"
+              >
+                <SyncOutlined spin={refreshing} />
+              </button>
+            </div>
             <h3 className="text-xl sm:text-2xl font-bold text-[#101828]">
               {connectStatus.connected ? "Active" : "Setup Required"}
             </h3>
@@ -318,18 +398,43 @@ export default function InstructorEarningsView() {
             </div>
           </div>
 
-          <button
-            type="button"
-            disabled={connectLoading}
-            onClick={handleConnectStripe}
-            className="px-6 py-3 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {connectLoading
-              ? "Connecting..."
-              : connectStatus.connected
-              ? "Manage Stripe Account"
-              : "Connect Stripe"}
-          </button>
+          {/* Actions: Refresh & Manage/Connect Stripe */}
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            <button
+              type="button"
+              disabled={refreshing}
+              onClick={handleRefreshStatus}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+              title="Refresh Stripe Connect status"
+            >
+              <SyncOutlined spin={refreshing} />
+              <span>{refreshing ? "Refreshing..." : "Refresh Status"}</span>
+            </button>
+
+            {connectStatus.connected ? (
+              <button
+                type="button"
+                disabled={dashboardLoading}
+                onClick={handleManageStripeAccount}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Open Stripe Express Dashboard"
+              >
+                <BankOutlined />
+                <span>{dashboardLoading ? "Opening Dashboard..." : "Manage Stripe Account"}</span>
+                <ExportOutlined className="text-xs ml-0.5" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={connectLoading}
+                onClick={handleConnectStripe}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <BankOutlined />
+                <span>{connectLoading ? "Connecting..." : "Connect Stripe"}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -2,25 +2,18 @@
 import React, { useState } from "react";
 import {
   ChatIcon,
-  DownArrowIcon,
   EarPhoneIcon,
   GlobeIcon,
-  LogoutIcon,
   NotificationIcon,
 } from "@/utils/icons";
-import { Avatar, Badge, Drawer, Dropdown, MenuProps } from "antd";
-import ConfirmationModal from "./modal/ConfirmationModal";
-import ChangePassword from "./modal/ChangePassword";
+import { Avatar, Badge, Drawer } from "antd";
 import NotificationPanel from "./NotificationPanel";
 import AnnouncementPanel from "./AnnouncementPanel";
 import { useRouter, usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { resetAllSlices } from "@/redux/resetSlice";
 import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
 import { markAnnouncementsAsReadApi } from "@/services/collections";
 import { RootState } from "@/redux/store";
-import { RoutePaths } from "@/utils/enums";
-import Cookies from "js-cookie";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemePicker from "./ThemePicker";
@@ -28,6 +21,9 @@ import ThemePicker from "./ThemePicker";
 const UserHeader = () => {
   const { t } = useTranslation();
   const pathname = usePathname();
+  const route = useRouter();
+  const dispatch = useDispatch();
+
   const full_name = useSelector(
     (state: RootState) => state.userdata?.full_name
   );
@@ -38,6 +34,9 @@ const UserHeader = () => {
   const profile_img = useSelector(
     (state: RootState) => state.userdata?.profile_img
   );
+
+  const [notificationDrawer, setNotificationDrawer] = useState(false);
+  const [announcementDrawer, setAnnouncementDrawer] = useState(false);
 
   const getSectionTitle = () => {
     if (pathname.includes("/my-courses")) {
@@ -67,82 +66,8 @@ const UserHeader = () => {
     return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
   };
 
-  const menuItems: MenuProps["items"] = [
-    {
-      key: "change-password",
-      label: (
-        <div
-          onClick={() => setChangePassword(true)}
-          className="flex items-center gap-[8px] text-[14px] font-[400] px-[12px] py-[8px] rounded-[8px] text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
-        >
-          <span>{t("auth.changePassword.title")}</span>
-        </div>
-      ),
-    },
-    {
-      key: "logout",
-      label: (
-        <div className="flex items-center gap-[8px] text-[14px] font-[400] text-[var(--error)] px-[12px] py-[8px] rounded-[8px] hover:bg-[var(--error-light)] transition-all duration-[150ms]">
-          <span>{t("common.nav.logout")}</span>
-        </div>
-      ),
-      onClick: () => {
-        setLogOutModal(true);
-      },
-    },
-  ];
-  const [logoutModal, setLogOutModal] = useState(false);
-  const [logoutLoading, setLogOutLoading] = useState(false);
-  const route = useRouter();
-  const [changePassword, setChangePassword] = useState(false);
-  const [notificationDrawer, setNotificationDrawer] = useState(false);
-  const [announcementDrawer, setAnnouncementDrawer] = useState(false);
-  const dispatch = useDispatch();
-
-  const handleLogout = () => {
-    setLogOutLoading(true);
-    try {
-      Cookies.remove("token", { path: "/" });
-      Cookies.remove("role_name", { path: "/" });
-      Cookies.remove("user_onboarding", { path: "/" });
-      Cookies.remove("instructor_onboarding", { path: "/" });
-      Cookies.remove("profileStatus", { path: "/" });
-      dispatch(resetAllSlices());
-      if (typeof window !== "undefined") {
-        window.location.href = "/";
-      }
-    } catch (error) {
-      console.log(error);
-      if (typeof window !== "undefined") {
-        window.location.href = "/";
-      }
-    }
-  };
   return (
     <div className="w-full h-full flex items-center justify-between px-[16px] lg:px-[24px] box-border">
-      {logoutModal && (
-        <ConfirmationModal
-          open={logoutModal}
-          onCancel={() => setLogOutModal(false)}
-          onSubmit={handleLogout}
-          title={t("common.modals.logoutTitle", { defaultValue: "Logout" })}
-          description={t("common.modals.logoutConfirm", {
-            defaultValue: "Are you sure you want to logout this account?",
-          })}
-          cancelText={t("common.actions.no", { defaultValue: "Cancel" })}
-          submitText={t("common.modals.logoutConfirmBtn", { defaultValue: "Yes, Logout" })}
-          iconBG="#FB4A49"
-          icon={<LogoutIcon color="#FB4A49" />}
-          loading={logoutLoading}
-        />
-      )}
-
-      {changePassword && (
-        <ChangePassword
-          open={changePassword}
-          onCancel={() => setChangePassword(false)}
-        />
-      )}
 
       {notificationDrawer && (
         <Drawer
@@ -212,34 +137,28 @@ const UserHeader = () => {
         <ThemePicker variant="header" />
         <LanguageSwitcher variant="header" />
         <div className="w-[1px] h-[24px] bg-[var(--border)]"></div>
-        <Dropdown
-          prefixCls="custom-dropdown-header"
-          menu={{ items: menuItems }}
-          trigger={["click"]}
-          placement="bottomRight"
+        <button
+          onClick={() => route.push("/my-settings")}
+          className="flex items-center p-[4px] pr-[12px] gap-[8px] h-[40px] rounded-[10px] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] cursor-pointer border border-transparent hover:border-[var(--border)] transition-all duration-[150ms]"
+          title={t("dashboard.tabs.settings", { defaultValue: "Settings" })}
         >
-          <button className="flex items-center p-[4px] gap-[8px] h-[40px] rounded-[10px] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] cursor-pointer transition-all duration-[150ms]">
-            <Avatar
-              key={profile_img || "avatar"}
-              size={32}
-              src={
-                profile_img || "https://ui-avatars.com/api/?name=" + full_name
-              }
-              className="!flex-shrink-0"
-            />
-            <div className="hidden sm:flex flex-col items-start justify-center pr-[4px]">
-              <div className="text-[13px] font-[500] whitespace-nowrap text-[var(--text-primary)] leading-[140%]">
-                {full_name}
-              </div>
-              <div className="capitalize text-[10px] font-[500] text-[var(--primary)] leading-[14px]">
-                {role}
-              </div>
+          <Avatar
+            key={profile_img || "avatar"}
+            size={32}
+            src={
+              profile_img || "https://ui-avatars.com/api/?name=" + full_name
+            }
+            className="!flex-shrink-0"
+          />
+          <div className="hidden sm:flex flex-col items-start justify-center">
+            <div className="text-[13px] font-[500] whitespace-nowrap text-[var(--text-primary)] leading-[140%]">
+              {full_name}
             </div>
-            <span className="hidden sm:block pr-[8px]">
-              <DownArrowIcon color="var(--text-muted)" />
-            </span>
-          </button>
-        </Dropdown>
+            <div className="capitalize text-[10px] font-[500] text-[var(--primary)] leading-[14px]">
+              {role}
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );

@@ -705,6 +705,41 @@ body {
   border-radius: var(--radius-lg) !important;
 }
 
+/* Category Select Component Styling */
+.custom-category-select.ant-select .ant-select-selector {
+  height: 40px !important;
+  border-radius: 12px !important;
+  border-color: var(--border) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  transition: all 150ms ease-in-out !important;
+}
+
+.custom-category-select.ant-select:hover .ant-select-selector {
+  border-color: var(--primary) !important;
+}
+
+.custom-category-select.ant-select-focused .ant-select-selector {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(49, 92, 255, 0.12) !important;
+}
+
+.custom-category-select .ant-select-selection-item {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+}
+
+.custom-category-select .ant-select-selection-placeholder {
+  font-size: 13px !important;
+  color: #94a3b8 !important;
+}
+
+
 /* ============================================
    Reusable 3D Depth Classes
    ============================================ */

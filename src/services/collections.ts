@@ -273,6 +273,9 @@ export const getOrgConnectStatusApi = (organisationId?: string) => {
   return getApi(`/auth/course/v1/stripe/connect/organisation/status${query}`);
 };
 
+export const getOrgDashboardLinkApi = (payload?: { organisationId?: string }) =>
+  postApi("/auth/course/v1/stripe/connect/organisation/dashboard", payload || {});
+
 export const createTeacherConnectApi = (payload?: { teacherId?: string }) =>
   postApi("/auth/course/v1/stripe/connect/teacher", payload || {});
 
@@ -280,6 +283,9 @@ export const getTeacherConnectStatusApi = (teacherId?: string) => {
   const query = teacherId ? `?teacherId=${teacherId}` : "";
   return getApi(`/auth/course/v1/stripe/connect/teacher/status${query}`);
 };
+
+export const getTeacherDashboardLinkApi = (payload?: { teacherId?: string }) =>
+  postApi("/auth/course/v1/stripe/connect/teacher/dashboard", payload || {});
 
 // ─── Earnings APIs ────────────────────────────────────────────────────────────
 export const getOrgEarningsApi = (organisationId?: string) => {

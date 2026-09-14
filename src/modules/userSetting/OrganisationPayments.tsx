@@ -6,6 +6,7 @@ import {
   createOrgConnectApi,
   getOrgConnectStatusApi,
   getOrgEarningsApi,
+  getOrgDashboardLinkApi,
 } from "@/services/collections";
 import { toast } from "@/utils/toast";
 import {
@@ -16,6 +17,7 @@ import {
   SyncOutlined,
   ArrowRightOutlined,
   SafetyCertificateOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import { Table, Tag } from "antd";
 import { useSelector } from "react-redux";
@@ -26,6 +28,8 @@ const OrganisationPayments: React.FC = () => {
     (state: RootState) => state.userdata?.organization_id
   );
   const [connectLoading, setConnectLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(true);
   const [connectStatus, setConnectStatus] = useState<{
     connected: boolean;
@@ -53,7 +57,7 @@ const OrganisationPayments: React.FC = () => {
         setEarningsData(earningsRes.data);
       }
     } catch (err) {
-      console.error("Failed to load payment info", err);
+      console.error("Failed to load connect status", err);
     } finally {
       setStatusLoading(false);
     }
@@ -62,6 +66,66 @@ const OrganisationPayments: React.FC = () => {
   useEffect(() => {
     fetchStatus();
   }, [organization_id]);
+
+  const handleRefreshStatus = async () => {
+    try {
+      setRefreshing(true);
+      const [statusRes, earningsRes] = await Promise.all([
+        getOrgConnectStatusApi(organization_id),
+        getOrgEarningsApi(organization_id),
+      ]);
+
+      if (statusRes?.status && statusRes.data) {
+        setConnectStatus(statusRes.data);
+        if (statusRes.data.connected) {
+          toast.success("Stripe Connect status refreshed: Direct Deposits Active");
+        } else {
+          toast.info("Stripe Connect status refreshed: Setup Required");
+        }
+      } else {
+        toast.info("Stripe Connect status refreshed");
+      }
+
+      if (earningsRes?.status && earningsRes.data) {
+        setEarningsData(earningsRes.data);
+      }
+    } catch (err) {
+      console.error("Failed to refresh Stripe status", err);
+      toast.error("Failed to refresh Stripe Connect status");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleManageStripeAccount = async () => {
+    try {
+      setDashboardLoading(true);
+      const res: any = await getOrgDashboardLinkApi(
+        organization_id ? { organisationId: organization_id } : undefined
+      );
+
+      const redirectUrl =
+        res?.url ||
+        res?.data?.url ||
+        res?.data?.onboarding_url ||
+        res?.onboarding_url;
+
+      if (redirectUrl) {
+        toast.success("Opening Stripe Express Dashboard...");
+        window.open(redirectUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      await handleConnectStripe();
+    } catch (err: any) {
+      console.error("Failed to open Stripe dashboard", err);
+      toast.error(
+        err?.response?.data?.message || "Could not open Stripe Express dashboard"
+      );
+    } finally {
+      setDashboardLoading(false);
+    }
+  };
 
   const handleConnectStripe = async () => {
     try {
@@ -77,8 +141,8 @@ const OrganisationPayments: React.FC = () => {
         res?.url;
 
       if (redirectUrl) {
-        toast.success("Redirecting to Stripe Connect setup...");
-        window.location.href = redirectUrl;
+        toast.success("Opening Stripe setup...");
+        window.open(redirectUrl, "_blank", "noopener,noreferrer");
         return;
       }
 
@@ -202,18 +266,43 @@ const OrganisationPayments: React.FC = () => {
           </div>
         </div>
 
-        <CommonButton
-          text={
-            connectLoading
-              ? "Connecting..."
-              : connectStatus.connected
-              ? "Manage Stripe Account"
-              : "Connect Stripe"
-          }
-          loading={connectLoading}
-          onClick={handleConnectStripe}
-          className="!h-11 !px-6 !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white !font-bold text-xs shrink-0 shadow-md"
-        />
+        {/* Actions: Refresh & Manage/Connect Stripe */}
+        <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+          <button
+            type="button"
+            disabled={refreshing}
+            onClick={handleRefreshStatus}
+            className="flex items-center gap-2 px-4 h-11 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+            title="Refresh Stripe Connect status"
+          >
+            <SyncOutlined spin={refreshing} />
+            <span>{refreshing ? "Refreshing..." : "Refresh Status"}</span>
+          </button>
+
+          {connectStatus.connected ? (
+            <button
+              type="button"
+              disabled={dashboardLoading}
+              onClick={handleManageStripeAccount}
+              className="flex items-center gap-2 px-5 h-11 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Open Stripe Express Dashboard"
+            >
+              <BankOutlined />
+              <span>{dashboardLoading ? "Opening Dashboard..." : "Manage Stripe Account"}</span>
+              <ExportOutlined className="text-xs ml-0.5" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={connectLoading}
+              onClick={handleConnectStripe}
+              className="flex items-center gap-2 px-5 h-11 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <BankOutlined />
+              <span>{connectLoading ? "Connecting..." : "Connect Stripe"}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Financial Summary Cards */}

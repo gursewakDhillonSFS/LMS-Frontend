@@ -3,12 +3,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+import { Select } from "antd";
 import {
   SearchOutlined,
   CloseCircleFilled,
   FireOutlined,
   CompassOutlined,
   ReloadOutlined,
+  AppstoreOutlined,
+  FilterOutlined,
 } from "@ant-design/icons";
 
 import CourseCardSkeleton from "@/components/CourseCardSkeleton";
@@ -175,52 +178,37 @@ const MyExplore = () => {
 
   return (
     <div className="flex flex-col gap-6 pb-16 max-w-7xl mx-auto">
-      {/* 1. Exploration Controls Toolbar (No redundant title/description) */}
+      {/* 1. Exploration Controls Toolbar with Category Dropdown */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        {/* Category Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none flex-1">
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTag("");
-              setPage(1);
-            }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
-              activeTag === ""
-                ? "bg-[var(--primary)] text-white shadow-xs"
-                : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
-            }`}
-          >
-            All Categories
-          </button>
+        {/* Left Side: Category Dropdown & Search Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 min-w-0">
+          {/* Category Dropdown */}
+          <div className="w-full sm:w-56 md:w-60 lg:w-64 shrink-0">
+            <Select
+              value={activeTag || ""}
+              onChange={(value) => {
+                setActiveTag(value || "");
+                setPage(1);
+              }}
+              allowClear={!!activeTag}
+              className="w-full custom-category-select"
+              popupClassName="custom-category-dropdown"
+              placeholder="All Categories"
+              prefix={<AppstoreOutlined className="text-[var(--primary)] text-sm mr-1 shrink-0" />}
+              options={[
+                { value: "", label: "All Categories" },
+                ...(categories || []).map((cat) => ({
+                  value: cat.category_id,
+                  label: cat.category_name,
+                })),
+              ]}
+            />
+          </div>
 
-          {categories?.map((cat) => {
-            const isSelected = activeTag === cat.category_id;
-            return (
-              <button
-                key={cat.category_id}
-                type="button"
-                onClick={() => {
-                  setActiveTag(cat.category_id);
-                  setPage(1);
-                }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-all duration-150 ${
-                  isSelected
-                    ? "bg-[var(--primary)] text-white shadow-xs"
-                    : "bg-white text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-2xs"
-                }`}
-              >
-                {cat.category_name}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search Bar & Sort Controls */}
-        <div className="flex items-center gap-2 shrink-0">
+          {/* Search Bar */}
           <form
             onSubmit={handleSearchSubmit}
-            className="flex items-center bg-white rounded-xl p-1 shadow-2xs border border-[var(--border)] w-full sm:w-60 lg:w-72 focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/10 transition-all"
+            className="flex items-center bg-white rounded-xl p-1 shadow-2xs border border-[var(--border)] w-full sm:w-64 md:w-72 lg:w-80 focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/10 transition-all h-[40px]"
           >
             <div className="relative flex-1 flex items-center pl-2.5">
               <SearchOutlined className="text-slate-400 text-sm mr-2 shrink-0" />
@@ -229,7 +217,7 @@ const MyExplore = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search courses, skills..."
-                className="w-full py-1.5 bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden"
+                className="w-full py-1 bg-transparent text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden"
               />
               {search && (
                 <button
@@ -244,18 +232,33 @@ const MyExplore = () => {
 
             <button
               type="submit"
-              className="px-3.5 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer shrink-0"
+              className="px-3.5 h-full rounded-lg bg-[var(--primary)] hover:opacity-90 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer shrink-0"
             >
               Search
             </button>
           </form>
 
-          {/* Sort Controls */}
-          <div className="flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-xl border border-[var(--border)] shrink-0">
+          {/* Active Filter Reset Button */}
+          {(activeTag || submittedSearch) && (
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="inline-flex items-center gap-1.5 px-3 h-[40px] rounded-xl text-xs font-medium text-slate-500 hover:text-red-500 hover:bg-red-50 border border-dashed border-slate-200 hover:border-red-200 transition-colors cursor-pointer shrink-0"
+              title="Reset all filters"
+            >
+              <CloseCircleFilled className="text-xs" />
+              <span>Reset</span>
+            </button>
+          )}
+        </div>
+
+        {/* Right Side: Sort Controls */}
+        <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+          <div className="flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-xl border border-[var(--border)] h-[40px]">
             <button
               type="button"
               onClick={() => setSortBy("featured")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-3 h-full rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "featured"
                   ? "bg-white text-[var(--text-primary)] shadow-xs"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -266,7 +269,7 @@ const MyExplore = () => {
             <button
               type="button"
               onClick={() => setSortBy("rating")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-3 h-full rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "rating"
                   ? "bg-white text-[var(--text-primary)] shadow-xs"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -277,7 +280,7 @@ const MyExplore = () => {
             <button
               type="button"
               onClick={() => setSortBy("newest")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              className={`px-3 h-full rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 sortBy === "newest"
                   ? "bg-white text-[var(--text-primary)] shadow-xs"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
