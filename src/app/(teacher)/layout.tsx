@@ -1,8 +1,10 @@
 "use client";
 import InstructorHeader from "@/components/InstructorHeader";
+import ConfirmationModal from "@/components/modal/ConfirmationModal";
 import { resetCreateCourse } from "@/redux/slices/CreateCourseSlice";
 import { resetInstructorCourseTab } from "@/redux/tabslice/InstructorCourseTabSlice";
 import { resetInstructorStudentTab } from "@/redux/tabslice/InstructorStudentTabSlice";
+import { resetAllSlices } from "@/redux/resetSlice";
 import { RoutePaths } from "@/utils/enums";
 import {
   AssignmentIcon,
@@ -11,6 +13,7 @@ import {
   HeaderLogoIcon,
   HeaderSmallLogo,
   LiveIcon,
+  LogoutIcon,
   QuizIcon,
   ScheduleIcon,
   SettingIcon,
@@ -25,9 +28,9 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "@/context/I18nContext";
-
 import { DashboardThemeProvider } from "@/context/DashboardThemeContext";
 import SidebarPromoCard from "@/components/dashboard/SidebarPromoCard";
+import Cookies from "js-cookie";
 
 interface TeacherLayoutProps {
   children: ReactNode;
@@ -37,9 +40,31 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("");
+  const [logoutModal, setLogoutModal] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const pathname = usePathname();
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const handleLogout = () => {
+    setLogoutLoading(true);
+    try {
+      Cookies.remove("token", { path: "/" });
+      Cookies.remove("role_name", { path: "/" });
+      Cookies.remove("user_onboarding", { path: "/" });
+      Cookies.remove("instructor_onboarding", { path: "/" });
+      Cookies.remove("profileStatus", { path: "/" });
+      dispatch(resetAllSlices());
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error(error);
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    }
+  };
 
   useEffect(() => {
     const menuKeys = [
@@ -79,7 +104,24 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
   return (
     <DashboardThemeProvider>
       <Layout className="!min-h-screen !bg-[var(--dash-bg)] transition-colors duration-200">
-        <div className="bg-[var(--dash-sidebar-bg)] border-r border-[var(--dash-sidebar-border)] transition-colors duration-200">
+        {logoutModal && (
+          <ConfirmationModal
+            open={logoutModal}
+            onCancel={() => setLogoutModal(false)}
+            onSubmit={handleLogout}
+            title={t("common.modals.logoutTitle", { defaultValue: "Logout" })}
+            description={t("common.modals.logoutConfirm", {
+              defaultValue: "Are you sure you want to logout this account?",
+            })}
+            cancelText={t("common.actions.no", { defaultValue: "Cancel" })}
+            submitText={t("common.modals.logoutConfirmBtn", { defaultValue: "Yes, Logout" })}
+            iconBG="#FB4A49"
+            icon={<LogoutIcon color="#FB4A49" />}
+            loading={logoutLoading}
+          />
+        )}
+
+        <div className="bg-[var(--dash-sidebar-bg)] border-r border-[var(--dash-sidebar-border)] h-screen sticky top-0 flex flex-col transition-colors duration-200">
           <Sider
             trigger={null}
             width={240}
@@ -89,94 +131,118 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
             onBreakpoint={(broken) => {
               setCollapsed(broken);
             }}
-            className="!sticky !top-0 !max-h-screen scrollbar-hide !overflow-y-auto !bg-[var(--dash-sidebar-bg)] transition-colors duration-200"
+            className="!sticky !top-0 !bg-[var(--dash-sidebar-bg)] !h-full [&>.ant-layout-sider-children]:!flex [&>.ant-layout-sider-children]:!flex-col [&>.ant-layout-sider-children]:!justify-between [&>.ant-layout-sider-children]:!h-full transition-colors duration-200"
             style={{ background: "var(--dash-sidebar-bg)" }}
           >
-            <div
-              onClick={() => setCollapsed((prev) => !prev)}
-              className="bg-white cursor-pointer flex items-center justify-center h-[64px] min-h-[64px] max-h-[64px] px-[16px] border-b border-[#E4E7EC] sticky top-0 z-50 transition-colors"
-            >
-              {collapsed ? (
-                <HeaderSmallLogo />
-              ) : (
-                <HeaderLogoIcon height="36" textColor="#0B192C" />
-              )}
-            </div>
-            <Menu
-              prefixCls="custom-sidebar-menu"
-              className="!bg-transparent !pt-[12px] !px-[8px] !flex !flex-col !items-stretch"
-              theme="dark"
-              mode="inline"
-              selectedKeys={[activeTab]}
-              items={[
-                {
-                  key: "dashboard",
-                  icon: <DashboardIcon />,
-                  label: t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" }),
-                  onClick: () => router.push("/teacher/dashboard"),
-                },
-                {
-                  key: "courses",
-                  icon: <CourseIcon />,
-                  label: t("dashboard.tabs.courses", { defaultValue: "Courses" }),
-                  onClick: () => router.push("/teacher/courses"),
-                },
-                {
-                  key: "students",
-                  icon: <StudentIcon />,
-                  label: t("dashboard.tabs.students", { defaultValue: "Students" }),
-                  onClick: () => router.push("/teacher/students"),
-                },
-                {
-                  key: "live-classes",
-                  icon: <LiveIcon />,
-                  label: t("dashboard.tabs.liveClasses", { defaultValue: "Live Classes" }),
-                  onClick: () => router.push("/teacher/live-classes"),
-                },
-                {
-                  key: "schedule",
-                  icon: <ScheduleIcon />,
-                  label: t("dashboard.tabs.mySchedule", { defaultValue: "My Schedule" }),
-                  onClick: () => router.push("/teacher/schedule"),
-                },
-                {
-                  key: "assignments",
-                  icon: <AssignmentIcon />,
-                  label: t("dashboard.tabs.assignments", { defaultValue: "Assignments" }),
-                  onClick: () => router.push("/teacher/assignments"),
-                },
-                {
-                  key: "quizzes",
-                  icon: <QuizIcon />,
-                  label: t("dashboard.tabs.quizzes", { defaultValue: "Quizzes" }),
-                  onClick: () => router.push("/teacher/quizzes"),
-                },
-                {
-                  key: "announcements",
-                  icon: <NotificationOutlined style={{ fontSize: "20px" }} />,
-                  label: t("dashboard.tabs.announcements", { defaultValue: "Announcements" }),
-                  onClick: () => router.push("/teacher/announcements"),
-                },
-                {
-                  key: "earnings",
-                  icon: <EarningsNavIcon />,
-                  label: "Earnings",
-                  onClick: () => router.push("/teacher/earnings"),
-                },
-                {
-                  key: "settings",
-                  icon: <SettingIcon />,
-                  label: t("dashboard.tabs.settings", { defaultValue: "Settings" }),
-                  onClick: () => router.push("/teacher/settings"),
-                },
-              ]}
-            />
+            {/* Top Section: Logo, Navigation Menu, Promo Card */}
+            <div className="flex flex-col flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+              <div
+                onClick={() => setCollapsed((prev) => !prev)}
+                className="bg-white cursor-pointer flex items-center justify-center h-[64px] min-h-[64px] max-h-[64px] px-[16px] border-b border-[#E4E7EC] sticky top-0 z-50 transition-colors"
+              >
+                {collapsed ? (
+                  <HeaderSmallLogo />
+                ) : (
+                  <HeaderLogoIcon height="36" textColor="#0B192C" />
+                )}
+              </div>
+              <Menu
+                prefixCls="custom-sidebar-menu"
+                className="!bg-transparent !pt-[12px] !px-[8px] !flex !flex-col !items-stretch"
+                theme="dark"
+                mode="inline"
+                selectedKeys={[activeTab]}
+                items={[
+                  {
+                    key: "dashboard",
+                    icon: <DashboardIcon />,
+                    label: t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" }),
+                    onClick: () => router.push("/teacher/dashboard"),
+                  },
+                  {
+                    key: "courses",
+                    icon: <CourseIcon />,
+                    label: t("dashboard.tabs.courses", { defaultValue: "Courses" }),
+                    onClick: () => router.push("/teacher/courses"),
+                  },
+                  {
+                    key: "students",
+                    icon: <StudentIcon />,
+                    label: t("dashboard.tabs.students", { defaultValue: "Students" }),
+                    onClick: () => router.push("/teacher/students"),
+                  },
+                  {
+                    key: "live-classes",
+                    icon: <LiveIcon />,
+                    label: t("dashboard.tabs.liveClasses", { defaultValue: "Live Classes" }),
+                    onClick: () => router.push("/teacher/live-classes"),
+                  },
+                  {
+                    key: "schedule",
+                    icon: <ScheduleIcon />,
+                    label: t("dashboard.tabs.mySchedule", { defaultValue: "My Schedule" }),
+                    onClick: () => router.push("/teacher/schedule"),
+                  },
+                  {
+                    key: "assignments",
+                    icon: <AssignmentIcon />,
+                    label: t("dashboard.tabs.assignments", { defaultValue: "Assignments" }),
+                    onClick: () => router.push("/teacher/assignments"),
+                  },
+                  {
+                    key: "quizzes",
+                    icon: <QuizIcon />,
+                    label: t("dashboard.tabs.quizzes", { defaultValue: "Quizzes" }),
+                    onClick: () => router.push("/teacher/quizzes"),
+                  },
+                  {
+                    key: "announcements",
+                    icon: <NotificationOutlined style={{ fontSize: "20px" }} />,
+                    label: t("dashboard.tabs.announcements", { defaultValue: "Announcements" }),
+                    onClick: () => router.push("/teacher/announcements"),
+                  },
+                  {
+                    key: "earnings",
+                    icon: <EarningsNavIcon />,
+                    label: "Earnings",
+                    onClick: () => router.push("/teacher/earnings"),
+                  },
+                  {
+                    key: "settings",
+                    icon: <SettingIcon />,
+                    label: t("dashboard.tabs.settings", { defaultValue: "Settings" }),
+                    onClick: () => router.push("/teacher/settings"),
+                  },
+                ]}
+              />
 
-            {/* Bottom Promo Card */}
-            <SidebarPromoCard
-              collapsed={collapsed}
-              createCoursePath={`${RoutePaths.TeacherCourses}/create-course`}
-            />
+              {/* Promo Card */}
+              <SidebarPromoCard
+                collapsed={collapsed}
+                createCoursePath={`${RoutePaths.TeacherCourses}/create-course`}
+              />
+            </div>
+
+            {/* Bottom Section: Dedicated Logout Button */}
+            <div className="p-3 border-t border-[var(--dash-sidebar-border)] bg-[var(--dash-sidebar-bg)] shrink-0 transition-colors duration-200">
+              <button
+                type="button"
+                onClick={() => setLogoutModal(true)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50 transition-all font-medium text-sm cursor-pointer group ${
+                  collapsed ? "justify-center !px-0" : ""
+                }`}
+                title={t("common.nav.logout", { defaultValue: "Logout" })}
+              >
+                <span className="w-5 h-5 flex items-center justify-center shrink-0 text-red-500 group-hover:scale-110 transition-transform">
+                  <LogoutIcon color="#EF4444" />
+                </span>
+                {!collapsed && (
+                  <span className="truncate text-xs font-semibold">
+                    {t("common.nav.logout", { defaultValue: "Logout" })}
+                  </span>
+                )}
+              </button>
+            </div>
           </Sider>
         </div>
         <Layout className="!bg-[var(--dash-bg)] transition-colors duration-200">

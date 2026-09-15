@@ -26,97 +26,139 @@ export const Step2 = ({
   }));
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="rounded-xl p-6 bg-white flex flex-col gap-4">
-        <div className="font-semibold text-xl">Course Photo</div>
-        <div className="flex gap-10 items-center">
-          <Image
-            src={
-              profilePhoto
-                ? profilePhoto
-                : typeof DefaultImg === "string"
-                ? DefaultImg
-                : DefaultImg.src
-            }
-            width={180}
-            height={180}
-            unoptimized
-            alt="Profile"
-            className="w-[180px] h-[180px] rounded-xl object-cover "
-          />
-          <div className="flex flex-col gap-[12px] justify-center h-full">
-            <p className="font-semibold text-[16px] plus-jakarta-sans">
-              Choose an image from your computer
-            </p>
-            <p className="text-sm text-[#767676]">Minimum size 100 x 100 px</p>
-            <label className="flex items-center justify-center border cursor-pointer border-[#68B8FF] rounded-[10px] w-[120px] h-[32px] text-center">
+    <div className="flex flex-col gap-6">
+      {/* Course Photo Card */}
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-5">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-bold text-slate-900 leading-tight">
+            Course Thumbnail
+          </h2>
+          <p className="text-xs text-slate-500 mt-1">
+            Upload a high-quality cover image to represent your course across the platform
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-xl border border-slate-200/60 bg-slate-50/40">
+          <div className="relative w-[220px] h-[140px] rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 shadow-2xs">
+            <Image
+              src={
+                profilePhoto
+                  ? profilePhoto
+                  : typeof DefaultImg === "string"
+                  ? DefaultImg
+                  : DefaultImg.src
+              }
+              fill
+              unoptimized
+              alt="Course Thumbnail"
+              className="object-cover"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <div>
+              <p className="font-semibold text-slate-800 text-sm">
+                Choose a banner from your device
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Recommended 16:9 ratio (1280x720px), PNG, JPG or WEBP. Max 10MB.
+              </p>
+            </div>
+
+            <label className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-secondary bg-secondary/10 hover:bg-secondary/20 text-secondary text-xs font-bold cursor-pointer transition-colors w-fit">
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="!hidden"
+                className="hidden"
               />
-              <span className="text-sm text-center cursor-pointer text-[#68B8FF]">
-                {profilePhoto ? "Change Image" : "Upload Image"}
-              </span>
+              <span>{profilePhoto ? "Replace Image" : "Upload Image"}</span>
             </label>
           </div>
         </div>
       </div>
 
-      {/* What you'll learn */}
-      <div className="rounded-xl p-6 bg-white">
+      {/* Learning Outcomes & Skills Card */}
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-6">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-bold text-slate-900 leading-tight">
+            What You&apos;ll Learn & Skills
+          </h2>
+          <p className="text-xs text-slate-500 mt-1">
+            List the key takeaways and actionable competencies students will gain
+          </p>
+        </div>
+
         <div className="flex flex-col gap-4">
-          <label className="font-semibold text-xl">
-            What you&apos;ll learn
-          </label>
+          <div className="flex justify-between items-center">
+            <label className="font-bold text-sm text-slate-800">
+              Key Learning Objectives
+            </label>
+          </div>
+
           <Form.List name="learning_points">
             {(fields, { add, remove }) => (
               <div className="flex flex-col gap-3">
-                {fields.map(({ key, name, ...restField }) => (
-                  <div key={key} className="flex items-center gap-3">
-                    <SixDotIcon />
+                {fields.map(({ key, name, ...restField }, idx) => (
+                  <div
+                    key={key}
+                    className="flex items-center gap-3 p-2 rounded-xl border border-slate-200/80 bg-slate-50/50 shadow-2xs"
+                  >
+                    <div className="text-slate-400 cursor-grab pl-1">
+                      <SixDotIcon />
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 w-5 text-center">
+                      {idx + 1}.
+                    </span>
                     <Form.Item
                       {...restField}
                       name={name}
-                      rules={[{ required: true, message: "Enter a point" }]}
+                      rules={[{ required: true, message: "Enter an objective" }]}
                       className="w-full !mb-0"
                     >
                       <Input
-                        placeholder="Add Point"
-                        className="h-12 rounded-radius-10 text-sm"
+                        placeholder="e.g. Understand core design systems and responsive token styling"
+                        className="!h-10 rounded-lg text-sm bg-white"
                       />
                     </Form.Item>
-                    <div
-                      className="cursor-pointer"
+                    <button
+                      type="button"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
                       onClick={() => remove(name)}
+                      title="Remove objective"
                     >
                       <DeleteIcon />
-                    </div>
+                    </button>
                   </div>
                 ))}
+
                 <Button
                   onClick={() => add()}
-                  className="flex items-center justify-center text-base !border !border-secondary !text-secondary"
+                  className="w-full !h-11 flex items-center justify-center text-sm font-semibold !border-dashed !border-secondary !text-secondary hover:!bg-secondary/5 rounded-xl mt-1"
                 >
-                  + Add a point
+                  + Add Another Objective
                 </Button>
               </div>
             )}
           </Form.List>
 
-          <div className="flex flex-col gap-2 mt-4">
-            <p className="font-semibold text-base">Skills you&apos;ll gain</p>
+          <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-slate-100">
+            <label className="font-bold text-sm text-slate-800">
+              Skills You&apos;ll Gain
+            </label>
+            <p className="text-xs text-slate-400 -mt-1">
+              Select key categories and topics that will appear as skill tags on the course card
+            </p>
             <Form.Item
-              className="!mb-4"
+              className="!mb-0 mt-1"
               name="skills_you_gain"
               rules={[{ required: true, message: "Please select at least one skill" }]}
             >
               <Select
                 mode="multiple"
-                placeholder="--Select categories as skills--"
+                placeholder="-- Select categories as course skills --"
                 loading={categoryLoading}
-                className="w-full !h-[48px] text-start !rounded-lg"
+                className="w-full !min-h-[44px] text-start !rounded-xl"
                 options={skillOptions}
               />
             </Form.Item>

@@ -2,24 +2,18 @@
 import React, { useState } from "react";
 import {
   ChatIcon,
-  DownArrowIcon,
   GlobeIcon,
-  LogoutIcon,
   NotificationIcon,
   EarPhoneIcon,
 } from "@/utils/icons";
-import { Avatar, Badge, Drawer, Dropdown, MenuProps } from "antd";
+import { Avatar, Badge, Drawer } from "antd";
 import NotificationPanel from "./NotificationPanel";
 import AnnouncementPanel from "./AnnouncementPanel";
-import ChangePassword from "./modal/ChangePassword";
-import ConfirmationModal from "./modal/ConfirmationModal";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { resetAllSlices } from "@/redux/resetSlice";
 import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
 import { markAnnouncementsAsReadApi } from "@/services/collections";
 import { RootState } from "@/redux/store";
-import Cookies from "js-cookie";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemePicker from "./ThemePicker";
@@ -89,85 +83,13 @@ const InstructorHeader = () => {
     return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
   };
 
-  const menuItems: MenuProps["items"] = [
-    {
-      key: "change-password",
-      label: (
-        <div
-          onClick={() => setChangePassword(true)}
-          className="flex items-center gap-[8px] text-[14px] font-[400] px-[12px] py-[8px] rounded-[8px] text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
-        >
-          <span>{t("auth.changePassword.title")}</span>
-        </div>
-      ),
-    },
-    {
-      key: "logout",
-      label: (
-        <div className="flex items-center gap-[8px] text-[14px] font-[400] text-[var(--error)] px-[12px] py-[8px] rounded-[8px] hover:bg-[var(--error-light)] transition-all duration-[150ms]">
-          <span>{t("common.nav.logout")}</span>
-        </div>
-      ),
-      onClick: () => {
-        setLogOutModal(true);
-      },
-    },
-  ];
-  const [logoutModal, setLogOutModal] = useState(false);
   const route = useRouter();
-  const [changePassword, setChangePassword] = useState(false);
   const [notificationDrawer, setNotificationDrawer] = useState(false);
   const [announcementDrawer, setAnnouncementDrawer] = useState(false);
-
-  const [logoutLoading, setLogOutLoading] = useState(false);
-
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    setLogOutLoading(true);
-    try {
-      Cookies.remove("token", { path: "/" });
-      Cookies.remove("role_name", { path: "/" });
-      Cookies.remove("user_onboarding", { path: "/" });
-      Cookies.remove("instructor_onboarding", { path: "/" });
-      Cookies.remove("profileStatus", { path: "/" });
-      dispatch(resetAllSlices());
-      if (typeof window !== "undefined") {
-        window.location.href = "/";
-      }
-    } catch (error) {
-      console.log(error);
-      if (typeof window !== "undefined") {
-        window.location.href = "/";
-      }
-    }
-  };
   return (
     <div className="w-full h-[64px] flex items-center justify-between px-[16px] lg:px-[24px]">
-      {logoutModal && (
-        <ConfirmationModal
-          open={logoutModal}
-          onCancel={() => setLogOutModal(false)}
-          onSubmit={handleLogout}
-          loading={logoutLoading}
-          title={t("common.modals.logoutTitle", { defaultValue: "Logout" })}
-          description={t("common.modals.logoutConfirm", {
-            defaultValue: "Are you sure you want to logout this account?",
-          })}
-          cancelText={t("common.actions.no", { defaultValue: "Cancel" })}
-          submitText={t("common.modals.logoutConfirmBtn", { defaultValue: "Yes, Logout" })}
-          iconBG="#FB4A49"
-          icon={<LogoutIcon color="#FB4A49" />}
-        />
-      )}
-
-      {changePassword && (
-        <ChangePassword
-          open={changePassword}
-          onCancel={() => setChangePassword(false)}
-        />
-      )}
-
       {notificationDrawer && (
         <Drawer
           width={490}
@@ -240,35 +162,34 @@ const InstructorHeader = () => {
 
         <div className="w-[1px] h-[24px] bg-[#E4E7EC]"></div>
 
-        <Dropdown
-          prefixCls="custom-dropdown-header"
-          menu={{ items: menuItems }}
-          trigger={["click"]}
-          placement="bottomRight"
+        <button
+          onClick={() => {
+            const settingsPath = pathname?.startsWith("/teacher")
+              ? "/teacher/settings"
+              : "/settings";
+            route.push(settingsPath);
+          }}
+          className="flex items-center p-[4px] pr-[12px] gap-[8px] h-[40px] rounded-[10px] bg-white hover:bg-[#F8FAFC] border border-[#E4E7EC] cursor-pointer transition-all duration-[150ms]"
+          title={t("dashboard.tabs.settings", { defaultValue: "Settings" })}
         >
-          <button className="flex items-center p-[4px] gap-[8px] h-[40px] rounded-[10px] bg-white hover:bg-[#F8FAFC] border border-[#E4E7EC] cursor-pointer transition-all duration-[150ms]">
-            <Avatar
-              key={profile_img || "avatar"}
-              size={32}
-              src={
-                profile_img || "https://ui-avatars.com/api/?name=" + full_name
-              }
-              className="!flex-shrink-0"
-            />
+          <Avatar
+            key={profile_img || "avatar"}
+            size={32}
+            src={
+              profile_img || "https://ui-avatars.com/api/?name=" + full_name
+            }
+            className="!flex-shrink-0"
+          />
 
-            <div className="hidden sm:flex flex-col items-start justify-center pr-[4px]">
-              <div className="text-[13px] font-[600] whitespace-nowrap text-[#101828] leading-[140%]">
-                {full_name}
-              </div>
-              <div className="capitalize text-[10px] font-[600] text-[#315CFF] leading-[14px]">
-                {role}
-              </div>
+          <div className="hidden sm:flex flex-col items-start justify-center">
+            <div className="text-[13px] font-[600] whitespace-nowrap text-[#101828] leading-[140%]">
+              {full_name}
             </div>
-            <span className="hidden sm:block pr-[8px]">
-              <DownArrowIcon color="#667085" />
-            </span>
-          </button>
-        </Dropdown>
+            <div className="capitalize text-[10px] font-[600] text-[#315CFF] leading-[14px]">
+              {role}
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );

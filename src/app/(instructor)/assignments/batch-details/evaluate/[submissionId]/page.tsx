@@ -102,115 +102,194 @@ const EvaluateSubmission = () => {
   };
 
   return (
-    <div className="flex flex-col gap-[24px]">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full pb-12">
       <Breadcrumb
-        separator={<span className="text-[#002333] font-[700]">{">"}</span>}
+        separator={<span className="text-slate-400 font-bold">{">"}</span>}
         items={items}
         itemRender={(item) => <BreadcrumbItemRender item={item} />}
       />
 
       {dataLoading ? (
-        <Skeleton active paragraph={{ rows: 10 }} />
+        <div className="p-8 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+          <Skeleton active paragraph={{ rows: 10 }} />
+        </div>
       ) : (
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row items-start gap-6">
           {/* Left Column: Submission Details */}
-          <div className="flex-1 bg-white p-6 rounded-xl border border-gray-200 flex flex-col gap-6">
-            <div className="flex justify-between items-start">
-              <h1 className="text-2xl font-bold text-[#0E0E0E]">Submission Details</h1>
+          <div className="flex-1 bg-white p-6 md:p-8 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col gap-6 w-full">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+              <div>
+                <span className="text-xs font-bold text-secondary uppercase tracking-wider">
+                  Evaluation Cockpit
+                </span>
+                <h1 className="text-2xl font-bold text-slate-900 mt-0.5">
+                  Submission Details
+                </h1>
+              </div>
+
               {submission?.status && (
-                <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  submission.status === "Graded" ? "bg-green-100 text-green-700" :
-                  submission.status === "Pending" || submission.status === "Submitted" ? "bg-yellow-100 text-yellow-700" :
-                  "bg-gray-100 text-gray-700"
-                }`}>
+                <div
+                  className={`px-3.5 py-1 rounded-full text-xs font-bold ${
+                    submission.status === "Graded"
+                      ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                      : submission.status === "Pending" ||
+                        submission.status === "Submitted"
+                      ? "bg-amber-100 text-amber-800 border border-amber-200"
+                      : "bg-slate-100 text-slate-700 border border-slate-200"
+                  }`}
+                >
                   {submission.status}
                 </div>
               )}
             </div>
 
-            <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
+            {/* Student Profile Card */}
+            <div className="flex items-center gap-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/60 shadow-2xs">
               <UserAvatarDisplay
                 user={{ name: submission?.name, image: submission?.avatar }}
               />
-              <div className="flex flex-col">
-                <p className="font-semibold text-[#002333]">{submission?.name}</p>
-                <p className="text-sm text-gray-500">{submission?.email}</p>
+              <div className="flex flex-col min-w-0">
+                <p className="font-bold text-slate-900 text-base leading-tight truncate">
+                  {submission?.name}
+                </p>
+                <p className="text-xs text-slate-500 truncate mt-0.5">
+                  {submission?.email}
+                </p>
+                {submission?.dateOfSubmit && (
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Submitted on: {submission.dateOfSubmit}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 mt-2">
-              <h2 className="font-semibold text-[16px]">Assignment</h2>
-              <p className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-100">
+            {/* Assignment Title Chip */}
+            <div className="flex flex-col gap-1.5">
+              <h2 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                Assignment Context
+              </h2>
+              <div className="text-sm font-semibold text-slate-800 bg-slate-50/60 px-4 py-3 rounded-xl border border-slate-200/60">
                 {assignment?.assignmentName}
-              </p>
+              </div>
             </div>
 
+            {/* Student's Work */}
             {assignment?.projects && assignment.projects.length > 0 ? (
-              <div className="flex flex-col gap-4 flex-1 mt-2">
-                <h2 className="font-semibold text-[16px]">Student's Work (Projects)</h2>
+              <div className="flex flex-col gap-4 mt-2">
+                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <h2 className="font-bold text-base text-slate-900">
+                    Student's Work by Project
+                  </h2>
+                  <span className="text-xs text-slate-400 font-medium">
+                    {assignment.projects.length} Tasks
+                  </span>
+                </div>
+
                 {assignment.projects.map((proj: any, idx: number) => {
-                  let answer = "<span class='text-gray-400 italic'>No answer provided.</span>";
+                  let answer =
+                    "<span class='text-slate-400 italic'>No answer provided.</span>";
                   try {
                     const parsed = JSON.parse(submission?.submittedText || "{}");
                     if (parsed[idx]) answer = parsed[idx];
                   } catch {
-                    if (idx === 0 && submission?.submittedText) answer = submission.submittedText;
+                    if (idx === 0 && submission?.submittedText)
+                      answer = submission.submittedText;
                   }
-                  
+
                   return (
-                    <div key={idx} className="flex flex-col gap-2 border border-blue-100 rounded-lg overflow-hidden shadow-sm">
-                      <div className="bg-blue-50/80 px-4 py-3 border-b border-blue-100 font-semibold text-[#002333]">
-                        {proj.projectName || proj.title}
+                    <div
+                      key={idx}
+                      className="flex flex-col border border-slate-200 rounded-2xl overflow-hidden shadow-2xs bg-white"
+                    >
+                      <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                        <span className="font-bold text-sm text-slate-800">
+                          Task {idx + 1}: {proj.projectName || proj.title}
+                        </span>
                       </div>
-                      <div className="p-4 bg-white text-[#002333] [&>p]:mb-0" dangerouslySetInnerHTML={{ __html: answer }} />
+                      <div
+                        className="p-5 text-slate-700 text-sm leading-relaxed prose max-w-none"
+                        dangerouslySetInnerHTML={{ __html: answer }}
+                      />
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="flex flex-col gap-2 flex-1 mt-2">
-                <h2 className="font-semibold text-[16px]">Student's Work</h2>
-                <div 
-                  className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex-1 min-h-[200px] whitespace-pre-wrap text-[#002333]"
-                  dangerouslySetInnerHTML={{ __html: submission?.submittedText || "<span class='text-gray-400 italic'>No text submitted.</span>" }}
+              <div className="flex flex-col gap-2 mt-2">
+                <h2 className="font-bold text-base text-slate-900">
+                  Student's Work
+                </h2>
+                <div
+                  className="bg-slate-50/60 p-5 rounded-2xl border border-slate-200 min-h-[220px] text-slate-700 text-sm leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      submission?.submittedText ||
+                      "<span class='text-slate-400 italic'>No text submitted.</span>",
+                  }}
                 />
               </div>
             )}
           </div>
 
           {/* Right Column: Grading Form */}
-          <div className="w-full md:w-[400px] bg-white p-6 rounded-xl border border-gray-200 h-fit sticky top-6">
-            <h2 className="text-xl font-bold text-[#0E0E0E] mb-6">Evaluation</h2>
-            <Form form={form} layout="vertical">
+          <div className="w-full lg:w-[380px] bg-white p-6 md:p-7 rounded-2xl border border-slate-200/80 shadow-2xs sticky top-6 flex flex-col gap-5">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-xl font-bold text-slate-900">
+                Grading & Feedback
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Assign a score and provide personalized guidance
+              </p>
+            </div>
+
+            <Form form={form} layout="vertical" className="flex flex-col gap-3">
               <Form.Item
                 name="result"
-                label="Result / Score"
-                rules={[{ required: true, message: "Please enter a result" }]}
+                label={
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Score / Result
+                  </span>
+                }
+                rules={[{ required: true, message: "Please enter a score" }]}
+                className="!mb-2"
               >
-                <Input placeholder='e.g. "85/100" or "Pass"' size="large" />
+                <Input
+                  placeholder='e.g. "92/100", "A+" or "Pass"'
+                  className="!h-11 rounded-xl text-sm"
+                />
               </Form.Item>
 
-              <Form.Item name="feedback" label="Instructor Feedback (Optional)">
+              <Form.Item
+                name="feedback"
+                label={
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Instructor Feedback (Optional)
+                  </span>
+                }
+                className="!mb-0"
+              >
                 <Input.TextArea
                   rows={6}
-                  placeholder="Write your feedback for the student..."
-                  className="resize-none"
+                  placeholder="Share constructive feedback on project deliverables, code quality, or conceptual strengths..."
+                  className="!rounded-xl text-sm resize-none"
                 />
               </Form.Item>
             </Form>
 
-            <div className="flex justify-end gap-3 mt-8">
+            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
               <CommonButton
                 text="Cancel"
                 onClick={() => router.push(testDetailsUrl)}
-                className="!bg-transparent border !text-[#002333] flex-1"
+                className="border border-slate-200 !bg-white !text-slate-700 flex-1 hover:bg-slate-50"
                 type="button"
+                disable={loading}
               />
               <CommonButton
                 text="Submit Grade"
                 loading={loading}
+                disable={loading}
                 onClick={handleGrade}
-                className="!bg-secondary text-white flex-1"
+                className="!bg-secondary text-white font-semibold flex-1 shadow-xs hover:opacity-95"
                 type="button"
               />
             </div>

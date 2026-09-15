@@ -19,14 +19,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { toast } from "@/utils/toast";
 
-const headings: { title: string; description?: string }[] = [
+import { CheckOutlined } from "@ant-design/icons";
+
+const assignmentSteps: { title: string; subtitle: string }[] = [
   {
-    title: "Add Assignment",
-    description: "Fill the basic details of assignment",
+    title: "Basic Details",
+    subtitle: "Name, due date & project instructions",
   },
   {
-    title: "Project Details",
-    description: "Fill the details of assignment project",
+    title: "Project Tasks & Objectives",
+    subtitle: "Define projects, requirements & deliverables",
   },
 ];
 
@@ -193,84 +195,111 @@ const AddAssignmentInner = () => {
   }
 
   return (
-    <div className="flex flex-col gap-[24px]">
+    <div className="max-w-5xl mx-auto w-full flex flex-col gap-6 pb-12">
       <Breadcrumb
-        separator={<span className="text-[#002333] font-[700]">{">"}</span>}
+        separator={<span className="text-slate-400 font-bold">{">"}</span>}
         items={items}
         itemRender={(item) => <BreadcrumbItemRender item={item} />}
       />
 
-      <div className="flex flex-col items-center justify-center gap-6">
-        {/* Progress bar */}
-        <div className="w-[80%] flex gap-[5px] justify-between mb-6">
-          {[0, 1].map((index) => (
+      {/* Stepper Card */}
+      <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-2xs">
+        <div className="flex items-center justify-around relative">
+          <div className="absolute top-5 left-20 right-20 h-[2px] bg-slate-100 -z-0 hidden sm:block">
             <div
-              key={index}
-              className="w-full h-[4px] bg-[#D8D8D8] rounded-full overflow-hidden"
-            >
-              <div
-                className={`h-full rounded-full transition-all duration-500 ease-in-out ${
-                  currentStep >= index ? "bg-secondary" : "bg-transparent"
-                }`}
-                style={{
-                  width:
-                    currentStep > index
-                      ? "100%"
-                      : currentStep === index
-                      ? "100%"
-                      : "0%",
-                }}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-[32px] text-[#002333] font-bold leading-[120%]">
-            {headings[currentStep]?.title}
-          </p>
-          <p className="text-[20px] text-[#6B6B6B] leading-[120%]">
-            {headings[currentStep]?.description}
-          </p>
-        </div>
-
-        <Form form={form}>
-          <div className="rounded-xl p-6 bg-white w-[950px]">
-            {currentStep === 0 && <Step1 />}
-            {currentStep === 1 && (
-              <Step2 projects={projects} setProjects={setProjects} />
-            )}
-          </div>
-          <div className="mt-3 flex justify-center gap-2">
-            <CommonButton
-              className={`border !bg-transparent !w-[20%] ${
-                currentStep === 0 && "hidden"
-              }`}
-              onClick={() => setCurrentStep((prev) => prev - 1)}
-              type={"button"}
-              text={"Back"}
-            />
-
-            <CommonButton
-              loading={loading}
-              className="!w-[20%]"
-              onClick={
-                currentStep === 1
-                  ? handleFinish
-                  : () => setCurrentStep((prev) => prev + 1)
-              }
-              type={"button"}
-              text={
-                currentStep === 1
-                  ? mode === "edit"
-                    ? "Update"
-                    : "Publish"
-                  : "Next"
-              }
+              className="h-full bg-secondary transition-all duration-500 ease-in-out"
+              style={{
+                width: `${currentStep * 100}%`,
+              }}
             />
           </div>
-        </Form>
+
+          {assignmentSteps.map((s, idx) => {
+            const isCompleted = currentStep > idx;
+            const isCurrent = currentStep === idx;
+            return (
+              <div key={idx} className="flex flex-col items-center gap-2 z-10">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                    isCompleted
+                      ? "bg-secondary text-white shadow-sm ring-4 ring-secondary/15"
+                      : isCurrent
+                      ? "bg-white text-secondary border-2 border-secondary ring-4 ring-secondary/20 shadow-sm"
+                      : "bg-slate-100 text-slate-400 border border-slate-200"
+                  }`}
+                >
+                  {isCompleted ? (
+                    <CheckOutlined className="text-xs stroke-[2]" />
+                  ) : (
+                    idx + 1
+                  )}
+                </div>
+                <div className="text-center">
+                  <p
+                    className={`text-xs font-bold leading-tight ${
+                      isCurrent
+                        ? "text-slate-900"
+                        : isCompleted
+                        ? "text-slate-700"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {s.title}
+                  </p>
+                  <p className="text-[11px] text-slate-400 hidden sm:block mt-0.5">
+                    {s.subtitle}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
+
+      <Form form={form} className="flex flex-col gap-6 w-full">
+        <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs w-full">
+          {currentStep === 0 && <Step1 />}
+          {currentStep === 1 && (
+            <Step2 projects={projects} setProjects={setProjects} />
+          )}
+        </div>
+
+        <div className="flex justify-between items-center w-full pt-4 border-t border-slate-200/80 bg-white/50 backdrop-blur-xs p-4 rounded-2xl">
+          <CommonButton
+            className={`border border-slate-200 !bg-white !text-slate-700 !px-6 hover:bg-slate-50 transition-all ${
+              currentStep === 0 ? "invisible" : ""
+            }`}
+            onClick={() => setCurrentStep((prev) => prev - 1)}
+            type="button"
+            text="Back"
+            disable={loading}
+          />
+
+          <CommonButton
+            loading={loading}
+            disable={loading}
+            className="!px-8 !bg-secondary text-white font-semibold shadow-xs hover:opacity-95"
+            onClick={
+              currentStep === 1
+                ? handleFinish
+                : async () => {
+                    try {
+                      await form.validateFields();
+                      setCurrentStep((prev) => prev + 1);
+                    } catch (_) {}
+                  }
+            }
+            type="button"
+            text={
+              currentStep === 1
+                ? mode === "edit"
+                  ? "Update Assignment"
+                  : "Publish Assignment"
+                : "Continue to Projects"
+            }
+          />
+        </div>
+      </Form>
     </div>
   );
 };

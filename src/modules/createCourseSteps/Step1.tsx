@@ -161,7 +161,16 @@ export const Step1: React.FC<Step1Prop> = ({ batch, setBatch }) => {
   };
 
   return (
-    <div className="rounded-xl p-6 bg-white">
+    <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-6">
+      <div className="border-b border-slate-100 pb-4">
+        <h2 className="text-xl font-bold text-slate-900 leading-tight">
+          Basic Course Information
+        </h2>
+        <p className="text-xs text-slate-500 mt-1">
+          Configure the course title, instructor, schedule, and pricing model
+        </p>
+      </div>
+
       <Row gutter={[16, 0]} className="w-full">
         {step1Fields.map((field) => {
           return (
@@ -170,55 +179,77 @@ export const Step1: React.FC<Step1Prop> = ({ batch, setBatch }) => {
             </React.Fragment>
           );
         })}
+
         <Col span={24}>
-          <div className="flex flex-col gap-2">
-            <h1 className="font-bold text-xl">Batch</h1>
-              <div className="flex flex-col gap-3">
-                {batch.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between gap-4 w-full"
-                  >
+          <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-slate-100">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900">
+                  Batches & Assigned Teachers
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Assign batches and optional instructors to manage student cohorts
+                </p>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+                {batch.length} {batch.length === 1 ? "Batch" : "Batches"}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              {batch.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs"
+                >
+                  <div className="flex items-center gap-2 w-full sm:flex-1">
+                    <span className="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-600 font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                      #{index + 1}
+                    </span>
                     <Input
-                      placeholder="Add Point"
+                      placeholder="e.g. Batch A - Morning Cohort"
                       value={item.batchName}
                       onChange={(e) =>
                         handleBatchNameChange(e.target.value, index)
                       }
                       onKeyDown={handleKeyDown}
-                      className="h-12 rounded-radius-10 text-sm"
+                      className="!h-11 rounded-lg text-sm bg-white"
                     />
-                    <div className="flex gap-1 items-center !min-w-[30%]">
-                      <Select
-                        placeholder="--Select Teacher--"
-                        loading={instructorLoading}
-                        value={item.teacher}
-                        onChange={(value) => handleTeacherChange(value, index)}
-                        onKeyDown={handleKeyDown}
-                        className="!w-full !h-[48px] text-start !rounded-lg"
-                        options={instructor}
-                      />
-                      {index > 0 && (
-                        <div
-                          className="cursor-pointer"
-                          onClick={() => handleRemoveBatch(index)}
-                        >
-                          <DeleteIcon />
-                        </div>
-                      )}
-                    </div>
                   </div>
-                ))}
-                <Button
-                  onClick={handleAddBatch}
-                  className="flex items-center justify-center text-base !border !border-secondary !text-secondary "
-                >
-                  Add Batch
-                </Button>
-              </div>
-            </div>
-          </Col>
 
+                  <div className="flex gap-2 items-center w-full sm:w-[320px]">
+                    <Select
+                      placeholder="-- Select Batch Teacher --"
+                      loading={instructorLoading}
+                      value={item.teacher}
+                      onChange={(value) => handleTeacherChange(value, index)}
+                      onKeyDown={handleKeyDown}
+                      className="w-full !h-[44px] text-start !rounded-lg"
+                      options={instructor}
+                    />
+                    {batch.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveBatch(index)}
+                        className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                        title="Remove Batch"
+                      >
+                        <DeleteIcon />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              <Button
+                onClick={handleAddBatch}
+                className="w-full !h-11 flex items-center justify-center text-sm font-semibold !border-dashed !border-secondary !text-secondary hover:!bg-secondary/5 rounded-xl mt-1"
+              >
+                + Add Another Batch
+              </Button>
+            </div>
+          </div>
+        </Col>
       </Row>
     </div>
   );

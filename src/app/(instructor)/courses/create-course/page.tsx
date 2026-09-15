@@ -21,6 +21,7 @@ import {
 import { RoutePaths } from "@/utils/enums";
 import { getImageUrl } from "@/utils/comman";
 import { DraftIcon } from "@/utils/icons";
+import { CheckOutlined } from "@ant-design/icons";
 import { Breadcrumb, Form } from "antd";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -37,21 +38,22 @@ const items = [
   },
 ];
 
-const headings: { title: string; description?: string }[] = [
+const courseSteps = [
   {
-    title: "Basic Course Info",
-    description: "Fill the basic details of your course",
+    title: "Basic Info",
+    subtitle: "Course info & batches",
   },
   {
-    title: "Course Details",
-    description: "Fill the details of your course",
+    title: "Media & Skills",
+    subtitle: "Thumbnail & objectives",
   },
   {
-    title: "Course Description",
-    description: "Give the course a description so people know about course ",
+    title: "Description",
+    subtitle: "About & teacher profile",
   },
   {
-    title: "Add the Lessons",
+    title: "Curriculum",
+    subtitle: "Lessons & resources",
   },
 ];
 
@@ -62,8 +64,10 @@ const CreateCourse = () => {
   const form_data = useSelector(
     (state: RootState) => state.createCourse.form_data
   );
-  const [currentStep, setCurrentStep] = useState<number>(current_step);
+  const [currentStep, setCurrentStep] = useState<number>(current_step || 0);
   const [isDraft, setIsDraft] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+
   const course_id = useSelector(
     (state: RootState) => state.createCourse.course_id
   );
@@ -82,11 +86,10 @@ const CreateCourse = () => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-
       if (!file) return;
 
       if (!file.type.startsWith("image/")) {
-        console.error("Only image files are allowed.");
+        toast.error("Only image files are allowed.");
         return;
       }
 
@@ -97,6 +100,7 @@ const CreateCourse = () => {
   };
 
   const handleStepSubmit = async () => {
+    setSubmitLoading(true);
     try {
       const values = await form.validateFields();
 
@@ -156,7 +160,7 @@ const CreateCourse = () => {
           dispatch(
             setCourseFormData({ course_image_url: response?.data?.course_image_url })
           );
-          toast.success(response.message || "Step two Completed");
+          toast.success(response.message || "Step Two Completed");
           setCurrentStep((prev) => prev + 1);
         } else {
           toast.warning(response.message || "Something went wrong");
@@ -173,7 +177,7 @@ const CreateCourse = () => {
             return;
           }
           dispatch(setCourseFormData(values));
-          toast.success(response.message || "Step three Completed");
+          toast.success(response.message || "Step Three Completed");
           setCurrentStep((prev) => prev + 1);
         } else {
           toast.warning(response.message || "Something went wrong");
@@ -200,6 +204,7 @@ const CreateCourse = () => {
     } catch (error) {
       console.error("Validation or API error:", error);
     } finally {
+      setSubmitLoading(false);
       setIsDraft(false);
     }
   };
@@ -212,7 +217,6 @@ const CreateCourse = () => {
   }, [dispatch, currentStep]);
 
   useEffect(() => {
-    console.log(form_data, "nkj");
     const initForm = async () => {
       const initialValues = {
         ...form_data,
@@ -240,64 +244,94 @@ const CreateCourse = () => {
   }, [form, form_data]);
 
   return (
-    <Form
-      form={form}
-      onFinish={handleStepSubmit}
-      onFinishFailed={({ errorFields }) => {
-        console.warn("Validation failed:", errorFields);
-        toast.warning("Please complete all required fields.");
-      }}
-      className="!flex !flex-col !gap-[24px]"
-    >
-      <div className="flex justify-between w-full">
+    <div className="max-w-5xl mx-auto w-full flex flex-col gap-6 pb-12">
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
         <Breadcrumb
-          separator={<span className="text-[#002333] font-[700]">{">"}</span>}
+          separator={<span className="text-slate-400 font-bold">{">"}</span>}
           items={items}
           itemRender={(item) => <BreadcrumbItemRender item={item} />}
         />
         <CommonButton
           icon={<DraftIcon />}
-          text={"Save as draft"}
-          onClick={() => setIsDraft(true)}
-          className="!text-secondary !bg-transparent flex-row-reverse"
+          text={submitLoading && isDraft ? "Saving..." : "Save as draft"}
+          loading={submitLoading && isDraft}
+          disable={submitLoading}
+          onClick={() => {
+            setIsDraft(true);
+            form.submit();
+          }}
+          className="!text-secondary !bg-secondary/10 hover:!bg-secondary/20 !border-0 flex-row-reverse rounded-xl"
         />
       </div>
 
-      <div className="flex flex-col  gap-6">
-        <div className="w-[80%] flex gap-[5px] justify-between mb-6 mx-auto">
-          {[0, 1, 2, 3].map((index) => (
+      {/* Modern Stepper */}
+      <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-2xs">
+        <div className="flex items-center justify-between relative">
+          {/* Connecting line */}
+          <div className="absolute top-5 left-10 right-10 h-[2px] bg-slate-100 -z-0 hidden sm:block">
             <div
-              key={index}
-              className="w-full h-[4px] bg-[#D8D8D8] rounded-full overflow-hidden"
-            >
-              <div
-                className={`h-full rounded-full transition-all duration-500 ease-in-out ${
-                  currentStep >= index ? "bg-secondary" : "bg-transparent"
-                }`}
-                style={{
-                  width:
-                    currentStep > index
-                      ? "100%"
-                      : currentStep === index
-                      ? "100%"
-                      : "0%",
-                }}
-              />
-            </div>
-          ))}
-        </div>
+              className="h-full bg-secondary transition-all duration-500 ease-in-out"
+              style={{
+                width: `${(currentStep / (courseSteps.length - 1)) * 100}%`,
+              }}
+            />
+          </div>
 
-        <div className="flex flex-col  items-center justify-center gap-2">
-          <p className="text-[32px] text-[#002333] font-bold leading-[120%]">
-            {headings[currentStep]?.title}
-          </p>
-          <p className="text-[20px] text-[#6B6B6B] leading-[120%]">
-            {headings[currentStep]?.description}
-          </p>
+          {courseSteps.map((s, idx) => {
+            const isCompleted = currentStep > idx;
+            const isCurrent = currentStep === idx;
+            return (
+              <div key={idx} className="flex flex-col items-center gap-2 z-10">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                    isCompleted
+                      ? "bg-secondary text-white shadow-sm ring-4 ring-secondary/15"
+                      : isCurrent
+                      ? "bg-white text-secondary border-2 border-secondary ring-4 ring-secondary/20 shadow-sm"
+                      : "bg-slate-100 text-slate-400 border border-slate-200"
+                  }`}
+                >
+                  {isCompleted ? (
+                    <CheckOutlined className="text-xs stroke-[2]" />
+                  ) : (
+                    idx + 1
+                  )}
+                </div>
+                <div className="text-center hidden sm:block">
+                  <p
+                    className={`text-xs font-bold leading-tight ${
+                      isCurrent
+                        ? "text-slate-900"
+                        : isCompleted
+                        ? "text-slate-700"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {s.title}
+                  </p>
+                  <p className="text-[11px] text-slate-400 hidden md:block mt-0.5">
+                    {s.subtitle}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
 
-        {currentStep == 0 && <Step1 batch={batch} setBatch={setBatch} />}
-        {currentStep == 1 && (
+      {/* Form Container */}
+      <Form
+        form={form}
+        onFinish={handleStepSubmit}
+        onFinishFailed={({ errorFields }) => {
+          console.warn("Validation failed:", errorFields);
+          toast.warning("Please complete all required fields.");
+        }}
+        className="flex flex-col gap-6"
+      >
+        {currentStep === 0 && <Step1 batch={batch} setBatch={setBatch} />}
+        {currentStep === 1 && (
           <Step2
             profilePhoto={
               profilePhoto ||
@@ -309,26 +343,34 @@ const CreateCourse = () => {
             handleFileChange={handleFileChange}
           />
         )}
-        {currentStep == 2 && <Step3 />}
-        {currentStep == 3 && <Step4 />}
-        <div className="mt-3 flex justify-center gap-2 w-full">
+        {currentStep === 2 && <Step3 />}
+        {currentStep === 3 && <Step4 />}
+
+        {/* Footer Navigation Buttons */}
+        <div className="flex justify-between items-center w-full pt-4 border-t border-slate-200/80 bg-white/50 backdrop-blur-xs p-4 rounded-2xl">
           <CommonButton
-            className={`border !bg-transparent !w-[20%] ${
-              currentStep == 0 && "hidden"
+            className={`border border-slate-200 !bg-white !text-slate-700 !px-6 hover:bg-slate-50 transition-all ${
+              currentStep === 0 ? "invisible" : ""
             }`}
             onClick={() => setCurrentStep((prev) => prev - 1)}
-            type={"button"}
-            text={"Back"}
+            type="button"
+            text="Back"
+            disable={submitLoading}
           />
 
-          <CommonButton
-            className="!w-[20%]"
-            onClick={() => setIsDraft(false)}
-            text={currentStep == 3 ? "Publish" : "Next"}
-          />
+          <div className="flex items-center gap-3">
+            <CommonButton
+              loading={submitLoading && !isDraft}
+              disable={submitLoading}
+              className="!px-8 !bg-secondary text-white font-semibold shadow-xs hover:opacity-95"
+              type="submit"
+              onClick={() => setIsDraft(false)}
+              text={currentStep === 3 ? "Publish Course" : "Continue to Next Step"}
+            />
+          </div>
         </div>
-      </div>
-    </Form>
+      </Form>
+    </div>
   );
 };
 

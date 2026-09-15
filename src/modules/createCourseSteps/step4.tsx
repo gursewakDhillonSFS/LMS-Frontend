@@ -1,5 +1,6 @@
 import ConfirmationModal from "@/components/modal/ConfirmationModal";
 import LessonSublessonModal from "@/components/modal/LessonSublessonModal";
+import MediaPreviewModal, { PreviewFile } from "@/components/modal/MediaPreviewModal";
 import { RootState } from "@/redux/store";
 import {
   createLesson,
@@ -10,9 +11,16 @@ import {
   updateLesson,
   updateSublesson,
 } from "@/services/collections";
-import { DeleteIcon, EditIcon, FileIcon, SixDotIcon } from "@/utils/icons";
-import { DeleteFilled } from "@ant-design/icons";
-import { Button, Collapse, Form, Input, UploadFile, UploadProps } from "antd";
+import { DeleteIcon, EditIcon, SixDotIcon } from "@/utils/icons";
+import {
+  DeleteFilled,
+  EyeOutlined,
+  FilePdfOutlined,
+  VideoCameraOutlined,
+  FileOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { Button, Collapse, Form, UploadFile, UploadProps } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import QuillEditor from "@/components/QuillEditor";
 import { useSelector } from "react-redux";
@@ -62,6 +70,23 @@ export const Step4 = () => {
     id: string;
   } | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Document & Media Preview state
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
+
+  const handlePreviewFile = (mat: {
+    file_url: string;
+    file_name: string;
+    file_type: string;
+  }) => {
+    setPreviewFile({
+      name: mat.file_name,
+      url: mat.file_url,
+      type: mat.file_type,
+    });
+    setPreviewModalOpen(true);
+  };
 
   const handleChange = (key: string | string[]) => {
     setActiveKey(key);
@@ -121,7 +146,11 @@ export const Step4 = () => {
     },
   };
 
-  const transformToUploadFileList = (materials: { file_url: string; file_name: string; file_type: string }[] | undefined): UploadFile[] => {
+  const transformToUploadFileList = (
+    materials:
+      | { file_url: string; file_name: string; file_type: string }[]
+      | undefined
+  ): UploadFile[] => {
     if (!materials) return [];
     return materials.map((mat) => ({
       uid: mat.file_url,
@@ -139,9 +168,12 @@ export const Step4 = () => {
         const existing_files = fileList
           .filter((f) => !f.originFileObj)
           .map((f) => ({
-            file_url: f.url?.replace(process.env.NEXT_PUBLIC_BACKEND_API_URL || '', ''),
+            file_url: f.url?.replace(
+              process.env.NEXT_PUBLIC_BACKEND_API_URL || "",
+              ""
+            ),
             file_name: f.name,
-            file_type: f.type?.includes('video') ? 'video' : 'pdf',
+            file_type: f.type?.includes("video") ? "video" : "pdf",
           }));
 
         const lessonDataPayload = {
@@ -204,9 +236,12 @@ export const Step4 = () => {
         const existing_files = fileList
           .filter((f) => !f.originFileObj)
           .map((f) => ({
-            file_url: f.url?.replace(process.env.NEXT_PUBLIC_BACKEND_API_URL || '', ''),
+            file_url: f.url?.replace(
+              process.env.NEXT_PUBLIC_BACKEND_API_URL || "",
+              ""
+            ),
             file_name: f.name,
-            file_type: f.type?.includes('video') ? 'video' : 'pdf',
+            file_type: f.type?.includes("video") ? "video" : "pdf",
           }));
 
         const subLessonPayload = {
@@ -298,7 +333,16 @@ export const Step4 = () => {
   }, [getLessonList]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
+      <MediaPreviewModal
+        open={previewModalOpen}
+        file={previewFile}
+        onClose={() => {
+          setPreviewModalOpen(false);
+          setPreviewFile(null);
+        }}
+      />
+
       {deleteModalVisible && (
         <ConfirmationModal
           open={deleteModalVisible}
@@ -311,74 +355,131 @@ export const Step4 = () => {
           icon={<DeleteFilled className="text-4xl !text-white" />}
         />
       )}
-      <div className="rounded-xl p-6 bg-white flex flex-col gap-4">
-        <div className="font-semibold text-xl">Overview</div>
+
+      {/* Course Overview Card */}
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-5">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-bold text-slate-900 leading-tight">
+            Curriculum Overview
+          </h2>
+          <p className="text-xs text-slate-500 mt-1">
+            Provide a syllabus outline and instructions for completing the lessons
+          </p>
+        </div>
         <Form.Item
           rules={[
             { required: true, message: "Overview is required" },
             {
               validator: (_, value) => {
-                if (value && value.replace(/<[^>]+>/g, '').trim().length > 2000) {
-                  return Promise.reject("Overview cannot exceed 2000 characters.");
+                if (
+                  value &&
+                  value.replace(/<[^>]+>/g, "").trim().length > 2000
+                ) {
+                  return Promise.reject(
+                    "Overview cannot exceed 2000 characters."
+                  );
                 }
                 return Promise.resolve();
-              }
-            }
+              },
+            },
           ]}
           name="overview"
           className="!mb-0"
         >
-          <QuillEditor placeholder="Enter text here..." />
+          <QuillEditor
+            minHeight="140px"
+            placeholder="Introduce the syllabus, pace, and graduation expectations..."
+          />
         </Form.Item>
       </div>
-      <div className="rounded-xl p-6 bg-white flex flex-col gap-4">
+
+      {/* Lessons & Sub-topics Card */}
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-6">
+        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 leading-tight">
+              Course Lessons & Structure
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Add lessons, sub-topics, descriptions, and uploaded study materials
+            </p>
+          </div>
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
+            {lessonData?.length || 0} Lessons Added
+          </span>
+        </div>
+
         <div className="flex flex-col gap-4">
-          <label className="font-semibold text-xl">
-            What you&apos;ll learn
-          </label>
-          <div className="flex flex-col gap-3">
-            {lessonData?.map((item, index) => {
-              const isActive = Array.isArray(activeKey)
-                ? activeKey.includes(index.toString())
-                : activeKey === index.toString();
-              return (
-                <div key={index} className="flex items-center gap-1">
+          {lessonData?.map((item, index) => {
+            const isActive = Array.isArray(activeKey)
+              ? activeKey.includes(index.toString())
+              : activeKey === index.toString();
+
+            return (
+              <div
+                key={index}
+                className="flex items-start gap-2 group w-full"
+              >
+                <div className="text-slate-400 pt-3 cursor-grab">
                   <SixDotIcon />
+                </div>
+                <div className="flex-1 min-w-0">
                   <Collapse
-                    key={index}
                     accordion={true}
                     onChange={handleChange}
                     expandIconPosition="end"
                     activeKey={activeKey}
-                    className={
-                      isActive ? "!bg-[#F5FCFF] w-full" : "!bg-white w-full"
-                    }
+                    className={`!rounded-2xl border transition-all duration-200 overflow-hidden ${
+                      isActive
+                        ? "!bg-white border-secondary shadow-sm"
+                        : "!bg-slate-50/60 border-slate-200 hover:border-slate-300"
+                    }`}
                     items={[
                       {
                         key: index.toString(),
                         label: (
-                          <div className="flex items-center gap-2">
-                            <p className={`text-[16px] font-[700]"`}>
-                              {index + 1}.
-                            </p>
-                            <p className="text-[16px] font-[700]">
-                              {item.lesson_name}
-                            </p>
+                          <div className="flex items-center justify-between gap-3 pr-2">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="w-7 h-7 rounded-lg bg-secondary text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                {index + 1}
+                              </span>
+                              <p className="text-sm font-bold text-slate-900 truncate">
+                                {item.lesson_name}
+                              </p>
+                              {item.unlock_after_previous && (
+                                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 hidden sm:inline-block">
+                                  Sequential Unlock
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-slate-400">
+                                {item.sublessons?.length || 0} Sub-topics
+                              </span>
+                            </div>
                           </div>
                         ),
                         children: (
-                          <div className="flex flex-col gap-4">
-                            <div className="flex items-center justify-between gap-1">
-                              <div className="w-[95%] text-[16px] text-[#002333] break-words overflow-hidden">
-                                <QuillEditor readOnly value={item?.lesson_description || ''} />
+                          <div className="flex flex-col gap-4 pt-1">
+                            {/* Lesson description */}
+                            <div className="flex items-start justify-between gap-3 bg-slate-50/70 p-3.5 rounded-xl border border-slate-100">
+                              <div className="flex-1 text-sm text-slate-700 leading-relaxed">
+                                <QuillEditor
+                                  readOnly
+                                  value={item?.lesson_description || ""}
+                                />
                               </div>
-                              <div
-                                className="cursor-pointer"
+                              <button
+                                type="button"
+                                title="Edit Lesson"
+                                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
                                 onClick={() => {
                                   setAddLessonModalStatus(true);
                                   setLessonName(item.lesson_name);
                                   setDescription(item.lesson_description);
-                                  setFileList(transformToUploadFileList(item.studyMaterials));
+                                  setFileList(
+                                    transformToUploadFileList(item.studyMaterials)
+                                  );
                                   setUnlockAfterPrevious(
                                     item.unlock_after_previous
                                   );
@@ -387,40 +488,77 @@ export const Step4 = () => {
                                 }}
                               >
                                 <EditIcon />
-                              </div>
+                              </button>
                             </div>
-                            <div className="flex flex-col gap-2">
-                              {item.studyMaterials?.map((mat, i) => (
-                                <div key={i}>
-                                  <div className="flex gap-2 items-center border-b border-[#C8C8C8] pb-1">
-                                    <div className="bg-primary rounded-full h-11 w-11 flex items-center justify-center text-white">
-                                      <FileIcon />
-                                    </div>
-                                    <div className="flex flex-col">
-                                      <span className="text-[18px] font-semibold">
-                                        {mat.file_name}
-                                      </span>
-                                      <span className="text-sm text-[#7B7B7B]">
-                                        {mat.file_type}
-                                      </span>
-                                    </div>
+
+                            {/* Lesson Study Materials with PREVIEW button */}
+                            {item.studyMaterials &&
+                              item.studyMaterials.length > 0 && (
+                                <div className="flex flex-col gap-2">
+                                  <span className="text-xs font-bold text-slate-700">
+                                    Attached Study Materials ({item.studyMaterials.length})
+                                  </span>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {item.studyMaterials.map((mat, i) => (
+                                      <div
+                                        key={i}
+                                        className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs gap-2"
+                                      >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                          <div className="w-8 h-8 rounded-lg bg-blue-50 text-secondary border border-blue-100/60 flex items-center justify-center shrink-0">
+                                            {mat.file_type === "video" ? (
+                                              <VideoCameraOutlined />
+                                            ) : (
+                                              <FilePdfOutlined className="text-rose-500" />
+                                            )}
+                                          </div>
+                                          <div className="min-w-0">
+                                            <p className="text-xs font-bold text-slate-800 truncate">
+                                              {mat.file_name}
+                                            </p>
+                                            <p className="text-[10px] text-slate-400 uppercase font-semibold">
+                                              {mat.file_type}
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() => handlePreviewFile(mat)}
+                                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-secondary/10 hover:border-secondary hover:text-secondary text-xs font-semibold text-slate-700 transition cursor-pointer shrink-0"
+                                        >
+                                          <EyeOutlined className="text-xs" />
+                                          <span>Preview</span>
+                                        </button>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
-                              ))}
-                            </div>
-                            <div className="flex flex-col gap-2">
+                              )}
+
+                            {/* Sublessons List */}
+                            <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
+                              <span className="text-xs font-bold text-slate-700">
+                                Sub-Topics ({item.sublessons?.length || 0})
+                              </span>
+
                               {item?.sublessons?.map((subItem, subIndex) => (
                                 <div
                                   key={subIndex}
-                                  className="w-full bg-[#F7F7F7] rounded-xl p-3 flex flex-col gap-1"
+                                  className="w-full bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-2xs flex flex-col gap-2.5"
                                 >
-                                  <div className="flex items-center justify-between gap-1">
-                                    <div className="font-bold text-[18px]">
-                                      {subItem.sublesson_name}
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                      <span className="w-5 h-5 rounded-md bg-slate-100 text-slate-600 font-bold text-[10px] flex items-center justify-center shrink-0">
+                                        {index + 1}.{subIndex + 1}
+                                      </span>
+                                      <h4 className="font-bold text-xs text-slate-900 truncate">
+                                        {subItem.sublesson_name}
+                                      </h4>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="flex items-center gap-1">
                                       <button
                                         type="button"
+                                        title="Edit Sub-topic"
                                         onClick={() => {
                                           setAddSubLessonModalStatus(true);
                                           setLessonName(
@@ -429,19 +567,24 @@ export const Step4 = () => {
                                           setDescription(
                                             subItem.sublesson_description
                                           );
-                                          setFileList(transformToUploadFileList(subItem.studyMaterials));
+                                          setFileList(
+                                            transformToUploadFileList(
+                                              subItem.studyMaterials
+                                            )
+                                          );
                                           setIsEditing(true);
                                           setEditLessonId(item?.lesson_id);
                                           setEditSublessonId(
                                             subItem?.sublesson_id
                                           );
                                         }}
-                                        className="cursor-pointer"
+                                        className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-50 transition cursor-pointer"
                                       >
                                         <EditIcon />
                                       </button>
                                       <button
                                         type="button"
+                                        title="Delete Sub-topic"
                                         onClick={() => {
                                           setDeleteTarget({
                                             type: "sublesson",
@@ -449,67 +592,116 @@ export const Step4 = () => {
                                           });
                                           setDeleteModalVisible(true);
                                         }}
+                                        className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
                                       >
                                         <DeleteIcon />
                                       </button>
                                     </div>
                                   </div>
-                                  <div className="w-[95%] text-[16px] text-[#002333] break-words overflow-hidden">
-                                    <QuillEditor readOnly value={subItem?.sublesson_description || ''} />
+
+                                  <div className="text-xs text-slate-600 leading-relaxed bg-slate-50/60 p-2.5 rounded-lg">
+                                    <QuillEditor
+                                      readOnly
+                                      value={
+                                        subItem?.sublesson_description || ""
+                                      }
+                                    />
                                   </div>
-                                  <div className="flex flex-col gap-1">
-                                    {subItem.studyMaterials?.map((mat, i) => (
-                                      <div key={i} className="flex gap-1 items-center">
-                                        <div className="bg-primary rounded-full h-11 w-11 flex items-center justify-center text-white">
-                                          <FileIcon />
-                                        </div>
-                                        <div className="flex flex-col">
-                                          <span className="text-[18px] font-semibold">
-                                            {mat.file_name}
-                                          </span>
-                                          <span className="text-sm text-[#7B7B7B]">
-                                            {mat.file_type}
-                                          </span>
-                                        </div>
+
+                                  {/* Sublesson Study Materials with PREVIEW button */}
+                                  {subItem.studyMaterials &&
+                                    subItem.studyMaterials.length > 0 && (
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+                                        {subItem.studyMaterials.map(
+                                          (mat, i) => (
+                                            <div
+                                              key={i}
+                                              className="flex items-center justify-between p-2 rounded-lg border border-slate-200 bg-slate-50/50 gap-2"
+                                            >
+                                              <div className="flex items-center gap-2 min-w-0">
+                                                <div className="w-7 h-7 rounded-md bg-white border border-slate-200 text-secondary flex items-center justify-center shrink-0">
+                                                  {mat.file_type ===
+                                                  "video" ? (
+                                                    <VideoCameraOutlined className="text-xs" />
+                                                  ) : (
+                                                    <FilePdfOutlined className="text-xs text-rose-500" />
+                                                  )}
+                                                </div>
+                                                <p className="text-xs font-medium text-slate-800 truncate">
+                                                  {mat.file_name}
+                                                </p>
+                                              </div>
+                                              <button
+                                                type="button"
+                                                onClick={() =>
+                                                  handlePreviewFile(mat)
+                                                }
+                                                className="flex items-center gap-1 px-2 py-0.5 rounded-md border border-slate-200 bg-white hover:border-secondary hover:text-secondary text-[11px] font-semibold text-slate-700 transition cursor-pointer shrink-0"
+                                              >
+                                                <EyeOutlined className="text-[10px]" />
+                                                <span>Preview</span>
+                                              </button>
+                                            </div>
+                                          )
+                                        )}
                                       </div>
-                                    ))}
-                                  </div>
+                                    )}
                                 </div>
                               ))}
-                              <div
-                                className="text-secondary cursor-pointer"
+
+                              <button
+                                type="button"
+                                className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-dashed border-secondary/40 text-secondary hover:bg-secondary/5 font-semibold text-xs transition cursor-pointer mt-1"
                                 onClick={() => {
                                   setAddSubLessonModalStatus(true);
                                   setAddSubLessonLessonId(item?.lesson_id);
                                 }}
                               >
-                                + Add Sub Topic
-                              </div>
+                                <PlusOutlined className="text-xs" />
+                                <span>Add Sub-Topic</span>
+                              </button>
                             </div>
                           </div>
                         ),
                       },
                     ]}
                   />
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setDeleteTarget({ type: "lesson", id: item.lesson_id });
-                      setDeleteModalVisible(true);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </div>
                 </div>
-              );
-            })}
-            <Button
-              onClick={() => setAddLessonModalStatus(true)}
-              className="flex items-center justify-center text-base !border !border-secondary !text-secondary"
-            >
-              + Add a Lesson
-            </Button>
-          </div>
+                <button
+                  type="button"
+                  title="Delete Lesson"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer mt-2"
+                  onClick={() => {
+                    setDeleteTarget({ type: "lesson", id: item.lesson_id });
+                    setDeleteModalVisible(true);
+                  }}
+                >
+                  <DeleteIcon />
+                </button>
+              </div>
+            );
+          })}
+
+          {(!lessonData || lessonData.length === 0) && (
+            <div className="py-12 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center p-6 bg-slate-50/40">
+              <div className="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary border border-secondary/20 flex items-center justify-center text-xl mb-3">
+                <FileOutlined />
+              </div>
+              <h4 className="font-bold text-slate-800 text-base">
+                No Lessons Added Yet
+              </h4>
+              <p className="text-xs text-slate-400 max-w-sm mt-1">
+                Start structuring your curriculum by adding your first core lesson and attaching learning resources.
+              </p>
+            </div>
+          )}
+
+          <Button
+            onClick={() => setAddLessonModalStatus(true)}
+            className="w-full !h-12 flex items-center justify-center text-sm font-bold !border-secondary !bg-secondary/5 hover:!bg-secondary/10 !text-secondary rounded-xl shadow-2xs"
+          >
+            + Add a Lesson
+          </Button>
         </div>
       </div>
 
@@ -530,7 +722,12 @@ export const Step4 = () => {
         removeFile={removeFile}
         handleSave={handleSave}
         handleSubLessonSave={handleSubLessonSave}
+        onPreviewFile={(f) => {
+          setPreviewFile(f);
+          setPreviewModalOpen(true);
+        }}
       />
     </div>
   );
 };
+

@@ -84,22 +84,24 @@ const InstructorCourseDetails: React.FC<InstructorCourseInfoProp> = ({
         fetchCourseInfo={fetchCourseInfo}
         onCancel={() => setEditModalVisible(false)}
       />
-      <div className="flex gap-4  rounded-[20px]">
-        <div className="relative w-[500px]">
+
+      {/* Hero Banner & Course Info Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-5 h-[260px] lg:h-auto min-h-[260px] relative rounded-2xl overflow-hidden border border-slate-200/80 shadow-2xs bg-slate-100">
           <Image
             src={displayImage}
             alt="Course Thumbnail"
             fill
             unoptimized
             onError={() => setImgError(true)}
-            className="rounded-xl"
+            className="object-cover"
           />
         </div>
 
-        <div className="p-5 bg-white rounded-xl flex flex-col gap-4 w-full">
-          <div className="flex justify-between">
-            <h1 className="font-semibold text-2xl text-[#0C0925]">
-              Course Info
+        <div className="lg:col-span-7 p-6 bg-white rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col gap-5">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h1 className="font-bold text-xl text-slate-900">
+              Course Information
             </h1>
             {!isTeacher && (
               <button
@@ -107,90 +109,97 @@ const InstructorCourseDetails: React.FC<InstructorCourseInfoProp> = ({
                   setEditModalVisible(true);
                   setType("info");
                 }}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-50 transition cursor-pointer"
+                title="Edit Course Info"
               >
                 <EditIcon />
               </button>
             )}
           </div>
+
           <Row gutter={[16, 16]}>
             {courseInfoArray.map((item, index) => (
               <Col key={index} span={item.span}>
-                <div className="flex flex-col gap-1.5">
-                  <p className="text-gray-500 text-sm">{item.label}</p>
-                  <p className="text-base font-medium">{item.value}</p>
+                <div className="flex flex-col gap-1 p-2 rounded-xl bg-slate-50/60 border border-slate-100">
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    {item.label}
+                  </p>
+                  <p className="text-sm font-bold text-slate-800 truncate">
+                    {item.value || "-"}
+                  </p>
                 </div>
               </Col>
             ))}
-            <Col span={16}>
-              <div className="flex flex-col gap-1.5">
-                <p className="text-gray-500 text-sm">Categories</p>
-                <div className="flex gap-1">
-                  {/* {coursesInfo.categories.map((item, index) => (
-                    <p
-                      className="border rounded-[80px] px-3 py-1.5"
-                      key={index}
-                    >
-                      {item}
-                    </p>
-                  ))} */}
-                  <p className="border rounded-[80px] px-3 py-1.5">
-                    {coursesInfo?.category_name}
-                  </p>
-                </div>
+            <Col span={24}>
+              <div className="flex items-center gap-2 pt-1">
+                <span className="text-slate-500 text-xs font-semibold">Category:</span>
+                <span className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 text-xs font-bold rounded-full">
+                  {coursesInfo?.category_name || "General"}
+                </span>
               </div>
             </Col>
           </Row>
         </div>
       </div>
 
-      <div className="flex gap-3">
-        <div className="flex flex-col gap-6 p-4 rounded-xl bg-white w-2/3">
-          <div className="flex justify-between">
-            <h1 className="font-semibold text-2xl text-[#0C0925]">
+      {/* What You'll Learn & Skills Gain Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 flex flex-col gap-5 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h2 className="font-bold text-lg text-slate-900">
               What you&apos;ll learn
-            </h1>
+            </h2>
             {!isTeacher && (
               <button
                 onClick={() => {
                   setEditModalVisible(true);
                   setType("points");
                 }}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-50 transition cursor-pointer"
+                title="Edit Learning Points"
               >
                 <EditIcon />
               </button>
             )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[24px]">
-            {coursesInfo?.course_learning_points.map((item, index) => (
-              <div key={index} className="flex items-start gap-[6px]">
-                <CheckIcon />
-                <span className="text-[#5C5C5C] text-[16px] ">{item}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {coursesInfo?.course_learning_points?.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50/60 border border-slate-100 shadow-2xs"
+              >
+                <div className="text-secondary shrink-0 mt-0.5">
+                  <CheckIcon />
+                </div>
+                <span className="text-slate-700 text-sm leading-snug">{item}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col gap-6 p-4 rounded-xl bg-white w-1/3">
-          <div className="flex justify-between">
-            <h1 className="font-semibold text-2xl text-[#0C0925]">
+        <div className="lg:col-span-1 flex flex-col gap-5 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h2 className="font-bold text-lg text-slate-900">
               Skills you&apos;ll gain
-            </h1>
+            </h2>
             {!isTeacher && (
               <button
                 onClick={() => {
                   setEditModalVisible(true);
                   setType("skills");
                 }}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-50 transition cursor-pointer"
+                title="Edit Skills"
               >
                 <EditIcon />
               </button>
             )}
           </div>
           <div className="flex flex-wrap gap-2">
-            {coursesInfo?.skills_you_gain.map((skill, index) => (
+            {coursesInfo?.skills_you_gain?.map((skill, index) => (
               <span
                 key={index}
-                className="px-3 py-1 border border-[#002333] text-[12px] text-[#002333] rounded-[6px]"
+                className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 text-xs font-bold rounded-lg shadow-2xs"
               >
                 {skill}
               </span>
@@ -199,34 +208,40 @@ const InstructorCourseDetails: React.FC<InstructorCourseInfoProp> = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between">
-          <h1 className="font-semibold text-2xl text-[#0C0925]">About Class</h1>
+      {/* About Class */}
+      <div className="flex flex-col gap-4 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <h2 className="font-bold text-lg text-slate-900">About Class</h2>
           {!isTeacher && (
             <button
               onClick={() => {
                 setEditModalVisible(true);
                 setType("about");
               }}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-50 transition cursor-pointer"
+              title="Edit About"
             >
               <EditIcon />
             </button>
           )}
         </div>
-        <QuillEditor readOnly value={coursesInfo?.about_course || ''} />
+        <div className="text-slate-700 text-sm leading-relaxed">
+          <QuillEditor readOnly value={coursesInfo?.about_course || ""} />
+        </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between">
-          <h1 className="font-semibold text-2xl text-[#0C0925]">
-            Meet Your Teacher
-          </h1>
+      {/* Meet Your Teacher */}
+      <div className="flex flex-col gap-5 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <h2 className="font-bold text-lg text-slate-900">Meet Your Teacher</h2>
           {!isTeacher && (
             <button
               onClick={() => {
                 setEditModalVisible(true);
                 setType("teacher");
               }}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-50 transition cursor-pointer"
+              title="Edit Teacher Info"
             >
               <EditIcon />
             </button>
@@ -235,9 +250,11 @@ const InstructorCourseDetails: React.FC<InstructorCourseInfoProp> = ({
         <AvtarInfo
           imageUrl={coursesInfo?.course_instructor_image_url}
           name={coursesInfo?.course_instructor}
-          organization={"Orangination Name"}
+          organization={"SkillBuild"}
         />
-        <QuillEditor readOnly value={coursesInfo?.description || ''} />
+        <div className="text-slate-700 text-sm leading-relaxed pt-2 border-t border-slate-100">
+          <QuillEditor readOnly value={coursesInfo?.description || ""} />
+        </div>
       </div>
     </div>
   );

@@ -95,40 +95,41 @@ const CourseDetails = () => {
   }, [activeTab]);
 
   return (
-    <div className="flex flex-col gap-[24px]">
+    <div className="flex flex-col gap-6 pb-12">
       <Breadcrumb
-        separator={<span className="text-[#002333] font-[700]">{">"}</span>}
+        separator={<span className="text-slate-400 font-bold">{">"}</span>}
         items={items}
         itemRender={(item) => <BreadcrumbItemRender item={item} />}
       />
-      <div className="w-full flex gap-[12px]">
-        <div className="flex flex-col gap-[24px] w-full">
-          <div className="flex justify-between">
+      <div className="w-full flex gap-4">
+        <div className="flex flex-col gap-6 w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
             <TabSwitcher
               activeKey={activeTab}
               onChange={setActiveTab}
               tabs={InstructorCoursesDetailsTabs}
             />
-            <div className="flex gap-2.5 items-center">
+            <div className="flex gap-2.5 items-center pr-1">
+              <BadgeComponent
+                className="capitalize"
+                status={coursesInfo?.course_status + ""}
+              />
               <CommonButton
                 onClick={courseStatusUpdate}
+                loading={loading}
                 disable={loading}
                 text={
                   coursesInfo?.course_status === StatusEnum?.DRAFT ||
                   coursesInfo?.course_status === StatusEnum?.UNPUBLISH
-                    ? "Publish"
-                    : "Unpublish"
+                    ? "Publish Course"
+                    : "Unpublish Course"
                 }
-                className={`text-white ${
+                className={`text-white font-semibold !h-9 !px-4 ${
                   coursesInfo?.course_status === StatusEnum?.DRAFT ||
                   coursesInfo?.course_status === StatusEnum?.UNPUBLISH
-                    ? "!bg-primary"
-                    : "!bg-[#D82D2D]"
+                    ? "!bg-secondary hover:opacity-95"
+                    : "!bg-rose-600 hover:bg-rose-700"
                 }`}
-              />
-              <BadgeComponent
-                className="capitalize"
-                status={coursesInfo?.course_status + ""}
               />
             </div>
           </div>

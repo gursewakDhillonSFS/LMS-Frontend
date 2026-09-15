@@ -5,11 +5,19 @@ import QuillEditor from "@/components/QuillEditor";
 export const Step3 = () => {
   const { data: instructor, loading: instructorLoading } = useInstructor();
 
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="rounded-xl p-6 bg-white flex flex-col gap-4">
-        <div className="font-semibold text-xl">About this class</div>
+    <div className="flex flex-col gap-6">
+      {/* About Course Card */}
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-5">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-bold text-slate-900 leading-tight">
+            About This Class
+          </h2>
+          <p className="text-xs text-slate-500 mt-1">
+            Explain what this course covers, target learners, prerequisites, and teaching methodology
+          </p>
+        </div>
+
         <Form.Item
           rules={[
             { required: true, message: "About is required" },
@@ -25,28 +33,50 @@ export const Step3 = () => {
           name="about_course"
           className="!mb-0"
         >
-          <QuillEditor placeholder="Enter text here..." />
+          <QuillEditor
+            minHeight="180px"
+            placeholder="Write a comprehensive overview of what makes this course unique..."
+          />
         </Form.Item>
       </div>
-      <div className="rounded-xl p-6 bg-white flex flex-col gap-4">
-        <div className="font-semibold text-xl">Meet your teacher</div>
+
+      {/* Meet Your Teacher Card */}
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-6">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-bold text-slate-900 leading-tight">
+            Instructor Bio & Introduction
+          </h2>
+          <p className="text-xs text-slate-500 mt-1">
+            Highlight the instructor's background, expertise, and guidance for enrolled students
+          </p>
+        </div>
+
         <div className="flex flex-col gap-2">
-          <p>Teacher</p>
+          <label className="text-sm font-bold text-slate-800">
+            Assigned Course Teacher
+          </label>
           <Form.Item
             rules={[{ required: true, message: "Teacher is required" }]}
             className="!mb-0"
             name="instructor_id"
           >
             <Select
-              placeholder="--Select Option--"
-              className="w-full !h-[48px] text-start !rounded-lg"
+              placeholder="-- Select an instructor --"
+              className="w-full !min-h-[44px] text-start !rounded-xl"
               loading={instructorLoading}
               options={instructor}
             />
           </Form.Item>
         </div>
+
         <div className="flex flex-col gap-2">
-          <p>Description</p>
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-bold text-slate-800">
+              Instructor Biography & Message
+            </label>
+            <span className="text-xs text-slate-400">Max 300 words</span>
+          </div>
+
           <Form.Item
             rules={[
               { required: true, message: "Description is required" },
@@ -66,7 +96,10 @@ export const Step3 = () => {
             className="!mb-0"
             name="description"
           >
-            <QuillEditor placeholder="Enter text here..." />
+            <QuillEditor
+              minHeight="140px"
+              placeholder="Provide a welcoming note from the instructor and a short bio..."
+            />
           </Form.Item>
         </div>
       </div>

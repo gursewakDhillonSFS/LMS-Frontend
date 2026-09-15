@@ -216,29 +216,66 @@ const TestDetailsInner = () => {
 
       {/* ── Assignment Details Tab ─────────────────────────────────────── */}
       {BatchTestTabs.ASSIGNMENT_DETAILS === activeTab && (
-        <div className="w-full flex flex-col gap-[12px]">
+        <div className="w-full flex flex-col gap-6">
           {detailLoading ? (
-            <Skeleton active paragraph={{ rows: 5 }} />
+            <div className="p-8 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+              <Skeleton active paragraph={{ rows: 6 }} />
+            </div>
           ) : detail ? (
             <>
-              <div className="flex flex-col gap-[12px]">
-                <h1 className="font-[700] text-[20px] text-[#0E0E0E]">
-                  Overview
-                </h1>
-                <p className="text-secondary font-semibold text-[16px]">
-                  Due on: {detail.dueDate}
-                </p>
-                <div className="font-[400] text-[16px] text-[#002333]">
-                  <QuillEditor readOnly value={detail.overview || ""} />
+              {/* Assignment Meta Card */}
+              <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-4">
+                  <div>
+                    <span className="text-xs font-bold text-secondary uppercase tracking-wider">
+                      Assignment Overview
+                    </span>
+                    <h1 className="text-2xl font-bold text-slate-900 mt-0.5">
+                      {detail.assignmentName}
+                    </h1>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
+                      {detail.projects?.length || 0} Projects
+                    </span>
+                  </div>
                 </div>
+
+                {/* Info Chips */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+                    <span className="text-slate-400">Due Date:</span>
+                    <span>{detail.dueDate}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-800">
+                    <span>Submissions:</span>
+                    <span>{detail.submittedCount} students</span>
+                  </div>
+                </div>
+
+                {detail.overview && (
+                  <div className="pt-2 text-slate-700 text-sm leading-relaxed">
+                    <QuillEditor readOnly value={detail.overview || ""} />
+                  </div>
+                )}
               </div>
 
+              {/* Projects Breakdown Card */}
               {detail.projects.length > 0 && (
-                <div className="w-full flex flex-col gap-[12px]">
-                  <h1 className="font-[700] text-[20px] text-[#0E0E0E]">
-                    Projects
-                  </h1>
-                  <div className="flex flex-col gap-4">
+                <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-6">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">
+                        Project Tasks & Deliverables ({detail.projects.length})
+                      </h2>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Students must submit responses corresponding to each project task below
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
                     {detail.projects.map((item, index) => (
                       <Collapse
                         key={index}
@@ -262,57 +299,58 @@ const TestDetailsInner = () => {
                             }}
                           />
                         )}
-                        className={
+                        className={`!rounded-2xl border transition-all duration-200 overflow-hidden ${
                           activeStep === index.toString()
-                            ? "!bg-secondary"
-                            : "!bg-white"
-                        }
+                            ? "!bg-white border-secondary shadow-sm"
+                            : "!bg-slate-50/60 border-slate-200 hover:border-slate-300"
+                        }`}
                         items={[
                           {
                             key: index.toString(),
                             label: (
-                              <div className="flex justify-between">
-                                <div className="flex gap-2">
-                                  <p
-                                    className={`rounded-[12px] px-2 py-1 text-xs whitespace-nowrap h-fit ${
-                                      activeStep !== index.toString()
-                                        ? "bg-[#E3E3E3]"
-                                        : "bg-white"
-                                    }`}
-                                  >
+                              <div className="flex justify-between items-center w-full pr-4">
+                                <div className="flex gap-3 items-center min-w-0">
+                                  <span className="w-7 h-7 rounded-lg bg-secondary text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                    {index + 1}
+                                  </span>
+                                  <span className="rounded-md px-2 py-0.5 text-[10px] uppercase font-bold whitespace-nowrap bg-secondary/10 text-secondary border border-secondary/20">
                                     Project {index + 1}
-                                  </p>
-                                  <p
-                                    className={`font-bold ${
-                                      activeStep === index.toString() &&
-                                      "text-white"
-                                    }`}
-                                  >
+                                  </span>
+                                  <p className="font-bold text-sm text-slate-900 truncate">
                                     {item.projectName}
                                   </p>
                                 </div>
                               </div>
                             ),
                             children: (
-                              <div className="space-y-4">
-                                <div className="flex flex-col gap-3">
-                                  <h1 className="font-semibold text-[16px]">
-                                    Project Details
-                                  </h1>
-                                  <div className="text-[#002333]">
+                              <div className="pt-2 space-y-4">
+                                <div className="flex flex-col gap-2">
+                                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                                    Project Description & Instructions
+                                  </h3>
+                                  <div className="text-slate-700 text-sm leading-relaxed bg-slate-50/70 p-3.5 rounded-xl border border-slate-100">
                                     <QuillEditor readOnly value={item.description || ""} />
                                   </div>
                                 </div>
+
                                 {item.objectives.length > 0 && (
-                                  <div className="flex flex-col gap-3">
-                                    <h1 className="font-semibold text-[16px]">
-                                      Objectives
-                                    </h1>
-                                    <ul className="list-disc pl-5 text-sm text-[#002333] flex flex-col gap-2 items-start">
+                                  <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
+                                    <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                                      Project Objectives & Criteria
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                       {item.objectives.map((el, i) => (
-                                        <li key={i}>{el}</li>
+                                        <div
+                                          key={i}
+                                          className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 flex items-start gap-2"
+                                        >
+                                          <span className="w-4 h-4 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                                            ✓
+                                          </span>
+                                          <span>{el}</span>
+                                        </div>
                                       ))}
-                                    </ul>
+                                    </div>
                                   </div>
                                 )}
                               </div>
@@ -326,7 +364,7 @@ const TestDetailsInner = () => {
               )}
             </>
           ) : (
-            <div className="text-center text-gray-500 py-10">
+            <div className="text-center text-slate-400 py-12 bg-white rounded-2xl border border-slate-200">
               Assignment not found.
             </div>
           )}

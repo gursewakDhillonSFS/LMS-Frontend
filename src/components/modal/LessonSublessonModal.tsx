@@ -10,6 +10,7 @@ import {
   InboxOutlined,
   FileTextOutlined,
   DeleteOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 
 export interface LessonSublessonModalProps {
@@ -29,6 +30,7 @@ export interface LessonSublessonModalProps {
   removeFile: (index: number) => void;
   handleSave: () => void;
   handleSubLessonSave: () => void;
+  onPreviewFile?: (file: { name: string; url: string; type?: string }) => void;
 }
 
 const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
@@ -48,6 +50,7 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
   removeFile,
   handleSave,
   handleSubLessonSave,
+  onPreviewFile,
 }) => {
   const modalTitle = addLessonModalStatus
     ? isEditing ? "Edit Lesson" : "Add Lesson"
@@ -169,13 +172,37 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
                         </p>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(index)}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                    >
-                      <DeleteOutlined className="text-xs" />
-                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {onPreviewFile && (
+                        <button
+                          type="button"
+                          title="Preview File"
+                          onClick={() => {
+                            const fileUrl =
+                              file.url ||
+                              (file.originFileObj
+                                ? URL.createObjectURL(file.originFileObj as File)
+                                : "");
+                            onPreviewFile({
+                              name: file.name,
+                              url: fileUrl,
+                              type: file.type || "file",
+                            });
+                          }}
+                          className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-secondary hover:bg-slate-100 transition-colors cursor-pointer"
+                        >
+                          <EyeOutlined className="text-xs" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        title="Remove File"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      >
+                        <DeleteOutlined className="text-xs" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
