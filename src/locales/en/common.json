@@ -1,7 +1,7 @@
 {
   "brand": {
-    "name": "Skillora",
-    "pro": "Skillora Pro",
+    "name": "SkillBuild",
+    "pro": "SkillBuild Pro",
     "tagline": "Learn · Build · Grow"
   },
   "nav": {
@@ -85,7 +85,7 @@
     "terms": "Terms & Conditions",
     "privacy": "Privacy Policy",
     "help": "Help Center",
-    "copyright": "© 2026 Skillora. All Rights Reserved."
+    "copyright": "© 2026 SkillBuild. All Rights Reserved."
   },
   "general": {
     "loading": "Loading...",
@@ -117,7 +117,7 @@
     "trendingDesc": "Discover what students and professionals are mastering this week",
     "help": "Help & Support",
     "helpDesc": "Find quick answers or get in touch with our student support team",
-    "becomeInstructor": "Teach on Skillora",
+    "becomeInstructor": "Teach on SkillBuild",
     "becomeInstructorDesc": "Share your expertise and inspire learners across the globe"
   }
 }

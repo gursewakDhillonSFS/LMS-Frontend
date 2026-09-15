@@ -307,7 +307,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 <span className="text-slate-300">|</span>
                 <div className="flex items-center gap-1.5 text-indigo-700 font-semibold">
                   <CrownOutlined className="text-indigo-600" />
-                  <span>Included with Skillora Pro</span>
+                  <span>Included with SkillBuild Pro</span>
                 </div>
               </div>
             </div>
@@ -322,7 +322,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                         ? courseImageUrl
                         : Fallback
                     }
-                    alt={coursesInfo?.course_name ? `${coursesInfo.course_name} syllabus preview` : "Skillora course curriculum preview"}
+                    alt={coursesInfo?.course_name ? `${coursesInfo.course_name} syllabus preview` : "SkillBuild course curriculum preview"}
                     fill
                     priority
                     unoptimized

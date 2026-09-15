@@ -3,10 +3,10 @@ import React from "react";
 import type { Metadata } from "next";
 import JsonLd, { getFAQPageSchema } from "@/components/JsonLd";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillora.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillbuild.com";
 
 export const metadata: Metadata = {
-  title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+  title: "SkillBuild — Master In-Demand Tech, Design & Business Skills",
   description:
     "Explore 1,000+ interactive online courses in Software Development, Data Science, AI, Design, and Business. Learn from industry experts and earn verified certificates.",
   alternates: {
@@ -19,16 +19,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    title: "SkillBuild — Master In-Demand Tech, Design & Business Skills",
     description:
       "Explore 1,000+ interactive online courses in Software Development, Data Science, AI, Design, and Business. Learn from industry experts and earn verified certificates.",
     url: `${baseUrl}`,
     type: "website",
-    siteName: "Skillora",
+    siteName: "SkillBuild",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    title: "SkillBuild — Master In-Demand Tech, Design & Business Skills",
     description:
       "Explore 1,000+ interactive online courses in Software Development, Data Science, AI, Design, and Business.",
   },
@@ -38,12 +38,12 @@ const faqs = [
   {
     question: "How do I enroll in a course?",
     answer:
-      "To enroll in any course, click on the course card, review the syllabus, and select 'Enroll Now'. If you have a Skillora Pro membership, you can instantly start learning with one click.",
+      "To enroll in any course, click on the course card, review the syllabus, and select 'Enroll Now'. If you have a SkillBuild Pro membership, you can instantly start learning with one click.",
   },
   {
     question: "Are the certificates accredited?",
     answer:
-      "Yes! All course completion certificates from Skillora are verifiable and recognized worldwide. You can add them directly to your LinkedIn profile or resume.",
+      "Yes! All course completion certificates from SkillBuild are verifiable and recognized worldwide. You can add them directly to your LinkedIn profile or resume.",
   },
   {
     question: "Can I learn at my own schedule?",
@@ -63,12 +63,12 @@ const faqs = [
   {
     question: "Can I access courses on mobile?",
     answer:
-      "Yes, Skillora is fully responsive on all devices, and you can download our native iOS or Android mobile apps for offline learning.",
+      "Yes, SkillBuild is fully responsive on all devices, and you can download our native iOS or Android mobile apps for offline learning.",
   },
   {
     question: "How do I contact support?",
     answer:
-      "Our dedicated support team is available 24/7 via live chat, email at support@skillora.com, or through our community help forum.",
+      "Our dedicated support team is available 24/7 via live chat, email at support@skillbuild.com, or through our community help forum.",
   },
   {
     question: "Are the courses self-paced?",

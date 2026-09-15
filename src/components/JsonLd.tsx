@@ -23,24 +23,24 @@ export default function JsonLd({ data, id }: JsonLdProps) {
 /**
  * Organization Schema generator
  */
-export function getOrganizationSchema(baseUrl: string = "https://skillora.com") {
+export function getOrganizationSchema(baseUrl: string = "https://skillbuild.com") {
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "@id": `${baseUrl}/#organization`,
-    name: "Skillora",
+    name: "SkillBuild",
     url: baseUrl,
     logo: {
       "@type": "ImageObject",
       url: `${baseUrl}/images/logo.png`,
-      caption: "Skillora Logo",
+      caption: "SkillBuild Logo",
     },
     description:
       "Master in-demand skills in software development, data science, AI, and design with industry-leading courses and verified certifications.",
     sameAs: [
-      "https://twitter.com/skillora",
-      "https://linkedin.com/company/skillora",
-      "https://github.com/skillora",
+      "https://twitter.com/skillbuild",
+      "https://linkedin.com/company/skillbuild",
+      "https://github.com/skillbuild",
     ],
   };
 }
@@ -48,12 +48,12 @@ export function getOrganizationSchema(baseUrl: string = "https://skillora.com") 
 /**
  * WebSite Schema with Sitelinks Searchbox
  */
-export function getWebSiteSchema(baseUrl: string = "https://skillora.com") {
+export function getWebSiteSchema(baseUrl: string = "https://skillbuild.com") {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${baseUrl}/#website`,
-    name: "Skillora",
+    name: "SkillBuild",
     url: baseUrl,
     description: "Master In-Demand Tech, Design & Business Skills",
     publisher: {
@@ -76,7 +76,7 @@ export function getWebSiteSchema(baseUrl: string = "https://skillora.com") {
  */
 export function getBreadcrumbSchema(
   items: Array<{ name: string; item: string }>,
-  baseUrl: string = "https://skillora.com"
+  baseUrl: string = "https://skillbuild.com"
 ) {
   return {
     "@context": "https://schema.org",
@@ -108,7 +108,7 @@ export interface CourseSchemaParams {
   datePublished?: string;
 }
 
-export function getCourseSchema(params: CourseSchemaParams, baseUrl: string = "https://skillora.com") {
+export function getCourseSchema(params: CourseSchemaParams, baseUrl: string = "https://skillbuild.com") {
   const fullCourseUrl = params.courseUrl.startsWith("http")
     ? params.courseUrl
     : `${baseUrl}${params.courseUrl}`;
@@ -120,7 +120,7 @@ export function getCourseSchema(params: CourseSchemaParams, baseUrl: string = "h
     description: params.description,
     provider: {
       "@type": "Organization",
-      name: params.providerName || "Skillora",
+      name: params.providerName || "SkillBuild",
       sameAs: baseUrl,
     },
     url: fullCourseUrl,

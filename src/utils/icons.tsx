@@ -104,7 +104,7 @@ export const HeaderLogoIcon = ({
 
       {/* Typography: Wordmark + Tagline */}
       <g transform="translate(62, 0)">
-        {/* Skillora Wordmark */}
+        {/* SkillBuild Wordmark */}
         <text
           x="0"
           y="24"
@@ -114,7 +114,7 @@ export const HeaderLogoIcon = ({
           letterSpacing="-0.5px"
           fill={isDark ? "#FFFFFF" : textColor}
         >
-          Skillora
+          SkillBuild
         </text>
 
         {/* Tagline */}

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Admin Panel | Skillora",
+  title: "Admin Panel | SkillBuild",
   robots: {
     index: false,
     follow: false,

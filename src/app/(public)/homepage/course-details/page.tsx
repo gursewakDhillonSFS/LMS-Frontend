@@ -38,7 +38,7 @@ const CourseDetails = () => {
         name: selectedCourseData.course_name || "Course",
         description:
           selectedCourseData.description ||
-          "Master in-demand skills with hands-on projects and professional instruction on Skillora.",
+          "Master in-demand skills with hands-on projects and professional instruction on SkillBuild.",
         imageUrl: selectedCourseData.course_image_url,
         courseUrl: "/homepage/course-details",
         price: selectedCourseData.course_price || 0,

@@ -372,7 +372,7 @@ const ProfileSetup = () => {
             <div className="flex flex-col gap-1 max-w-lg">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Skillora University & Academy Partner Program</span>
+                <span>SkillBuild University & Academy Partner Program</span>
               </div>
               <h2 className="text-lg sm:text-xl font-extrabold text-white">
                 {step === "1"

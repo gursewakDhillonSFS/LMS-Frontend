@@ -55,7 +55,7 @@
   "testimonials": {
     "badge": "TÉMOIGNAGES",
     "title": "Ce que disent nos apprenants",
-    "subtitle": "Rejoignez des milliers d'étudiants qui ont déjà transformé leur vie grâce à Skillora.",
+    "subtitle": "Rejoignez des milliers d'étudiants qui ont déjà transformé leur vie grâce à SkillBuild.",
     "viewAll": "Voir tous les avis"
   },
   "faq": {
@@ -85,11 +85,11 @@
       },
       {
         "question": "Puis-je accéder aux cours sur mobile ?",
-        "answer": "Oui, Skillora est parfaitement adapté à tous les écrans, et vous pouvez télécharger nos applications mobiles iOS ou Android pour apprendre hors-ligne."
+        "answer": "Oui, SkillBuild est parfaitement adapté à tous les écrans, et vous pouvez télécharger nos applications mobiles iOS ou Android pour apprendre hors-ligne."
       },
       {
         "question": "Comment contacter le support ?",
-        "answer": "Notre équipe d'assistance est joignable 24h/24 et 7j/7 par chat en direct, par e-mail à support@skillora.com ou via notre forum d'entraide."
+        "answer": "Notre équipe d'assistance est joignable 24h/24 et 7j/7 par chat en direct, par e-mail à support@skillbuild.com ou via notre forum d'entraide."
       },
       {
         "question": "Les cours sont-ils à mon rythme ?",

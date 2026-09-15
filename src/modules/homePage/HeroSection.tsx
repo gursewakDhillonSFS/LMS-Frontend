@@ -109,7 +109,7 @@ const HeroSection: FC = () => {
           <div className="relative w-full h-[320px] sm:h-[380px] lg:h-[420px] rounded-[24px] overflow-hidden border border-white/80 shadow-[0_12px_36px_rgba(49,92,255,0.12)] bg-gradient-to-b from-blue-50/50 to-indigo-50/30">
             <Image
               src={HomeHeroStudent}
-              alt="Skillora student mastering in-demand skills online"
+              alt="SkillBuild student mastering in-demand skills online"
               fill
               priority
               unoptimized

@@ -36,7 +36,7 @@ const testimonials: TestimonialItem[] = [
     role: "UI/UX Design Learner",
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
     feedback:
-      "Skillora gave me the confidence to switch my career. Great content and supportive community!",
+      "SkillBuild gave me the confidence to switch my career. Great content and supportive community!",
     rating: 5,
   },
   {

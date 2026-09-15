@@ -55,18 +55,18 @@ const notoSansGurmukhi = Noto_Sans_Gurmukhi({
   display: "swap",
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillora.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://skillbuild.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Skillora — Master In-Demand Tech, Design & Business Skills",
-    template: "%s | Skillora",
+    default: "SkillBuild — Master In-Demand Tech, Design & Business Skills",
+    template: "%s | SkillBuild",
   },
   description:
-    "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors on Skillora.",
+    "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors on SkillBuild.",
   keywords: [
-    "Skillora",
+    "SkillBuild",
     "online learning platform",
     "tech courses",
     "web development",
@@ -76,10 +76,10 @@ export const metadata: Metadata = {
     "professional certifications",
     "self-paced learning",
   ],
-  authors: [{ name: "Skillora Inc." }],
-  creator: "Skillora",
-  publisher: "Skillora",
-  applicationName: "Skillora",
+  authors: [{ name: "SkillBuild Inc." }],
+  creator: "SkillBuild",
+  publisher: "SkillBuild",
+  applicationName: "SkillBuild",
   robots: {
     index: true,
     follow: true,
@@ -114,8 +114,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: baseUrl,
-    siteName: "Skillora",
-    title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    siteName: "SkillBuild",
+    title: "SkillBuild — Master In-Demand Tech, Design & Business Skills",
     description:
       "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors.",
     images: [
@@ -123,16 +123,16 @@ export const metadata: Metadata = {
         url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Skillora — Modern Learning Platform",
+        alt: "SkillBuild — Modern Learning Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Skillora — Master In-Demand Tech, Design & Business Skills",
+    title: "SkillBuild — Master In-Demand Tech, Design & Business Skills",
     description:
       "Start, switch, or advance your career with 1,000+ industry-leading courses, hands-on projects, and verified certificates from expert instructors.",
-    creator: "@skillora",
+    creator: "@skillbuild",
     images: ["/images/og-image.jpg"],
   },
 };

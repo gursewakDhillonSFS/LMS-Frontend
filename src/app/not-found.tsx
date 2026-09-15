@@ -85,7 +85,7 @@ export default function NotFound() {
           <Link
             href="/"
             className="flex items-center gap-2 group transition-transform hover:scale-[1.02]"
-            aria-label="Skillora Home"
+            aria-label="SkillBuild Home"
           >
             <HeaderLogoIcon width="160" height="38" />
           </Link>
@@ -271,7 +271,7 @@ export default function NotFound() {
       <footer className="relative z-10 w-full border-t border-slate-200/70 bg-white/60 backdrop-blur-sm py-5 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} Skillora Inc.</span>
+            <span>© {new Date().getFullYear()} SkillBuild Inc.</span>
             <span>•</span>
             <span>Master In-Demand Tech, Design & Business Skills</span>
           </div>

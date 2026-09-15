@@ -130,7 +130,7 @@ const OnboardingForm: React.FC = () => {
           }
         }
         Cookies.set("user_onboarding", "completed", { path: "/" });
-        toast.success("Profile setup complete! Welcome to Skillora.");
+        toast.success("Profile setup complete! Welcome to SkillBuild.");
         window.location.href = RoutePaths?.Dashboard || "/dashboard";
         return;
       }
