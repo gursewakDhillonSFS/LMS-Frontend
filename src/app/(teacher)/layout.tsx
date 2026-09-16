@@ -224,7 +224,7 @@ const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children }) => {
             </div>
 
             {/* Bottom Section: Dedicated Logout Button */}
-            <div className="p-3 border-t border-[var(--dash-sidebar-border)] bg-[var(--dash-sidebar-bg)] shrink-0 transition-colors duration-200">
+            <div className="p-3 border-t border-[var(--dash-sidebar-border)] bg-[var(--dash-sidebar-bg)] shrink-0 transition-colors duration-200 mt-auto">
               <button
                 type="button"
                 onClick={() => setLogoutModal(true)}

@@ -26,6 +26,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const email = useSelector((state: RootState) => state.authmodal.email);
+  const userId = useSelector((state: RootState) => state.authmodal.user_id);
   const [resendDisabled, setResendDisabled] = useState<boolean>(true);
 
   const handleChange = (index: number, value: string) => {
@@ -71,12 +72,17 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
       setLoading(true);
       const response = await verifyOtpApi({
         otp: finalOtp,
+        email: email || undefined,
+        user_id: userId || undefined,
       });
-      if (response?.status) {
-        dispatch(setToken(response?.data?.token));
-        dispatch(setuserId(response?.data?.user_id));
+      if (response?.status || response?.success) {
+        const token = response?.data?.token || response?.token;
+        const resolvedUserId = response?.data?.user_id || response?.userId || userId;
+        if (token) dispatch(setToken(token));
+        if (resolvedUserId) dispatch(setuserId(resolvedUserId));
         dispatch(setOtpVerify(false));
         dispatch(setChangePass(true));
+        toast.success(response?.message ?? "Code verified successfully");
       } else {
         toast.warning(response?.message ?? "Invalid verification code");
       }
@@ -96,8 +102,8 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignin }) => {
         const response = await forgetPasswordApi({
           email,
         });
-        if (response?.status) {
-          toast.success(response?.message ?? "A new code has been sent");
+        if (response?.status || response?.success) {
+          toast.success(response?.message ?? "A new verification code has been sent");
           setTimer(60);
           setResendDisabled(true);
         } else {

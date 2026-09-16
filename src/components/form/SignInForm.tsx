@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form } from "antd";
 import CommonInput from "../CommonInput";
 import CommonButton from "../CommonButton";
@@ -7,8 +7,9 @@ import { AppleIcon, GoogleIcon } from "@/utils/icons";
 import { useRouter } from "next/navigation";
 import { Role, RoutePaths } from "@/utils/enums";
 import { loginApi, socialAuth } from "@/services/collections";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/slices/UserDataSlice";
+import { RootState } from "@/redux/store";
 import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "@/context/I18nContext";
@@ -39,7 +40,14 @@ const SignInForm: React.FC<SignInFormProps> = ({
   const [form] = Form.useForm();
   const router = useRouter();
   const dispatch = useDispatch();
+  const defaultEmail = useSelector((state: RootState) => state.authmodal.email);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (defaultEmail) {
+      form.setFieldsValue({ email: defaultEmail });
+    }
+  }, [defaultEmail, form]);
 
   const onFinish = async (value: { email: string; password: string }) => {
     try {

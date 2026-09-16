@@ -1160,3 +1160,18 @@ button {
 [data-theme="plum"] .border-\[\#EAECF0\] {
   border-color: var(--border) !important;
 }
+
+/* ============================================
+   Ant Design Sider Full Height & Sticky Bottom
+   ============================================ */
+.ant-layout-sider {
+  height: 100% !important;
+}
+
+.ant-layout-sider .ant-layout-sider-children {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  justify-content: space-between !important;
+}

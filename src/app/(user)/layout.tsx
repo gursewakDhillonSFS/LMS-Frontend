@@ -184,7 +184,7 @@ const UserLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           </div>
 
           {/* Bottom Section: Dedicated Logout Button */}
-          <div className="p-3 border-t border-[var(--border)] bg-white shrink-0">
+          <div className="p-3 border-t border-[var(--border)] bg-white shrink-0 mt-auto">
             <button
               type="button"
               onClick={() => setLogoutModal(true)}

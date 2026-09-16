@@ -8,7 +8,7 @@ import { RoutePaths } from "@/utils/enums";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordApi } from "@/services/collections";
 import { toast } from "@/utils/toast";
-import { setSignin } from "@/redux/slices/AuthModalSlice";
+import { setSignin, setChangePass } from "@/redux/slices/AuthModalSlice";
 import { RootState } from "@/redux/store";
 
 interface ChangePasswordProps {
@@ -28,20 +28,29 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onSignin }) => {
     re_enter_new_password: string;
   }) => {
     try {
-      if (user_id && token) {
-        setLoading(true);
-        const payload = {
-          user_id,
-          token,
-          ...value,
-        };
-        const response = await resetPasswordApi(payload);
-        if (response?.status) {
-          dispatch(setSignin(true));
-          toast.success(response?.message ?? "Password updated successfully");
-        } else {
-          toast.warning(response?.message ?? "Failed to update password");
+      if (!user_id || !token) {
+        toast.warning("Session expired. Please request a new verification code.");
+        return;
+      }
+      setLoading(true);
+      const payload = {
+        user_id,
+        token,
+        ...value,
+      };
+      const response = await resetPasswordApi(payload);
+      if (response?.status || response?.success) {
+        dispatch(setChangePass(false));
+        dispatch(setSignin(true));
+        if (onSignin) {
+          onSignin();
         }
+        toast.success(
+          response?.message ??
+            "Password reset successfully. Please sign in with your new password."
+        );
+      } else {
+        toast.warning(response?.message ?? "Failed to update password");
       }
     } catch (err) {
       console.error("Failed to reset password:", err);

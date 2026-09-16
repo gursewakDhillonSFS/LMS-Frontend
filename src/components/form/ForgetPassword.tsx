@@ -6,7 +6,7 @@ import CommonLink from "../CommonLink";
 import { forgetPasswordApi } from "@/services/collections";
 import { toast } from "@/utils/toast";
 import { useDispatch } from "react-redux";
-import { setEmail } from "@/redux/slices/AuthModalSlice";
+import { setEmail, setuserId } from "@/redux/slices/AuthModalSlice";
 
 interface ForgetPasswordProps {
   onSignin?: () => void;
@@ -24,10 +24,14 @@ const ForgetPassword: React.FC<ForgetPasswordProps> = ({ onSignin, onOtp }) => {
       const response = await forgetPasswordApi({
         ...value,
       });
-      if (response?.status) {
+      if (response?.status || response?.success) {
         dispatch(setEmail(value?.email));
+        const resolvedUserId = response?.data?.user_id || response?.userId;
+        if (resolvedUserId) {
+          dispatch(setuserId(resolvedUserId));
+        }
         onOtp();
-        toast.success(response?.message ?? "OTP sent to your email");
+        toast.success(response?.message ?? "Verification code sent to your email");
       } else {
         toast.warning(response?.message ?? "Failed to send reset email");
       }

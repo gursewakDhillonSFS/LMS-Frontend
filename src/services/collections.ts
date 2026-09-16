@@ -94,7 +94,11 @@ export const createOrganisationApi = (payload: FormData) => {
 export const forgetPasswordApi = (payload: { email: string }) => {
   return postApi(FORGET_PASSWORD, payload);
 };
-export const verifyOtpApi = (payload: { otp: string }) => {
+export const verifyOtpApi = (payload: {
+  otp: string;
+  email?: string;
+  user_id?: string;
+}) => {
   return postApi(VERIFY_OTP, payload);
 };
 export const resetPasswordApi = (payload: {
