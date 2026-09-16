@@ -30,9 +30,25 @@ const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
 }) => {
   if (!file) return null;
 
-  const resolvedUrl = file.url.startsWith("http") || file.url.startsWith("blob:")
-    ? file.url
-    : `${process.env.NEXT_PUBLIC_BACKEND_API_URL || ""}${file.url}`;
+  let rawUrl = file.url || "";
+  if (
+    rawUrl.includes("https://") &&
+    rawUrl.indexOf("https://") !== rawUrl.lastIndexOf("https://")
+  ) {
+    rawUrl = rawUrl.substring(rawUrl.lastIndexOf("https://"));
+  } else if (
+    rawUrl.includes("http://") &&
+    rawUrl.indexOf("http://") !== rawUrl.lastIndexOf("http://")
+  ) {
+    rawUrl = rawUrl.substring(rawUrl.lastIndexOf("http://"));
+  }
+
+  const resolvedUrl =
+    rawUrl.startsWith("http") || rawUrl.startsWith("blob:")
+      ? rawUrl
+      : `${process.env.NEXT_PUBLIC_BACKEND_API_URL || ""}${
+          rawUrl.startsWith("/") ? "" : "/"
+        }${rawUrl}`;
 
   const isVideo =
     file.type?.toLowerCase().includes("video") ||

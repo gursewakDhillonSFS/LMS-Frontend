@@ -5,7 +5,23 @@ import { renderFormItem } from "@/utils/commonFunctions";
 import { DeleteIcon, DollarIcon } from "@/utils/icons";
 import { CreateCourseStep1Prop } from "@/utils/interface";
 import { Button, Col, Form, Input, Row, Select } from "antd";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
+
+export const getWeeksFromDuration = (duration?: string | null): number => {
+  if (!duration) return 4;
+  if (duration === "1_week") return 1;
+  if (duration === "2_weeks") return 2;
+  if (duration === "3_weeks") return 3;
+  if (duration === "4_weeks" || duration === "1_month") return 4;
+  if (duration === "6_weeks") return 6;
+  if (duration === "8_weeks" || duration === "2_months") return 8;
+  if (duration === "12_weeks" || duration === "3_months") return 12;
+  if (duration === "16_weeks" || duration === "4_months") return 16;
+  if (duration === "24_weeks" || duration === "6_months") return 24;
+  const match = duration.match(/(\d+)/);
+  if (match) return parseInt(match[1], 10);
+  return 4;
+};
 
 interface Step1Prop {
   batch: { batchName: string; teacher: string | null }[];
@@ -19,46 +35,40 @@ export const Step1: React.FC<Step1Prop> = ({ batch, setBatch }) => {
   const { data: instructor, loading: instructorLoading } = useInstructor();
   const liveClassesValue = Form.useWatch("live_classes");
   const courseTypeValue = Form.useWatch("course_type");
+  const form = Form.useFormInstance();
 
-  // const formattedCategories =
-  //   category?.map((cat: Category) => ({
-  //     label: cat.category_name,
-  //     value: cat.category_id,
-  //   })) || [];
-
-  // const formattedInstructors =
-  //   instructor?.map((inst: { name: string; instructor_id: string }) => ({
-  //     label: inst.name,
-  //     value: inst.instructor_id,
-  //   })) || [];
+  useEffect(() => {
+    if (courseTypeValue === "free") {
+      form.setFieldsValue({
+        course_price: 0,
+        teacher_revenue_percent: 0,
+      });
+    }
+  }, [courseTypeValue, form]);
 
   const step1Fields: CreateCourseStep1Prop[] = [
     {
       key: "course_name",
       label: "Course Name",
       type: "input",
-      placeholder: "Enter organization name",
+      placeholder: "Enter course name",
       colSpan: 24,
     },
     {
-      key: "head_teacher",
-      label: "Head Teacher",
-      type: "select",
-      placeholder: "--Select Option--",
-      options: instructor,
-      loading: instructorLoading,
-      colSpan: 12,
-    },
-    {
       key: "duration",
-      label: "Duration",
+      label: "Course Duration (Weeks)",
       type: "select",
-      placeholder: "--Select Option--",
+      placeholder: "--Select Duration--",
       options: [
         { label: "1 Week", value: "1_week" },
         { label: "2 Weeks", value: "2_weeks" },
-        { label: "1 Month", value: "1_month" },
-        { label: "3 Months", value: "3_months" },
+        { label: "3 Weeks", value: "3_weeks" },
+        { label: "4 Weeks (1 Month)", value: "4_weeks" },
+        { label: "6 Weeks", value: "6_weeks" },
+        { label: "8 Weeks (2 Months)", value: "8_weeks" },
+        { label: "12 Weeks (3 Months)", value: "12_weeks" },
+        { label: "16 Weeks (4 Months)", value: "16_weeks" },
+        { label: "24 Weeks (6 Months)", value: "24_weeks" },
       ],
       colSpan: 12,
     },
@@ -79,21 +89,18 @@ export const Step1: React.FC<Step1Prop> = ({ batch, setBatch }) => {
       type: "input",
       prefix: <DollarIcon />,
       placeholder: "Enter price",
-      colSpan: courseTypeValue === "paid" ? 6 : 12,
+      colSpan: 12,
       disabled: courseTypeValue === "free",
     },
-    ...(courseTypeValue === "paid"
-      ? [
-          {
-            key: "teacher_revenue_percent",
-            label: "Teacher Share / Compensation (%)",
-            type: "input",
-            prefix: "%",
-            placeholder: "20",
-            colSpan: 6,
-          },
-        ]
-      : []),
+    {
+      key: "teacher_revenue_percent",
+      label: "Teacher Share / Compensation (%)",
+      type: "input",
+      prefix: "%",
+      placeholder: courseTypeValue === "free" ? "0" : "20",
+      colSpan: 12,
+      disabled: courseTypeValue === "free",
+    },
     {
       key: "demo_class",
       label: "Would you like to offer a demo class for this course?",

@@ -1,7 +1,7 @@
 "use client";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
 import CommonButton from "@/components/CommonButton";
-import { Step1 } from "@/modules/createCourseSteps/Step1";
+import { Step1, getWeeksFromDuration } from "@/modules/createCourseSteps/Step1";
 import { Step2 } from "@/modules/createCourseSteps/Step2";
 import { Step3 } from "@/modules/createCourseSteps/Step3";
 import { Step4 } from "@/modules/createCourseSteps/step4";
@@ -71,6 +71,7 @@ const CreateCourse = () => {
   const course_id = useSelector(
     (state: RootState) => state.createCourse.course_id
   );
+  const userData = useSelector((state: RootState) => state.userdata);
   const organization_id = useSelector(
     (state: RootState) => state.userdata?.organization_id
   );
@@ -112,17 +113,25 @@ const CreateCourse = () => {
           return;
         }
 
+        const totalWeeks = getWeeksFromDuration(restValues.duration);
         const payload = {
           ...restValues,
-          ...(restValues.course_type === 'free'
-            ? {}
-            : {
-                course_price,
-                teacher_revenue_percent:
-                  teacher_revenue_percent !== undefined && teacher_revenue_percent !== null && teacher_revenue_percent !== ''
-                    ? Number(teacher_revenue_percent)
-                    : 20,
-              }),
+          total_weeks: totalWeeks,
+          head_teacher:
+            restValues.head_teacher ||
+            userData?.instructor_id ||
+            userData?.teacherId ||
+            undefined,
+          course_price:
+            restValues.course_type === "free" ? 0 : Number(course_price || 0),
+          teacher_revenue_percent:
+            restValues.course_type === "free"
+              ? 0
+              : teacher_revenue_percent !== undefined &&
+                teacher_revenue_percent !== null &&
+                teacher_revenue_percent !== ""
+              ? Number(teacher_revenue_percent)
+              : 20,
           ...(course_id ? { course_id } : {}),
           organisation_id: organization_id || undefined,
           batch: validBatches,
@@ -168,7 +177,12 @@ const CreateCourse = () => {
       }
 
       if (currentStep === 2) {
-        const payload = { ...values, course_id };
+        const instructorId =
+          values.instructor_id ||
+          form.getFieldValue("instructor_id") ||
+          userData?.instructor_id ||
+          userData?.teacherId;
+        const payload = { ...values, instructor_id: instructorId, course_id };
         const response = await createStep3(payload);
         if (response?.status) {
           if (isDraft) {

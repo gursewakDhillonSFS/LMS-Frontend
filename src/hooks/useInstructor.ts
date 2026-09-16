@@ -2,8 +2,13 @@ import { getInstructorListing } from "@/services/collections";
 import { Instructor } from "@/utils/interface";
 import { useEffect, useState } from "react";
 
+export interface InstructorOption {
+  label: string;
+  value: string;
+}
+
 const useInstructor = () => {
-  const [data, setData] = useState<Instructor[]>([]);
+  const [data, setData] = useState<InstructorOption[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,7 +17,7 @@ const useInstructor = () => {
       try {
         setLoading(true);
         const response = await getInstructorListing();
-        const formattedInstructors =
+        const formattedInstructors: InstructorOption[] =
           response?.teachers?.map(
             (inst: { firstName: string; lastName: string; _id: string }) => ({
               label: `${inst.firstName} ${inst.lastName}`,

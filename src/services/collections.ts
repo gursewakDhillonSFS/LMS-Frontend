@@ -127,6 +127,8 @@ const COURSE_SUBLESSON_UPDATE = "/auth/course/v1/Sublesson/update";
 const COURSE_LESSON_UPDATE = "/auth/course/v1/lesson/update";
 const COURSE_SUBLESSON_DELETE = "/auth/course/v1/sublesson/delete";
 const COURSE_LESSON_DELETE = "/auth/course/v1/lesson/delete";
+const COURSE_LESSON_REORDER = "/auth/course/v1/lesson/reorder";
+const COURSE_SUBLESSON_REORDER = "/auth/course/v1/sublesson/reorder";
 const ALL_LESSON = "/auth/course/v1/get-sublesson-lesson";
 const GET_ORGANISATION = "/auth/user/v1/organization";
 const ADD_TO_FAVORITE = "/auth/course/v1/add-to-favorite";
@@ -219,6 +221,18 @@ export const deleteLesson = (lesson_id: string) => {
 };
 export const deleteSublesson = (sublesson_id: string) => {
   return deleteApi(`${COURSE_SUBLESSON_DELETE}/${sublesson_id}`);
+};
+export const reorderLessons = (
+  course_id: string,
+  orders: { lesson_id: string; order: number }[]
+) => {
+  return putApi(COURSE_LESSON_REORDER, { course_id, orders });
+};
+export const reorderSublessons = (
+  lesson_id: string,
+  orders: { sublesson_id: string; order: number }[]
+) => {
+  return putApi(COURSE_SUBLESSON_REORDER, { lesson_id, orders });
 };
 
 export const getInstructorListing = () => {
@@ -490,9 +504,16 @@ export const updateScheduleApi = (id: string, payload: object) =>
 export const deleteScheduleApi = (id: string) =>
   deleteApi(`${DELETE_SCHEDULE}/${id}`);
 
+const UPDATE_SCHEDULE_RECORDING = "/auth/schedule/v1/recording";
+export const updateScheduleRecordingApi = (
+  id: string,
+  payload: { recordingUrl: string; recordingName?: string }
+) => putApi(`${UPDATE_SCHEDULE_RECORDING}/${id}`, payload);
+
 // ─── Students APIs ────────────────────────────────────────────────────────────
 const GET_STUDENTS_LIST = "/auth/course/v1/students/list";
 const GET_STUDENT_DETAILS = "/auth/course/v1/students";
+const GET_STUDENT_EVALUATIONS = "/auth/course/v1/student/evaluations";
 
 export const getStudentsListApi = (params?: URLSearchParams) =>
   getApi(`${GET_STUDENTS_LIST}${params ? '?' + params : ''}`);
@@ -502,6 +523,14 @@ export const getStudentDetailsApi = (studentId: string) =>
 
 export const getStudentSubmissionsApi = (studentId: string) =>
   getApi(`${GET_STUDENT_DETAILS}/${studentId}/submissions`);
+
+export const getStudentEvaluationsApi = (courseId?: string, batchId?: string) => {
+  const params = new URLSearchParams();
+  if (courseId) params.append("courseId", courseId);
+  if (batchId) params.append("batchId", batchId);
+  const qs = params.toString();
+  return getApi(`${GET_STUDENT_EVALUATIONS}${qs ? '?' + qs : ''}`);
+};
 
 // ─── Course Progress APIs ──────────────────────────────────────────────────────
 const COURSE_PROGRESS = "/auth/course/v1/progress";

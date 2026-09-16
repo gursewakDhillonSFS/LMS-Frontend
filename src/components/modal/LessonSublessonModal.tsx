@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox, Input, Modal, Upload, UploadFile, UploadProps } from "antd";
+import { Checkbox, Input, Modal, Select, Upload, UploadFile, UploadProps } from "antd";
 import React from "react";
 import CommonButton from "../CommonButton";
 import QuillEditor from "@/components/QuillEditor";
@@ -23,6 +23,9 @@ export interface LessonSublessonModalProps {
   unlockAfterPrevious: boolean;
   loading: boolean;
   isEditing: boolean;
+  week?: number;
+  totalWeeks?: number;
+  setWeek?: (val: number) => void;
   onClose: () => void;
   setLessonName: (val: string) => void;
   setDescription: (val: string) => void;
@@ -43,6 +46,9 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
   unlockAfterPrevious,
   loading,
   isEditing,
+  week = 1,
+  totalWeeks = 4,
+  setWeek,
   onClose,
   setLessonName,
   setDescription,
@@ -112,6 +118,24 @@ const LessonSublessonModal: React.FC<LessonSublessonModalProps> = ({
               className="!h-[42px] !rounded-xl text-sm"
             />
           </div>
+
+          {/* Assigned Week Selector (for Lessons) */}
+          {addLessonModalStatus && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-700">
+                Assigned Curriculum Week
+              </label>
+              <Select
+                value={week || 1}
+                onChange={(val) => setWeek && setWeek(Number(val))}
+                options={Array.from({ length: Math.max(1, totalWeeks || 4) }, (_, i) => ({
+                  label: `Week ${i + 1}`,
+                  value: i + 1,
+                }))}
+                className="!h-[42px] !rounded-xl text-sm w-full"
+              />
+            </div>
+          )}
 
           {/* Description with Quill */}
           <div className="flex flex-col gap-1.5">

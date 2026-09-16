@@ -1,9 +1,45 @@
+import React, { useEffect, useMemo } from "react";
 import useInstructor from "@/hooks/useInstructor";
-import { Form, Input, Select } from "antd";
+import { Form, Select } from "antd";
 import QuillEditor from "@/components/QuillEditor";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export const Step3 = () => {
   const { data: instructor, loading: instructorLoading } = useInstructor();
+  const form = Form.useFormInstance();
+  const userData = useSelector((state: RootState) => state?.userdata);
+
+  const instructorOptions = useMemo(() => {
+    const list = [...(instructor || [])];
+    const userInstId =
+      userData?.instructor_id || userData?.teacherId || userData?.teacher_id;
+    if (
+      userInstId &&
+      !list.some((item) => String(item.value) === String(userInstId))
+    ) {
+      list.unshift({
+        label: userData?.full_name || "Current Instructor",
+        value: userInstId,
+      });
+    }
+    return list;
+  }, [instructor, userData]);
+
+  useEffect(() => {
+    const currentVal = form.getFieldValue("instructor_id");
+    const defaultInstructorId =
+      userData?.instructor_id ||
+      userData?.teacherId ||
+      userData?.teacher_id ||
+      (instructorOptions.length > 0 ? instructorOptions[0]?.value : undefined);
+
+    if (!currentVal && defaultInstructorId) {
+      form.setFieldsValue({
+        instructor_id: defaultInstructorId,
+      });
+    }
+  }, [userData, instructorOptions, form]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -64,7 +100,8 @@ export const Step3 = () => {
               placeholder="-- Select an instructor --"
               className="w-full !min-h-[44px] text-start !rounded-xl"
               loading={instructorLoading}
-              options={instructor}
+              options={instructorOptions}
+              disabled={true}
             />
           </Form.Item>
         </div>

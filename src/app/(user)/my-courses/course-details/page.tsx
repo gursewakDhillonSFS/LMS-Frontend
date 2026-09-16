@@ -203,9 +203,11 @@ const CourseDetails = () => {
           {activeTab === UserCourseInternalTab?.ASSIGNMENTS && (
             <CourseAssignments courseId={activeCourseId} batchId={activeBatchId} />
           )}
-          {activeTab === UserCourseInternalTab?.EVALUATIONS && <Evaluation />}
+          {activeTab === UserCourseInternalTab?.EVALUATIONS && (
+            <Evaluation courseId={activeCourseId} batchId={activeBatchId} />
+          )}
           {activeTab === UserCourseInternalTab?.LIVE_CLASSES && (
-            <CourseLiveClasses />
+            <CourseLiveClasses courseId={activeCourseId} batchId={activeBatchId} />
           )}
           {activeTab === UserCourseInternalTab?.QUIZZES && (
             <CourseQuizzes courseId={activeCourseId} batchId={activeBatchId} />

@@ -167,8 +167,10 @@ export interface Course {
 }
 
 export interface Instructor {
-  instructor_id: string;
-  name: string;
+  instructor_id?: string;
+  name?: string;
+  label?: string;
+  value?: string;
 }
 
 export interface Category {

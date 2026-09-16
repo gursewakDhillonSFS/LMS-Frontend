@@ -17,17 +17,20 @@ import {
   LinkOutlined,
   PlayCircleOutlined,
   DownloadOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 
 import {
   createScheduleApi,
   getSchedulesApi,
   deleteScheduleApi,
+  updateScheduleRecordingApi,
 } from "@/services/collections";
 import { toast } from "@/utils/toast";
 import CustomDropdown from "@/components/CustomDropdown";
 import ConfirmationModal from "@/components/modal/ConfirmationModal";
 import ScheduleLiveClassModal from "@/components/modal/ScheduleLiveClassModal";
+import AddRecordingModal from "@/components/modal/AddRecordingModal";
 
 export interface LiveClassItem {
   id: string;
@@ -41,6 +44,8 @@ export interface LiveClassItem {
   meetingLink?: string;
   duration?: string;
   streamedDate?: string;
+  recordingUrl?: string;
+  recordingName?: string;
 }
 
 interface LiveClassesManagerViewProps {
@@ -65,6 +70,11 @@ export const LiveClassesManagerView: React.FC<LiveClassesManagerViewProps> = ({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Recording Modal
+  const [recordingModalOpen, setRecordingModalOpen] = useState(false);
+  const [selectedRecordingClass, setSelectedRecordingClass] = useState<LiveClassItem | null>(null);
+  const [recordingLoading, setRecordingLoading] = useState(false);
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -108,6 +118,8 @@ export const LiveClassesManagerView: React.FC<LiveClassesManagerViewProps> = ({
           meetingLink,
           duration: `${startTime}${e.endTime ? ` - ${e.endTime}` : ""}`,
           streamedDate: eventDate ? eventDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Past session",
+          recordingUrl: e.recordingUrl || "",
+          recordingName: e.recordingName || "",
         };
 
         if (isPast) {
@@ -126,6 +138,29 @@ export const LiveClassesManagerView: React.FC<LiveClassesManagerViewProps> = ({
       setLoading(false);
     }
   }, []);
+
+  const handleSaveRecording = async (recordingUrl: string, recordingName: string) => {
+    if (!selectedRecordingClass) return;
+    setRecordingLoading(true);
+    try {
+      const res = await updateScheduleRecordingApi(selectedRecordingClass.id, {
+        recordingUrl,
+        recordingName,
+      });
+      if (res?.status || res?.success) {
+        toast.success("Recording saved successfully!");
+        setRecordingModalOpen(false);
+        setSelectedRecordingClass(null);
+        fetchClasses();
+      } else {
+        toast.warning(res?.message || "Failed to save recording");
+      }
+    } catch (err) {
+      toast.error("Failed to save recording");
+    } finally {
+      setRecordingLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchClasses();
@@ -257,6 +292,20 @@ export const LiveClassesManagerView: React.FC<LiveClassesManagerViewProps> = ({
             toast.error("Failed to schedule live class");
           }
         }}
+      />
+
+      {/* Attach / Update Recording Modal */}
+      <AddRecordingModal
+        open={recordingModalOpen}
+        onClose={() => {
+          setRecordingModalOpen(false);
+          setSelectedRecordingClass(null);
+        }}
+        onSave={handleSaveRecording}
+        initialUrl={selectedRecordingClass?.recordingUrl}
+        initialName={selectedRecordingClass?.recordingName}
+        sessionTitle={selectedRecordingClass?.topic}
+        loading={recordingLoading}
       />
 
       <div className="w-full flex flex-col gap-6 pb-12 animate-fadeIn">
@@ -602,18 +651,54 @@ export const LiveClassesManagerView: React.FC<LiveClassesManagerViewProps> = ({
                                   </button>
                                 </>
                               ) : (
-                                <>
-                                  {item.meetingLink && (
+                                <div className="flex items-center gap-2">
+                                  {item.recordingUrl ? (
+                                    <>
+                                      <button
+                                        type="button"
+                                        onClick={() => window.open(item.recordingUrl, "_blank")}
+                                        className="px-3 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                      >
+                                        <PlayCircleOutlined className="text-xs" />
+                                        <span>Watch Recording</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setSelectedRecordingClass(item);
+                                          setRecordingModalOpen(true);
+                                        }}
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 border border-[#E4E7EC] transition-colors cursor-pointer"
+                                        title="Edit Recording Link"
+                                      >
+                                        <EditOutlined className="text-xs" />
+                                      </button>
+                                    </>
+                                  ) : (
                                     <button
                                       type="button"
-                                      onClick={() => window.open(item.meetingLink, "_blank")}
-                                      className="px-3 py-1.5 rounded-lg border border-[#E4E7EC] hover:border-blue-200 text-[#315CFF] hover:bg-blue-50 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                      onClick={() => {
+                                        setSelectedRecordingClass(item);
+                                        setRecordingModalOpen(true);
+                                      }}
+                                      className="px-3 py-1.5 rounded-lg border border-purple-200 text-purple-600 hover:bg-purple-50 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                                     >
-                                      <PlayCircleOutlined className="text-xs" />
-                                      <span>Watch Recording</span>
+                                      <VideoCameraOutlined className="text-xs" />
+                                      <span>+ Attach Recording</span>
                                     </button>
                                   )}
-                                </>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setDeleteId(item.id);
+                                      setDeleteModalOpen(true);
+                                    }}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-rose-600 hover:bg-rose-50 border border-[#E4E7EC] hover:border-rose-200 transition-colors cursor-pointer"
+                                    title="Delete Session"
+                                  >
+                                    <DeleteOutlined className="text-xs" />
+                                  </button>
+                                </div>
                               )}
                             </div>
                           </td>
@@ -694,18 +779,56 @@ export const LiveClassesManagerView: React.FC<LiveClassesManagerViewProps> = ({
                     </div>
 
                     {/* Bottom: Action */}
-                    <div className="pt-2 border-t border-[#F2F4F7] flex items-center justify-between">
-                      {item.meetingLink ? (
-                        <button
-                          type="button"
-                          onClick={() => window.open(item.meetingLink, "_blank")}
-                          className="px-3 py-1.5 rounded-xl bg-[#315CFF] hover:bg-[#254BD1] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                        >
-                          <PlayCircleOutlined className="text-xs" />
-                          <span>{activeTab === "upcoming" ? "Start Class" : "Watch Recording"}</span>
-                        </button>
+                    <div className="pt-2 border-t border-[#F2F4F7] flex items-center justify-between flex-wrap gap-2">
+                      {activeTab === "upcoming" ? (
+                        item.meetingLink ? (
+                          <button
+                            type="button"
+                            onClick={() => window.open(item.meetingLink, "_blank")}
+                            className="px-3 py-1.5 rounded-xl bg-[#315CFF] hover:bg-[#254BD1] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <PlayCircleOutlined className="text-xs" />
+                            <span>Start Class</span>
+                          </button>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">No meeting link</span>
+                        )
                       ) : (
-                        <span className="text-xs text-slate-400 italic">No meeting link</span>
+                        item.recordingUrl ? (
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => window.open(item.recordingUrl, "_blank")}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <PlayCircleOutlined className="text-xs" />
+                              <span>Watch Recording</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedRecordingClass(item);
+                                setRecordingModalOpen(true);
+                              }}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600 bg-slate-50 hover:bg-slate-100 border border-[#E4E7EC] transition-colors cursor-pointer"
+                              title="Edit Recording"
+                            >
+                              <EditOutlined className="text-xs" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedRecordingClass(item);
+                              setRecordingModalOpen(true);
+                            }}
+                            className="px-3 py-1.5 rounded-xl border border-purple-200 text-purple-600 hover:bg-purple-50 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <VideoCameraOutlined className="text-xs" />
+                            <span>+ Attach Recording</span>
+                          </button>
+                        )
                       )}
 
                       <div className="flex items-center gap-1.5">

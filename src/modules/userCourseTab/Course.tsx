@@ -42,6 +42,8 @@ interface Lesson {
   unlock_after_previous?: boolean;
   sublessons: Sublesson[];
   studyMaterials?: StudyMaterial[];
+  week?: number;
+  order?: number;
 }
 
 interface ViewerItem {
@@ -115,6 +117,8 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
 
   // Lessons & progress state
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [totalWeeks, setTotalWeeks] = useState<number>(4);
+  const [selectedWeekFilter, setSelectedWeekFilter] = useState<number | "all">("all");
   const [lessonOverview, setLessonOverview] = useState<string>("");
   const [loadingLessons, setLoadingLessons] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
@@ -133,8 +137,13 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
     try {
       const res = await getLessonsWithSublessonsApi(courseId);
       if (res?.status) {
-        setLessons(res.data?.lessons || []);
+        const fetchedLessons = res.data?.lessons || [];
+        setLessons(fetchedLessons);
         setLessonOverview(res.data?.overview || "");
+        const computedWeeks =
+          res.data?.total_weeks ||
+          Math.max(1, ...fetchedLessons.map((l: any) => l.week || 1));
+        setTotalWeeks(computedWeeks || 4);
       }
     } catch {
       toast.error("Failed to load lessons");
@@ -264,174 +273,232 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         </div>
       )}
 
-      {/* Lessons */}
-      <div className="flex flex-col gap-[12px]">
-        <h1 className="font-[700] text-[20px] text-[#0E0E0E]">Lessons</h1>
+      {/* Lessons Curriculum Grouped Week-Wise */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-[700] text-[20px] text-[#0E0E0E]">Curriculum & Weekly Lessons</h1>
+            <p className="text-xs text-gray-500 mt-0.5">Structured weekly modules for guided learning</p>
+          </div>
+          <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
+            {lessons.length} {lessons.length === 1 ? "Lesson" : "Lessons"} Total
+          </span>
+        </div>
+
+        {/* Week Filter Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <button
+            type="button"
+            onClick={() => setSelectedWeekFilter("all")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              selectedWeekFilter === "all"
+                ? "bg-secondary text-white shadow-xs"
+                : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+            }`}
+          >
+            All Weeks ({totalWeeks} Weeks)
+          </button>
+          {Array.from({ length: totalWeeks }, (_, idx) => idx + 1).map((w) => {
+            const weekLessons = (lessons || []).filter((l) => (l.week || 1) === w);
+            const count = weekLessons.length;
+            const completedCount = weekLessons.filter((l) => {
+              const materials = l.studyMaterials ?? [];
+              const sublessons = l.sublessons ?? [];
+              if (materials.length === 0 && sublessons.length === 0) {
+                return completedLessons.has(l.lesson_id);
+              }
+              const allMatDone = materials.every((m) => completedMaterials.has(m.file_url));
+              const allSubDone = sublessons.every((sl) => {
+                const slm = sl.studyMaterials ?? [];
+                return slm.length === 0
+                  ? completedSublessons.has(sl.sublesson_id)
+                  : slm.every((m) => completedMaterials.has(m.file_url));
+              });
+              return allMatDone && allSubDone;
+            }).length;
+
+            return (
+              <button
+                key={w}
+                type="button"
+                onClick={() => setSelectedWeekFilter(w)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                  selectedWeekFilter === w
+                    ? "bg-secondary text-white shadow-xs"
+                    : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                <span>Week {w}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    selectedWeekFilter === w
+                      ? "bg-white/25 text-white"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {completedCount}/{count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
         {loadingLessons ? (
-          <div className="flex justify-center py-8">
+          <div className="flex justify-center py-12">
             <Spin size="large" />
           </div>
         ) : lessons.length === 0 ? (
-          <div className="text-center py-8 text-[#7B7B7B]">
-            No lessons available yet.
+          <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400 text-sm">
+            No lessons available for this course yet.
           </div>
         ) : (
-          <div className="flex flex-col gap-[12px]">
-            {lessons.map((lesson, index) => {
-              const checkIsLessonCompleted = (l: Lesson) => {
-                const materials = l.studyMaterials ?? [];
-                const sublessons = l.sublessons ?? [];
-                const hasMaterials = materials.length > 0;
-                const hasSublessons = sublessons.length > 0;
-
-                if (!hasMaterials && !hasSublessons) {
-                  return completedLessons.has(l.lesson_id);
-                }
-
-                if (hasMaterials) {
-                  const allMaterialsCompleted = materials.every((m) =>
-                    completedMaterials.has(m.file_url)
-                  );
-                  if (!allMaterialsCompleted) return false;
-                }
-
-                if (hasSublessons) {
-                  const allSubCompleted = sublessons.every((sl) => {
-                    const slMaterials = sl.studyMaterials ?? [];
-                    if (slMaterials.length === 0) {
-                      return completedSublessons.has(sl.sublesson_id);
-                    }
-                    return slMaterials.every((m) =>
-                      completedMaterials.has(m.file_url)
-                    );
-                  });
-                  if (!allSubCompleted) return false;
-                }
-
-                return true;
-              };
-
-              const isLocked = lesson.unlock_after_previous && index > 0 && !checkIsLessonCompleted(lessons[index - 1]);
-              const isLessonCompleted = checkIsLessonCompleted(lesson);
-              const isActive = Array.isArray(activeKey)
-                ? activeKey.includes(index.toString())
-                : activeKey === index.toString();
+          <div className="flex flex-col gap-4">
+            {(selectedWeekFilter === "all"
+              ? Array.from({ length: totalWeeks }, (_, idx) => idx + 1)
+              : [selectedWeekFilter]
+            ).map((weekNum) => {
+              const weekLessons = (lessons || []).filter(
+                (l) => (l.week || 1) === weekNum
+              );
 
               return (
-                <div key={lesson.lesson_id} className="flex items-center gap-3">
-                  <Collapse
-                    accordion
-                    onChange={!isLocked ? (key) => setActiveKey(key) : undefined}
-                    expandIconPosition="end"
-                    prefixCls="custom-course-collapse"
-                    activeKey={activeKey}
-                    expandIcon={({ isActive: ia }) =>
-                      !isLocked ? (
-                        <RightOutlined
-                          style={{
-                            color: ia ? "white" : "black",
-                            transform: ia ? "rotate(90deg)" : "rotate(0deg)",
-                            transition: "0.2s",
-                          }}
-                        />
-                      ) : (
-                        <LockIcon />
-                      )
-                    }
-                    className={`${isActive ? "!bg-secondary w-full" : "!bg-white w-full"}`}
-                    items={[
-                      {
-                        key: index.toString(),
-                        label: (
-                          <div className="flex items-center gap-2">
-                            {isLessonCompleted && (
-                              <CheckCircleFilled className="text-green-400" />
-                            )}
-                            <p className={`text-[16px] font-[700] ${isActive && "text-white"}`}>
-                              {lesson.lesson_name}
-                            </p>
-                          </div>
-                        ),
-                        children: (
-                          <div className="flex flex-col gap-4 px-3 py-6 w-full">
-                            {lesson.lesson_description && (
-                              <div className="text-[#002333] text-[16px] leading-[150%]">
-                                <QuillEditor readOnly value={lesson.lesson_description} />
-                              </div>
-                            )}
+                <div
+                  key={weekNum}
+                  className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col gap-3"
+                >
+                  <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-3 py-1 rounded-md bg-secondary/10 text-secondary font-bold text-xs tracking-wider uppercase">
+                        Week {weekNum}
+                      </span>
+                      <span className="text-xs text-gray-500 font-medium">
+                        {weekLessons.length} {weekLessons.length === 1 ? "Lesson" : "Lessons"}
+                      </span>
+                    </div>
+                  </div>
 
-                            {/* Lesson file */}
-                            {lesson.studyMaterials && lesson.studyMaterials.length > 0 && (
-                              <div className="flex flex-col gap-3">
-                                {lesson.studyMaterials.map((material, idx) => {
-                                  const isMaterialCompleted = completedMaterials.has(material.file_url);
-                                  return (
-                                    <MaterialRow
-                                      key={idx}
-                                      name={material.file_name || lesson.lesson_name}
-                                      fileType={material.file_type}
-                                      isCompleted={isMaterialCompleted}
-                                      onOpen={() =>
-                                        openContent({
-                                          id: lesson.lesson_id,
-                                          name: lesson.lesson_name,
-                                          file_url: material.file_url,
-                                          file_type: material.file_type,
-                                          isSublesson: false,
-                                          courseId,
-                                          batchId,
-                                        })
-                                      }
-                                    />
-                                  );
-                                })}
-                              </div>
-                            )}
+                  {weekLessons.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-gray-400 bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
+                      No lessons scheduled for Week {weekNum}.
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {weekLessons.map((lesson, index) => {
+                        const checkIsLessonCompleted = (l: Lesson) => {
+                          const materials = l.studyMaterials ?? [];
+                          const sublessons = l.sublessons ?? [];
+                          const hasMaterials = materials.length > 0;
+                          const hasSublessons = sublessons.length > 0;
 
-                            {/* Sub-lessons */}
-                            {lesson.sublessons?.length > 0 && (
-                              <div className="flex flex-col gap-4">
-                                {lesson.sublessons.map((sub) => {
-                                  const isSubCompleted = completedSublessons.has(
-                                    sub.sublesson_id
-                                  );
-                                  return (
-                                    <div
-                                      key={sub.sublesson_id}
-                                      className="w-full bg-[#F7F7F7] rounded-xl p-3 flex flex-col gap-2"
-                                    >
-                                      <div className="flex items-center gap-2 font-bold text-[18px]">
-                                        {isSubCompleted && (
-                                          <CheckCircleFilled className="text-green-500" />
-                                        )}
-                                        {sub.sublesson_name}
-                                      </div>
-                                      {sub.sublesson_description && (
-                                        <div>
-                                          <QuillEditor
-                                            readOnly
-                                            value={sub.sublesson_description}
-                                          />
+                          if (!hasMaterials && !hasSublessons) {
+                            return completedLessons.has(l.lesson_id);
+                          }
+
+                          if (hasMaterials) {
+                            const allMaterialsCompleted = materials.every((m) =>
+                              completedMaterials.has(m.file_url)
+                            );
+                            if (!allMaterialsCompleted) return false;
+                          }
+
+                          if (hasSublessons) {
+                            const allSubCompleted = sublessons.every((sl) => {
+                              const slMaterials = sl.studyMaterials ?? [];
+                              if (slMaterials.length === 0) {
+                                return completedSublessons.has(sl.sublesson_id);
+                              }
+                              return slMaterials.every((m) =>
+                                completedMaterials.has(m.file_url)
+                              );
+                            });
+                            if (!allSubCompleted) return false;
+                          }
+
+                          return true;
+                        };
+
+                        const isLocked =
+                          lesson.unlock_after_previous &&
+                          index > 0 &&
+                          !checkIsLessonCompleted(weekLessons[index - 1]);
+                        const isLessonCompleted = checkIsLessonCompleted(lesson);
+                        const collapseKey = `${weekNum}-${lesson.lesson_id || index}`;
+                        const isActive = Array.isArray(activeKey)
+                          ? activeKey.includes(collapseKey)
+                          : activeKey === collapseKey;
+
+                        return (
+                          <div key={collapseKey} className="flex items-center gap-3">
+                            <Collapse
+                              accordion={false}
+                              onChange={!isLocked ? (key) => setActiveKey(key) : undefined}
+                              expandIconPosition="end"
+                              prefixCls="custom-course-collapse"
+                              activeKey={activeKey}
+                              expandIcon={({ isActive: ia }) =>
+                                !isLocked ? (
+                                  <RightOutlined
+                                    style={{
+                                      color: ia ? "white" : "black",
+                                      transform: ia ? "rotate(90deg)" : "rotate(0deg)",
+                                      transition: "0.2s",
+                                    }}
+                                  />
+                                ) : (
+                                  <LockIcon />
+                                )
+                              }
+                              className={`${
+                                isActive ? "!bg-secondary w-full" : "!bg-[#FAFAFA] w-full"
+                              } border border-gray-200/70 rounded-xl overflow-hidden`}
+                              items={[
+                                {
+                                  key: collapseKey,
+                                  label: (
+                                    <div className="flex items-center gap-2 py-0.5">
+                                      {isLessonCompleted && (
+                                        <CheckCircleFilled className="text-emerald-500" />
+                                      )}
+                                      <p
+                                        className={`text-[15px] font-[600] ${
+                                          isActive && "text-white"
+                                        }`}
+                                      >
+                                        {lesson.lesson_name}
+                                      </p>
+                                    </div>
+                                  ),
+                                  children: (
+                                    <div className="flex flex-col gap-4 px-3 py-4 w-full bg-white rounded-lg">
+                                      {lesson.lesson_description && (
+                                        <div className="text-[#002333] text-[15px] leading-[150%]">
+                                          <QuillEditor readOnly value={lesson.lesson_description} />
                                         </div>
                                       )}
-                                      {sub.studyMaterials && sub.studyMaterials.length > 0 && (
-                                        <div className="flex flex-col gap-2 mt-2">
-                                          {sub.studyMaterials.map((material, idx) => {
-                                            const isMaterialCompleted = completedMaterials.has(material.file_url);
+
+                                      {/* Lesson file */}
+                                      {lesson.studyMaterials && lesson.studyMaterials.length > 0 && (
+                                        <div className="flex flex-col gap-2 border-t border-gray-100 pt-3">
+                                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Study Materials ({lesson.studyMaterials.length})
+                                          </span>
+                                          {lesson.studyMaterials.map((material, idx) => {
+                                            const isMaterialCompleted = completedMaterials.has(
+                                              material.file_url
+                                            );
                                             return (
                                               <MaterialRow
                                                 key={idx}
-                                                name={material.file_name || sub.sublesson_name}
+                                                name={material.file_name || lesson.lesson_name}
                                                 fileType={material.file_type}
                                                 isCompleted={isMaterialCompleted}
                                                 onOpen={() =>
                                                   openContent({
-                                                    id: sub.sublesson_id,
-                                                    name: sub.sublesson_name,
+                                                    id: lesson.lesson_id,
+                                                    name: lesson.lesson_name,
                                                     file_url: material.file_url,
                                                     file_type: material.file_type,
-                                                    isSublesson: true,
+                                                    isSublesson: false,
                                                     courseId,
                                                     batchId,
                                                   })
@@ -441,16 +508,81 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                           })}
                                         </div>
                                       )}
+
+                                      {/* Sub-lessons */}
+                                      {lesson.sublessons && lesson.sublessons.length > 0 && (
+                                        <div className="flex flex-col gap-3 border-t border-gray-100 pt-3">
+                                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Sub-Topics ({lesson.sublessons.length})
+                                          </span>
+                                          {lesson.sublessons.map((sub) => {
+                                            const isSubCompleted = completedSublessons.has(
+                                              sub.sublesson_id
+                                            );
+                                            return (
+                                              <div
+                                                key={sub.sublesson_id}
+                                                className="w-full bg-[#F9FAFB] rounded-xl p-3.5 flex flex-col gap-2 border border-gray-100"
+                                              >
+                                                <div className="flex items-center gap-2 font-bold text-[15px]">
+                                                  {isSubCompleted && (
+                                                    <CheckCircleFilled className="text-emerald-500" />
+                                                  )}
+                                                  {sub.sublesson_name}
+                                                </div>
+                                                {sub.sublesson_description && (
+                                                  <div className="text-sm">
+                                                    <QuillEditor
+                                                      readOnly
+                                                      value={sub.sublesson_description}
+                                                    />
+                                                  </div>
+                                                )}
+                                                {sub.studyMaterials &&
+                                                  sub.studyMaterials.length > 0 && (
+                                                    <div className="flex flex-col gap-2 mt-2">
+                                                      {sub.studyMaterials.map((material, idx) => {
+                                                        const isMaterialCompleted =
+                                                          completedMaterials.has(material.file_url);
+                                                        return (
+                                                          <MaterialRow
+                                                            key={idx}
+                                                            name={
+                                                              material.file_name || sub.sublesson_name
+                                                            }
+                                                            fileType={material.file_type}
+                                                            isCompleted={isMaterialCompleted}
+                                                            onOpen={() =>
+                                                              openContent({
+                                                                id: sub.sublesson_id,
+                                                                name: sub.sublesson_name,
+                                                                file_url: material.file_url,
+                                                                file_type: material.file_type,
+                                                                isSublesson: true,
+                                                                courseId,
+                                                                batchId,
+                                                              })
+                                                            }
+                                                          />
+                                                        );
+                                                      })}
+                                                    </div>
+                                                  )}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
                                     </div>
-                                  );
-                                })}
-                              </div>
-                            )}
+                                  ),
+                                },
+                              ]}
+                            />
                           </div>
-                        ),
-                      },
-                    ]}
-                  />
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}

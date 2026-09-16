@@ -11,6 +11,7 @@ import {
   getCourseInfoApi,
   removeFromFavorite,
   purchaseCourseApi,
+  getLessonsWithSublessonsApi,
 } from "@/services/collections";
 import PurchaseModal from "@/components/PurchaseModal";
 import { formatLabel, getImageUrl, isValidUrl, getCategoryName } from "@/utils/comman";
@@ -32,6 +33,8 @@ import {
   CrownOutlined,
   CodeOutlined,
   LoadingOutlined,
+  LockOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { Skeleton } from "antd";
 import Image from "next/image";
@@ -56,6 +59,8 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
   const [imgError, setImgError] = useState(false);
   const [isExpandedTeacher, setIsExpandedTeacher] = useState(false);
   const [coursesInfo, setCoursesInfo] = useState<CourseInfoDataProp>();
+  const [courseLessons, setCourseLessons] = useState<any[]>([]);
+  const [totalWeeks, setTotalWeeks] = useState<number>(4);
   const Subscribed = coursesInfo?.enrolled_status || false;
   const [loading, setLoading] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
@@ -87,9 +92,21 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
     setLoading(true);
     try {
       if (selectedCourseData?.course_id) {
-        const response = await getCourseInfoApi(selectedCourseData?.course_id);
+        const [response, lessonsRes] = await Promise.all([
+          getCourseInfoApi(selectedCourseData?.course_id),
+          getLessonsWithSublessonsApi(selectedCourseData?.course_id).catch(() => null),
+        ]);
         if (response) {
           setCoursesInfo(response?.data);
+        }
+        if (lessonsRes?.status && lessonsRes?.data) {
+          const lList = lessonsRes.data.lessons || [];
+          setCourseLessons(lList);
+          const computedWeeks =
+            lessonsRes.data.total_weeks ||
+            response?.data?.total_weeks ||
+            Math.max(1, ...lList.map((l: any) => l.week || 1));
+          setTotalWeeks(computedWeeks || 4);
         }
       }
     } catch (err) {
@@ -468,6 +485,106 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                       </span>
                     </div>
                   ))}
+                </div>
+              )}
+            </section>
+
+            {/* Course Curriculum Week-by-Week */}
+            <section className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col gap-5">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg">📚</span>
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+                      Course Curriculum & Weekly Schedule
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Structured across {totalWeeks} weeks of practical learning
+                    </p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-indigo-50 text-[#4F46E5] text-xs font-bold">
+                  {courseLessons.length} {courseLessons.length === 1 ? "Lesson" : "Lessons"}
+                </span>
+              </div>
+
+              {loading ? (
+                <Skeleton paragraph={{ rows: 4 }} active />
+              ) : courseLessons.length === 0 ? (
+                <div className="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                  Curriculum syllabus is currently being finalized by the instructor.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {Array.from({ length: totalWeeks }, (_, idx) => idx + 1).map((weekNum) => {
+                    const weekLessons = (courseLessons || []).filter(
+                      (l: any) => (l.week || 1) === weekNum
+                    );
+
+                    return (
+                      <div
+                        key={weekNum}
+                        className="rounded-xl border border-slate-200/70 overflow-hidden bg-white"
+                      >
+                        <div className="bg-slate-50/80 p-3.5 flex items-center justify-between border-b border-slate-200/60">
+                          <div className="flex items-center gap-2.5">
+                            <span className="px-2.5 py-0.5 rounded-md bg-[#4F46E5] text-white font-bold text-xs uppercase tracking-wider">
+                              Week {weekNum}
+                            </span>
+                            <span className="text-xs font-semibold text-slate-700">
+                              {weekLessons.length} {weekLessons.length === 1 ? "Lesson" : "Lessons"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {weekLessons.length === 0 ? (
+                          <div className="p-3 text-xs text-slate-400 italic">
+                            No lessons listed for this week.
+                          </div>
+                        ) : (
+                          <div className="divide-y divide-slate-100">
+                            {weekLessons.map((l: any, i: number) => (
+                              <div
+                                key={l.lesson_id || i}
+                                className="p-3.5 flex items-start justify-between gap-3 hover:bg-slate-50/50 transition-colors"
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                                    {i + 1}
+                                  </div>
+                                  <div className="flex flex-col gap-0.5">
+                                    <h4 className="text-sm font-bold text-slate-900">
+                                      {l.lesson_name}
+                                    </h4>
+                                    {l.lesson_description && (
+                                      <p className="text-xs text-slate-500 line-clamp-1">
+                                        {l.lesson_description.replace(/<[^>]+>/g, "")}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                                      {l.studyMaterials && l.studyMaterials.length > 0 && (
+                                        <span className="flex items-center gap-1">
+                                          <FileTextOutlined /> {l.studyMaterials.length} materials
+                                        </span>
+                                      )}
+                                      {l.sublessons && l.sublessons.length > 0 && (
+                                        <span>• {l.sublessons.length} sub-topics</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="shrink-0 flex items-center gap-1 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+                                  <LockOutlined className="text-[10px]" />
+                                  <span>Enrolled</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </section>
