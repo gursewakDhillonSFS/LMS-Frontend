@@ -601,13 +601,13 @@ export const regenerateCourseTranslationApi = (
 
 // ─── Notification APIs ───────────────────────────────────────────────────────
 export const getMyNotificationsApi = (unreadOnly = false) =>
-  getApi(`/auth/notifications/v1/my-notifications${unreadOnly ? "?unreadOnly=true" : ""}`);
+  getApi(`/auth/notification/v1/my-notifications${unreadOnly ? "?unreadOnly=true" : ""}`);
 
 export const markNotificationReadApi = (notificationId: string) =>
-  putApi(`/auth/notifications/v1/mark-read/${notificationId}`, {});
+  putApi(`/auth/notification/v1/mark-read/${notificationId}`, {});
 
 export const markAllNotificationsReadApi = () =>
-  putApi("/auth/notifications/v1/mark-all-read", {});
+  putApi("/auth/notification/v1/mark-all-read", {});
 
 // ─── Chat Message Fallback API ───────────────────────────────────────────────
 export const sendChatMessageApi = (groupId: string, message: string) =>

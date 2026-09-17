@@ -91,8 +91,8 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
     try {
       setLoading(true);
       const res = await getMyNotificationsApi();
-      const list: NotificationItem[] = res?.data?.notifications || res?.data || [];
-      const safeList = Array.isArray(list) ? list : [];
+      const list = res?.data?.notifications || (Array.isArray(res?.data) ? res.data : []);
+      const safeList: NotificationItem[] = Array.isArray(list) ? list : [];
       setNotifications(safeList);
 
       const unreadCount = safeList.filter((n) => !n.is_read).length;

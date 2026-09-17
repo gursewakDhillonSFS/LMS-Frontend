@@ -83,12 +83,31 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
         const params = new URLSearchParams();
         params.append("size", "100");
         const res = await getAllCoursesApi(params);
-        const list: CourseItem[] = res?.data?.courses || res?.data || [];
+        const rawList =
+          res?.data?.course_list ||
+          res?.data?.courses ||
+          (Array.isArray(res?.data) ? res.data : []);
+        const list: CourseItem[] = Array.isArray(rawList)
+          ? rawList.map((c: any) => ({
+              course_id: String(c.course_id || c._id || ""),
+              course_name: c.course_name || "Course",
+              batch: Array.isArray(c.batch)
+                ? c.batch.map((b: any) => ({
+                    _id: String(b._id),
+                    batchName: b.batchName || "Batch",
+                    startDate: b.startDate,
+                    endDate: b.endDate,
+                  }))
+                : [],
+            }))
+          : [];
+
         if (isMounted) {
           setCourses(list);
         }
       } catch (err) {
         console.error("Failed to load courses for scheduler:", err);
+        if (isMounted) setCourses([]);
       } finally {
         if (isMounted) setFetchingCourses(false);
       }
@@ -113,8 +132,9 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
     setSelectedBatchId("");
     form.setFieldsValue({ batchId: undefined });
 
-    const found = courses.find((c) => c.course_id === courseId);
-    const batches = found?.batch || [];
+    const safeCourses = Array.isArray(courses) ? courses : [];
+    const found = safeCourses.find((c) => String(c.course_id) === String(courseId));
+    const batches = Array.isArray(found?.batch) ? found.batch : [];
     setAvailableBatches(batches);
 
     // If only one batch exists, auto-select it
@@ -274,7 +294,7 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
                   String(option?.children ?? "").toLowerCase().includes(input.toLowerCase())
                 }
               >
-                {courses.map((c) => (
+                {(Array.isArray(courses) ? courses : []).map((c) => (
                   <Option key={c.course_id} value={c.course_id}>
                     {c.course_name}
                   </Option>
@@ -298,7 +318,7 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
                 onChange={handleBatchChange}
                 className="w-full !h-10"
               >
-                {availableBatches.map((b) => (
+                {(Array.isArray(availableBatches) ? availableBatches : []).map((b) => (
                   <Option key={b._id} value={b._id}>
                     {b.batchName}
                   </Option>

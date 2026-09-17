@@ -42,7 +42,7 @@ const UserHeader = () => {
   const fetchNotificationCount = React.useCallback(async () => {
     try {
       const res = await getMyNotificationsApi(true);
-      const list = res?.data?.notifications || res?.data || [];
+      const list = res?.data?.notifications || (Array.isArray(res?.data) ? res.data : []);
       if (Array.isArray(list)) {
         setUnreadNotificationCount(list.filter((n: any) => !n.is_read).length);
       }
