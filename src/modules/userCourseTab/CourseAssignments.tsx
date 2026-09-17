@@ -6,7 +6,7 @@ import QuillEditor from "@/components/QuillEditor";
 import { getAssignmentsByBatchApi } from "@/services/collections";
 import { AssignmentTab } from "@/utils/constant";
 import { AssignmentIcon, StopWatchIcon } from "@/utils/icons";
-import { Spin } from "antd";
+import { Skeleton } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
@@ -28,39 +28,53 @@ interface ApiAssignment {
   overview: string;
   dueDate: string;
   status: string;
-  projects?: { title: string; description: string }[];
-  studentSubmission: { status: string; result: string | null } | null;
+  assignmentType?: string;
+  studentSubmission?: {
+    status: string;
+    grade?: string;
+    feedback?: string;
+    submittedDate?: string;
+    result?: string | null;
+  };
 }
 
 interface CourseAssignmentsProps {
-  courseId: string;
-  batchId: string;
+  batchId?: string;
+  courseId?: string;
 }
 
 const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
-  courseId,
   batchId,
+  courseId,
 }) => {
-  const [assignmentTab, setAssignmentTab] = useState("current");
-  const [assignments, setAssignments] = useState<ApiAssignment[]>([]);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [assignmentTab, setAssignmentTab] = useState("all");
+  const [loading, setLoading] = useState(false);
+  const [assignments, setAssignments] = useState<ApiAssignment[]>([]);
+
+  // Submission modal state
+  const [selectedAssignment, setSelectedAssignment] = useState<ApiAssignment | null>(null);
+  const [submissionText, setSubmissionText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const fetchAssignments = useCallback(async () => {
-    if (!batchId || !courseId) return;
+    if (!batchId) return;
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        batchId,
-        courseId,
-        tab: assignmentTab === "current" ? "ongoing" : "past",
-      });
+      const params = new URLSearchParams();
+      params.append("batchId", batchId);
+      if (courseId) params.append("courseId", courseId);
       const res = await getAssignmentsByBatchApi(params);
-      if (res?.status) {
-        setAssignments(res.data?.assignments || []);
+      const list = res?.data?.assignments || res?.data || [];
+      if (assignmentTab === "submitted") {
+        setAssignments(list.filter((a: ApiAssignment) => a.studentSubmission?.status));
+      } else if (assignmentTab === "pending") {
+        setAssignments(list.filter((a: ApiAssignment) => !a.studentSubmission?.status));
+      } else {
+        setAssignments(list);
       }
     } catch {
-      toast.error("Failed to load assignments");
+      setAssignments([]);
     } finally {
       setLoading(false);
     }
@@ -76,8 +90,22 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <Spin size="large" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="bg-white rounded-xl p-5 border border-slate-100 shadow-xs space-y-3">
+            <div className="flex gap-3 items-center">
+              <Skeleton.Avatar active size={40} shape="circle" />
+              <div className="flex-1">
+                <Skeleton.Input active size="small" style={{ width: "60%" }} />
+              </div>
+            </div>
+            <Skeleton active paragraph={{ rows: 2 }} />
+            <div className="flex justify-between pt-2">
+              <Skeleton.Button active size="small" style={{ width: 80 }} />
+              <Skeleton.Button active size="small" style={{ width: 100 }} />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

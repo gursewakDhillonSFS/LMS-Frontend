@@ -11,7 +11,7 @@ import { RootState } from "@/redux/store";
 import { setInstructorStudentTab } from "@/redux/tabslice/InstructorStudentTabSlice";
 import { studentTabOption } from "@/utils/constant";
 import { RoutePaths, StudentTabEnum } from "@/utils/enums";
-import { Breadcrumb, Spin } from "antd";
+import { Breadcrumb, Skeleton } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
@@ -23,44 +23,50 @@ const StudentDetails = () => {
   );
   const [activeTab, setActiveTab] = useState<string>(studentActiveTab);
   const [open, setOpen] = useState(false);
-  const dispatch = useDispatch();
-  const searchParams = useSearchParams();
-  const studentId = searchParams.get("id") || searchParams.get("student_id");
-
   const [loading, setLoading] = useState(true);
   const [studentDetails, setStudentDetails] = useState<any>(null);
-  const [assignments, setAssignments] = useState<any[]>([]);
-  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [submissions, setSubmissions] = useState<any[]>([]);
+
+  const searchParams = useSearchParams();
+  const studentId = searchParams.get("id");
+  const courseId = searchParams.get("course_id");
+  const batchId = searchParams.get("batch_id");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setInstructorStudentTab(activeTab));
   }, [activeTab]);
 
   useEffect(() => {
-    if (studentId) {
-      setLoading(true);
-      Promise.all([
-        getStudentDetailsApi(studentId),
-        getStudentSubmissionsApi(studentId),
-      ])
-        .then(([detailsRes, submissionsRes]) => {
-          if (detailsRes?.status) {
-            setStudentDetails(detailsRes.data);
-          }
-          if (submissionsRes?.status) {
-            setAssignments(submissionsRes.data?.assignments || []);
-            setQuizzes(submissionsRes.data?.quizzes || []);
-          }
-        })
-        .catch(console.error)
-        .finally(() => setLoading(false));
-    }
+    if (!studentId) return;
+    setLoading(true);
+    getStudentDetailsApi(studentId)
+      .then((res: any) => {
+        if (res?.data) {
+          setStudentDetails(res.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+
+    // Also fetch submissions
+    getStudentSubmissionsApi(studentId)
+      .then((res: any) => {
+        if (res?.data) {
+          setSubmissions(res.data.submissions || res.data || []);
+        }
+      })
+      .catch(() => {});
   }, [studentId]);
+
+  const assignments = (submissions as any)?.assignments || (Array.isArray(submissions) ? submissions : []);
+  const quizzes = (submissions as any)?.quizzes || [];
 
   const items = [
     {
       title: "Students",
-      href: RoutePaths?.Students,
+      href: RoutePaths.Students,
     },
     {
       title: studentDetails?.name || "Student Details",
@@ -69,8 +75,17 @@ const StudentDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Spin size="large" />
+      <div className="flex flex-col gap-6 py-6">
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-xs flex gap-6 items-center">
+          <Skeleton.Avatar active size={80} shape="circle" />
+          <div className="flex-1 space-y-2">
+            <Skeleton.Input active size="large" style={{ width: 240 }} />
+            <Skeleton active paragraph={{ rows: 2 }} />
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-xs space-y-4">
+          <Skeleton active paragraph={{ rows: 4 }} />
+        </div>
       </div>
     );
   }

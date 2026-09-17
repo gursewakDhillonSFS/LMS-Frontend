@@ -599,3 +599,21 @@ export const regenerateCourseTranslationApi = (
   locale?: string,
 ) => postApi(`/auth/course/v1/translations/${courseId}/regenerate`, { locale });
 
+// ─── Notification APIs ───────────────────────────────────────────────────────
+export const getMyNotificationsApi = (unreadOnly = false) =>
+  getApi(`/auth/notifications/v1/my-notifications${unreadOnly ? "?unreadOnly=true" : ""}`);
+
+export const markNotificationReadApi = (notificationId: string) =>
+  putApi(`/auth/notifications/v1/mark-read/${notificationId}`, {});
+
+export const markAllNotificationsReadApi = () =>
+  putApi("/auth/notifications/v1/mark-all-read", {});
+
+// ─── Chat Message Fallback API ───────────────────────────────────────────────
+export const sendChatMessageApi = (groupId: string, message: string) =>
+  postApi("/auth/communication/v1/send-message", { groupId, message });
+
+// ─── Certificate Claim API ───────────────────────────────────────────────────
+export const claimCertificateApi = (courseId: string) =>
+  postApi("/auth/certificate/v1/claim", { courseId });
+

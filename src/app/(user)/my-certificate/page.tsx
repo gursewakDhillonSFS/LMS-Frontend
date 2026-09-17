@@ -15,11 +15,14 @@ import {
   ArrowRightOutlined,
 } from "@ant-design/icons";
 import { Modal, Tooltip } from "antd";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 import { getMyCertificatesApi } from "@/services/collections";
 import { Certificate } from "@/utils/images";
 import { toast } from "@/utils/toast";
 import { RoutePaths } from "@/utils/enums";
+import CertificateDisplay from "@/components/certificate/CertificateDisplay";
 
 interface CertItem {
   certificate_id: string;
@@ -32,6 +35,10 @@ interface CertItem {
 
 const MyCertificate = () => {
   const router = useRouter();
+  const currentUserName =
+    useSelector((s: RootState) => s.userdata?.full_name) ||
+    useSelector((s: RootState) => s.userdata?.first_name) ||
+    "Student";
   const [certs, setCerts] = useState<CertItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -315,50 +322,22 @@ const MyCertificate = () => {
           onCancel={() => setPreviewCert(null)}
           footer={null}
           centered
-          width={800}
+          width={880}
           className="rounded-2xl overflow-hidden"
+          destroyOnClose
         >
-          <div className="p-4 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#F2F4F7]">
-              <div>
-                <h3 className="text-base font-bold text-[#101828]">{previewCert.course_name}</h3>
-                <span className="text-xs text-slate-500 font-mono">
-                  Credential ID: {previewCert.certificate_code}
-                </span>
-              </div>
-              <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-xs flex items-center gap-1 border border-emerald-200">
-                <SafetyCertificateFilled /> Verified
-              </span>
-            </div>
-
-            <div className="w-full relative h-[440px] rounded-xl overflow-hidden shadow-inner bg-slate-900">
-              <Image
-                src={Certificate}
-                alt={previewCert.course_name}
-                unoptimized
-                fill
-                className="object-contain"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => handleCopyCode(previewCert.certificate_code)}
-                className="px-4 py-2 rounded-xl border border-[#D0D5DD] text-xs font-semibold text-[#344054] hover:bg-[#F8FAFC] flex items-center gap-1.5 cursor-pointer"
-              >
-                <CopyOutlined />
-                <span>Copy Code</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDownload(previewCert.course_name, previewCert.certificate_code)}
-                className="px-5 py-2 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
-              >
-                <DownloadOutlined />
-                <span>Download PDF</span>
-              </button>
-            </div>
+          <div className="p-2">
+            <CertificateDisplay
+              data={{
+                studentName: currentUserName,
+                courseTitle: previewCert.course_name,
+                certificateCode: previewCert.certificate_code,
+                issuedDate: previewCert.issued_at,
+                instructorName: previewCert.instructor_name,
+                grade: previewCert.grade,
+              }}
+              onClose={() => setPreviewCert(null)}
+            />
           </div>
         </Modal>
       )}

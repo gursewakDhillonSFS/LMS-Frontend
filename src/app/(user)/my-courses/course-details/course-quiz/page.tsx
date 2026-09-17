@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, Suspense, useRef } from "react";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
 import { RoutePaths } from "@/utils/enums";
-import { Breadcrumb, Radio, Input, Alert, Spin } from "antd";
+import { Breadcrumb, Radio, Input, Alert, Skeleton } from "antd";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getQuizDetailsApi, submitQuizApi } from "@/services/collections";
 import CommonButton from "@/components/CommonButton";
@@ -188,7 +188,18 @@ const CourseQuizContent = () => {
   ];
 
   if (loading) {
-    return <div className="flex justify-center p-12"><Spin size="large" /></div>;
+    return (
+      <div className="flex flex-col gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-xs">
+        <Skeleton.Input active size="large" style={{ width: 280 }} />
+        <div className="space-y-4 pt-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-3">
+              <Skeleton active paragraph={{ rows: 2 }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!quiz) {
@@ -301,7 +312,14 @@ const CourseQuizContent = () => {
 
 export default function CourseQuizAttempt() {
   return (
-    <Suspense fallback={<div className="flex justify-center p-12"><Spin size="large" /></div>}>
+    <Suspense
+      fallback={
+        <div className="p-8 bg-white rounded-2xl border border-slate-100 space-y-4">
+          <Skeleton.Input active size="large" style={{ width: 280 }} />
+          <Skeleton active paragraph={{ rows: 3 }} />
+        </div>
+      }
+    >
       <CourseQuizContent />
     </Suspense>
   );

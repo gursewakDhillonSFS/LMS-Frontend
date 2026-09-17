@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChatIcon,
   EarPhoneIcon,
@@ -12,7 +12,7 @@ import AnnouncementPanel from "./AnnouncementPanel";
 import { useRouter, usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
-import { markAnnouncementsAsReadApi } from "@/services/collections";
+import { markAnnouncementsAsReadApi, getMyNotificationsApi } from "@/services/collections";
 import { RootState } from "@/redux/store";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -37,6 +37,25 @@ const UserHeader = () => {
 
   const [notificationDrawer, setNotificationDrawer] = useState(false);
   const [announcementDrawer, setAnnouncementDrawer] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+
+  const fetchNotificationCount = React.useCallback(async () => {
+    try {
+      const res = await getMyNotificationsApi(true);
+      const list = res?.data?.notifications || res?.data || [];
+      if (Array.isArray(list)) {
+        setUnreadNotificationCount(list.filter((n: any) => !n.is_read).length);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotificationCount();
+    const interval = setInterval(fetchNotificationCount, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotificationCount]);
 
   const getSectionTitle = () => {
     if (pathname.includes("/my-courses")) {
@@ -78,7 +97,10 @@ const UserHeader = () => {
           onClose={() => setNotificationDrawer(false)}
           open={notificationDrawer}
         >
-          <NotificationPanel onClose={() => setNotificationDrawer(false)} />
+          <NotificationPanel
+            onClose={() => setNotificationDrawer(false)}
+            onUpdateCount={(cnt) => setUnreadNotificationCount(cnt)}
+          />
         </Drawer>
       )}
       {announcementDrawer && (
@@ -110,7 +132,7 @@ const UserHeader = () => {
               markAnnouncementsAsReadApi().catch(console.error);
             }
           }}
-          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms] cursor-pointer"
         >
           <Badge
             count={unreadAnnouncementCount}
@@ -123,9 +145,16 @@ const UserHeader = () => {
         </button>
         <button
           onClick={() => setNotificationDrawer(true)}
-          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms]"
+          className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-[150ms] cursor-pointer"
         >
-          <NotificationIcon />
+          <Badge
+            count={unreadNotificationCount}
+            overflowCount={99}
+            size="small"
+            offset={[-2, 2]}
+          >
+            <NotificationIcon />
+          </Badge>
         </button>
         <button
           onClick={() => route.push("/chat")}

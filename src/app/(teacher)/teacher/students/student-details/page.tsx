@@ -11,7 +11,7 @@ import { RootState } from "@/redux/store";
 import { setInstructorStudentTab } from "@/redux/tabslice/InstructorStudentTabSlice";
 import { studentTabOption } from "@/utils/constant";
 import { RoutePaths, StudentTabEnum } from "@/utils/enums";
-import { Breadcrumb, Spin } from "antd";
+import { Breadcrumb, Skeleton } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
@@ -103,8 +103,17 @@ interface StudentSubmissionsData {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20 min-h-[400px]">
-        <Spin size="large" />
+      <div className="flex flex-col gap-6 py-6">
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-xs flex gap-6 items-center">
+          <Skeleton.Avatar active size={80} shape="circle" />
+          <div className="flex-1 space-y-2">
+            <Skeleton.Input active size="large" style={{ width: 240 }} />
+            <Skeleton active paragraph={{ rows: 2 }} />
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-xs space-y-4">
+          <Skeleton active paragraph={{ rows: 4 }} />
+        </div>
       </div>
     );
   }

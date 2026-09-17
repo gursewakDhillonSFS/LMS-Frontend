@@ -6,7 +6,7 @@ import { TagColors } from "@/utils/constant";
 import { QuizCardIcon, QuizeStopWatch } from "@/utils/icons";
 import CustomTabSwitcher from "@/components/CustomTabSwitcher";
 import { AssignmentTab } from "@/utils/constant";
-import { Alert, Modal, Radio, Spin, Input } from "antd";
+import { Alert, Modal, Radio, Skeleton, Input } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
@@ -25,13 +25,14 @@ interface ApiQuiz {
   quizType: string;
   overview: string;
   enableTimer: boolean;
-  timer?: number;
+  timer: string | null;
   questions: QuizQuestion[];
-  totalMarks: number;
   studentSubmission: {
     status: string;
-    obtainedScore: number;
+    score?: number;
+    obtainedScore?: number;
     totalMarks: number;
+    feedback?: string;
   } | null;
 }
 
@@ -40,7 +41,10 @@ interface CourseQuizzesProps {
   batchId: string;
 }
 
-const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
+const CourseQuizzes: React.FC<CourseQuizzesProps> = ({
+  courseId,
+  batchId,
+}) => {
   const [quizTab, setQuizTab] = useState("current");
   const [quizzes, setQuizzes] = useState<ApiQuiz[]>([]);
   const [loading, setLoading] = useState(false);
@@ -72,8 +76,22 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <Spin size="large" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="bg-white rounded-xl p-5 border border-slate-100 shadow-xs space-y-3">
+            <div className="flex gap-3 items-center">
+              <Skeleton.Avatar active size={40} shape="circle" />
+              <div className="flex-1">
+                <Skeleton.Input active size="small" style={{ width: "60%" }} />
+              </div>
+            </div>
+            <Skeleton active paragraph={{ rows: 2 }} />
+            <div className="flex justify-between pt-2">
+              <Skeleton.Button active size="small" style={{ width: 80 }} />
+              <Skeleton.Button active size="small" style={{ width: 100 }} />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -149,7 +167,7 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({ courseId, batchId }) => {
                   <p className="text-sm font-medium">Due: {quiz.dueDate}</p>
                   {isSubmitted && quiz.studentSubmission && (
                     <p className="text-sm font-semibold text-secondary">
-                      Score: {quiz.studentSubmission.obtainedScore}/
+                      Score: {quiz.studentSubmission.obtainedScore ?? quiz.studentSubmission.score ?? 0}/
                       {quiz.studentSubmission.totalMarks}
                     </p>
                   )}

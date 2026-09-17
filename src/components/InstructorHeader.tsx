@@ -12,7 +12,7 @@ import AnnouncementPanel from "./AnnouncementPanel";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUnreadCount } from "@/redux/slices/AnnouncementSlice";
-import { markAnnouncementsAsReadApi } from "@/services/collections";
+import { markAnnouncementsAsReadApi, getMyNotificationsApi } from "@/services/collections";
 import { RootState } from "@/redux/store";
 import { useTranslation } from "@/context/I18nContext";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -31,6 +31,28 @@ const InstructorHeader = () => {
   const profile_img = useSelector(
     (state: RootState) => state.userdata?.profile_img
   );
+
+  const [notificationDrawer, setNotificationDrawer] = useState(false);
+  const [announcementDrawer, setAnnouncementDrawer] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+
+  const fetchNotificationCount = React.useCallback(async () => {
+    try {
+      const res = await getMyNotificationsApi(true);
+      const list = res?.data?.notifications || res?.data || [];
+      if (Array.isArray(list)) {
+        setUnreadNotificationCount(list.filter((n: any) => !n.is_read).length);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchNotificationCount();
+    const interval = setInterval(fetchNotificationCount, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotificationCount]);
 
   const getSectionTitle = () => {
     if (!pathname) return t("dashboard.tabs.dashboard", { defaultValue: "Dashboard" });
@@ -84,8 +106,6 @@ const InstructorHeader = () => {
   };
 
   const route = useRouter();
-  const [notificationDrawer, setNotificationDrawer] = useState(false);
-  const [announcementDrawer, setAnnouncementDrawer] = useState(false);
   const dispatch = useDispatch();
 
   return (
@@ -99,7 +119,10 @@ const InstructorHeader = () => {
           onClose={() => setNotificationDrawer(false)}
           open={notificationDrawer}
         >
-          <NotificationPanel onClose={() => setNotificationDrawer(false)} />
+          <NotificationPanel
+            onClose={() => setNotificationDrawer(false)}
+            onUpdateCount={(cnt) => setUnreadNotificationCount(cnt)}
+          />
         </Drawer>
       )}
       {announcementDrawer && (
@@ -147,7 +170,14 @@ const InstructorHeader = () => {
           onClick={() => setNotificationDrawer(true)}
           className="w-[36px] h-[36px] rounded-[8px] flex items-center justify-center text-[#475467] hover:text-[#101828] hover:bg-[#F1F5F9] transition-all duration-[150ms] cursor-pointer"
         >
-          <NotificationIcon />
+          <Badge
+            count={unreadNotificationCount}
+            overflowCount={99}
+            size="small"
+            offset={[-2, 2]}
+          >
+            <NotificationIcon />
+          </Badge>
         </button>
 
         <button

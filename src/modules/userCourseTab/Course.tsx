@@ -16,7 +16,7 @@ import {
   VideoIcon,
 } from "@/utils/icons";
 import { CheckCircleFilled, RightOutlined, StarOutlined } from "@ant-design/icons";
-import { Collapse, Input, Modal, Rate, Spin } from "antd";
+import { Collapse, Input, Modal, Rate, Skeleton } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
 import { postApi } from "@/services/methods";
@@ -344,8 +344,15 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         </div>
 
         {loadingLessons ? (
-          <div className="flex justify-center py-12">
-            <Spin size="large" />
+          <div className="flex flex-col gap-3 py-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-3"
+              >
+                <Skeleton active paragraph={{ rows: 2 }} />
+              </div>
+            ))}
           </div>
         ) : lessons.length === 0 ? (
           <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400 text-sm">

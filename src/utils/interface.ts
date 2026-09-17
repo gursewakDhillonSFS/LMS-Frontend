@@ -379,6 +379,7 @@ export interface CourseReview {
   course_id: string;
   user_id: string;
   user_name: string | null;
+  user_avatar?: string;
   created_at: string;
   rating: number;
   review: string;

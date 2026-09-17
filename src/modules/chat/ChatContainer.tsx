@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Cookies from "js-cookie";
 import { io, Socket } from "socket.io-client";
 import { useSelector } from "react-redux";
-import { MessageOutlined, WechatOutlined } from "@ant-design/icons";
+import { MessageOutlined, WechatOutlined, SmileOutlined } from "@ant-design/icons";
+import { Skeleton } from "antd";
 
 import { RootState } from "@/redux/store";
 import { toast } from "@/utils/toast";
-import { chatRoom, getChatMessagesApi } from "@/services/collections";
+import { chatRoom, getChatMessagesApi, sendChatMessageApi } from "@/services/collections";
 
 import { ChatRoom, ChatMessageItem } from "./types";
-import { DEMO_CHAT_ROOMS, DEMO_MESSAGES } from "./demoData";
 import ConversationSidebar from "./ConversationSidebar";
 import ChatHeader from "./ChatHeader";
 import MessageFeed from "./MessageFeed";
@@ -23,17 +23,17 @@ interface ChatContainerProps {
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }) => {
-  const currentUserId = useSelector((s: RootState) => s.userdata?.user_id) || "p-3";
+  const currentUserId = useSelector((s: RootState) => s.userdata?.user_id) || "";
   const currentUserName =
     useSelector((s: RootState) => s.userdata?.full_name) ||
     useSelector((s: RootState) => s.userdata?.first_name) ||
     (role === "instructor" ? "Instructor" : "Student");
 
-  const [rooms, setRooms] = useState<ChatRoom[]>(DEMO_CHAT_ROOMS);
-  const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(DEMO_CHAT_ROOMS[0]);
-  const [messages, setMessages] = useState<ChatMessageItem[]>(
-    DEMO_MESSAGES["demo-room-1"] || []
-  );
+  const [rooms, setRooms] = useState<ChatRoom[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
+  const [messages, setMessages] = useState<ChatMessageItem[]>([]);
+  const [loadingRooms, setLoadingRooms] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
@@ -42,23 +42,56 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
-  // Load chat rooms from API with demo fallback
+  // Helper to fetch messages for a specific room
+  const fetchMessagesForRoom = useCallback(async (roomId: string) => {
+    setLoadingMessages(true);
+    try {
+      const res = await getChatMessagesApi(roomId);
+      const rawMessages = res?.data?.messages || res?.data || [];
+      if (Array.isArray(rawMessages)) {
+        const mapped = rawMessages.map((m: any) => ({
+          _id: m._id || `msg-${Math.random()}`,
+          message: m.message || "",
+          senderId: m.senderId?._id || m.senderId || "",
+          senderName: m.senderName || m.senderId?.fullName || "User",
+          senderAvatar: m.senderAvatar || m.senderId?.avatar,
+          senderRole: m.senderRole || m.senderId?.role || "student",
+          groupId: m.groupId || roomId,
+          createdAt: m.createdAt || new Date().toISOString(),
+          isDelivered: true,
+          isRead: true,
+        }));
+        setMessages(mapped);
+      } else {
+        setMessages([]);
+      }
+    } catch (err) {
+      console.error("Failed to load room messages:", err);
+      setMessages([]);
+    } finally {
+      setLoadingMessages(false);
+    }
+  }, []);
+
+  // Load chat rooms from API
   const loadRooms = useCallback(async () => {
+    setLoadingRooms(true);
     try {
       const res = await chatRoom();
-      if (res?.status && Array.isArray(res.data) && res.data.length > 0) {
-        // Map backend chat room format to ChatRoom interface
-        const mappedRooms: ChatRoom[] = res.data.map((r: any) => ({
+      const rawData = res?.data?.rooms || res?.data || [];
+      if (Array.isArray(rawData) && rawData.length > 0) {
+        const mappedRooms: ChatRoom[] = rawData.map((r: any) => ({
           _id: r._id,
           name: r.names || r.name || "Course Chat Room",
           names: r.names || r.name,
           type: r.type || "course",
-          courseTitle: r.courseTitle,
-          batchName: r.batchName,
+          courseTitle: r.courseTitle || r.courseId?.course_name,
+          batchName: r.batchName || r.batchId?.batchName,
           avatar: r.avatar,
-          memberCount: r.memberCount || 2,
+          memberCount: r.participants?.length || r.memberCount || 2,
           unreadCount: r.unreadCount || 0,
           description: r.description,
+          participants: r.participants || [],
           lastMessage: r.lastMessage
             ? {
                 message: r.lastMessage.message || "",
@@ -67,13 +100,24 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
               }
             : undefined,
         }));
+
         setRooms(mappedRooms);
         setSelectedRoom(mappedRooms[0]);
+        fetchMessagesForRoom(mappedRooms[0]._id);
+      } else {
+        setRooms([]);
+        setSelectedRoom(null);
+        setMessages([]);
       }
-    } catch {
-      // Keep demo rooms active for seamless UI inspection
+    } catch (err) {
+      console.error("Failed to load chat rooms:", err);
+      setRooms([]);
+      setSelectedRoom(null);
+      setMessages([]);
+    } finally {
+      setLoadingRooms(false);
     }
-  }, []);
+  }, [fetchMessagesForRoom]);
 
   // Socket connection
   useEffect(() => {
@@ -85,7 +129,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
 
     try {
       const s = io(`${backendUrl}/communication`, {
-        transports: ["websocket"],
+        transports: ["websocket", "polling"],
         auth: { token },
       });
       setSocket(s);
@@ -94,7 +138,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
         s.disconnect();
       };
     } catch (e) {
-      console.error("Socket error", e);
+      console.error("Socket error:", e);
     }
   }, [loadRooms]);
 
@@ -110,24 +154,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       prev.map((r) => (r._id === room._id ? { ...r, unreadCount: 0 } : r))
     );
 
-    // If it's a demo room, use demo messages
-    if (DEMO_MESSAGES[room._id]) {
-      setMessages(DEMO_MESSAGES[room._id]);
-      socket?.emit("joinRoom", { groupId: room._id });
-      return;
-    }
-
-    try {
-      const res = await getChatMessagesApi(room._id);
-      if (res?.status && res.data?.messages) {
-        setMessages(res.data.messages);
-      } else {
-        setMessages([]);
-      }
-      socket?.emit("joinRoom", { groupId: room._id });
-    } catch {
-      setMessages(DEMO_MESSAGES[room._id] || []);
-    }
+    await fetchMessagesForRoom(room._id);
+    socket?.emit("joinRoom", { groupId: room._id });
   };
 
   // Socket new message listener
@@ -139,11 +167,25 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       message: string;
       senderId: string;
       senderName?: string;
+      senderAvatar?: string;
       groupId: string;
       createdAt?: string;
     }) => {
       if (msg.groupId === selectedRoom._id) {
-        setMessages((prev) => [...prev, { ...msg, isDelivered: true }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            _id: msg._id || `msg-${Date.now()}`,
+            message: msg.message,
+            senderId: msg.senderId,
+            senderName: msg.senderName || "User",
+            senderAvatar: msg.senderAvatar,
+            groupId: msg.groupId,
+            createdAt: msg.createdAt || new Date().toISOString(),
+            isDelivered: true,
+            isRead: true,
+          },
+        ]);
       }
 
       // Update room's last message in the sidebar
@@ -154,7 +196,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
               ...r,
               lastMessage: {
                 message: msg.message,
-                senderName: msg.senderName,
+                senderName: msg.senderName || "User",
                 createdAt: msg.createdAt || new Date().toISOString(),
               },
               unreadCount:
@@ -174,13 +216,14 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
     };
   }, [socket, selectedRoom]);
 
-  // Send message handler (Optimistic UI update + Socket emit)
-  const handleSendMessage = (text: string) => {
+  // Send message handler (Optimistic UI update + Socket emit + REST fallback)
+  const handleSendMessage = async (text: string) => {
     if (!selectedRoom || !text.trim()) return;
 
+    const tempId = `msg-${Date.now()}`;
     const newMsgItem: ChatMessageItem = {
-      _id: `msg-${Date.now()}`,
-      message: text,
+      _id: tempId,
+      message: text.trim(),
       senderId: currentUserId,
       senderName: currentUserName,
       senderRole: role === "instructor" ? "instructor" : "student",
@@ -190,7 +233,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       isRead: false,
     };
 
-    // 1. Optimistic append to current view
+    // 1. Optimistic append
     setMessages((prev) => [...prev, newMsgItem]);
 
     // 2. Update room snippet in sidebar
@@ -200,7 +243,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
           ? {
               ...r,
               lastMessage: {
-                message: text,
+                message: text.trim(),
                 senderName: currentUserName,
                 createdAt: new Date().toISOString(),
               },
@@ -209,12 +252,19 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       )
     );
 
-    // 3. Emit through WebSocket
-    if (socket) {
+    // 3. Emit through WebSocket if connected
+    if (socket && socket.connected) {
       socket.emit("sendMessage", {
         groupId: selectedRoom._id,
-        message: text,
+        message: text.trim(),
       });
+    }
+
+    // 4. REST DB persistence fallback
+    try {
+      await sendChatMessageApi(selectedRoom._id, text.trim());
+    } catch (err) {
+      console.warn("Message REST sync error (socket might handle it):", err);
     }
   };
 
@@ -243,15 +293,29 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
 
   return (
     <div className="h-[calc(100vh-100px)] min-h-[580px] bg-white rounded-2xl border border-[#E4E7EC] overflow-hidden flex shadow-xs">
-      {/* 1. Left: Conversation Sidebar (Full on mobile if view is 'list', else 340px) */}
-      <ConversationSidebar
-        rooms={rooms}
-        selectedRoomId={selectedRoom?._id || null}
-        onSelectRoom={handleSelectRoom}
-        className={`${
-          mobileView === "list" ? "w-full lg:w-80 xl:w-88" : "hidden lg:flex lg:w-80 xl:w-88"
-        }`}
-      />
+      {/* 1. Left: Conversation Sidebar */}
+      {loadingRooms ? (
+        <div className="w-full lg:w-80 xl:w-88 p-4 border-r border-[#E4E7EC] space-y-4">
+          <Skeleton.Input active block style={{ height: 40 }} />
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton.Avatar active size={44} shape="circle" />
+              <div className="flex-1">
+                <Skeleton active paragraph={{ rows: 1 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <ConversationSidebar
+          rooms={rooms}
+          selectedRoomId={selectedRoom?._id || null}
+          onSelectRoom={handleSelectRoom}
+          className={`${
+            mobileView === "list" ? "w-full lg:w-80 xl:w-88" : "hidden lg:flex lg:w-80 xl:w-88"
+          }`}
+        />
+      )}
 
       {/* 2. Middle: Active Chat Area */}
       <div
@@ -303,13 +367,21 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
             )}
 
             {/* Message Feed */}
-            <MessageFeed
-              room={selectedRoom}
-              messages={messages}
-              currentUserId={currentUserId}
-              searchQuery={searchQuery}
-              onAddReaction={handleAddReaction}
-            />
+            {loadingMessages ? (
+              <div className="flex-1 p-6 space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} active avatar paragraph={{ rows: 2 }} />
+                ))}
+              </div>
+            ) : (
+              <MessageFeed
+                room={selectedRoom}
+                messages={messages}
+                currentUserId={currentUserId}
+                searchQuery={searchQuery}
+                onAddReaction={handleAddReaction}
+              />
+            )}
 
             {/* Message Composer */}
             <MessageComposer
@@ -323,9 +395,13 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
             <div className="w-16 h-16 rounded-3xl bg-[#F0F4FF] text-[#315CFF] flex items-center justify-center text-3xl mb-4 shadow-xs">
               <WechatOutlined />
             </div>
-            <h3 className="text-lg font-bold text-[#101828]">Select a conversation</h3>
+            <h3 className="text-lg font-bold text-[#101828]">
+              {rooms.length === 0 ? "No Conversations Yet" : "Select a conversation"}
+            </h3>
             <p className="text-xs sm:text-sm text-[#667085] max-w-sm mt-1">
-              Choose a study group, course batch, or faculty advisor from the list on the left to start collaborating.
+              {rooms.length === 0
+                ? "Chat rooms are automatically created for each course and batch you are enrolled in or assigned to teach."
+                : "Choose a study group, course batch, or faculty advisor from the list on the left to start collaborating."}
             </p>
           </div>
         )}
