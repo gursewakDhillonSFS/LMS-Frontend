@@ -112,7 +112,8 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full resize-none max-h-32 text-xs sm:text-sm text-[#101828] placeholder-[#98A2B3] focus:outline-hidden px-2 pt-1 leading-relaxed"
+          style={{ outline: "none", boxShadow: "none", border: "none" }}
+          className="w-full resize-none max-h-32 text-xs sm:text-sm text-[#101828] placeholder-[#98A2B3] border-0 outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 shadow-none px-2 pt-1 leading-relaxed bg-transparent"
         />
 
         {/* Action Controls Toolbar */}

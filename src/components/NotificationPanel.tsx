@@ -91,11 +91,15 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
     try {
       setLoading(true);
       const res = await getMyNotificationsApi();
-      const list = res?.data?.notifications || (Array.isArray(res?.data) ? res.data : []);
+      const list =
+        res?.data?.notifications ||
+        res?.data?.all ||
+        (Array.isArray(res?.data) ? res.data : []);
       const safeList: NotificationItem[] = Array.isArray(list) ? list : [];
       setNotifications(safeList);
 
-      const unreadCount = safeList.filter((n) => !n.is_read).length;
+      const unreadCount =
+        res?.unreadCount ?? safeList.filter((n) => !n.is_read).length;
       if (onUpdateCount) onUpdateCount(unreadCount);
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
@@ -106,6 +110,11 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
 
   useEffect(() => {
     fetchNotifications();
+    const handleRefresh = () => fetchNotifications();
+    window.addEventListener("refresh_notifications", handleRefresh);
+    return () => {
+      window.removeEventListener("refresh_notifications", handleRefresh);
+    };
   }, [fetchNotifications]);
 
   const handleMarkAsRead = async (e: React.MouseEvent, item: NotificationItem) => {

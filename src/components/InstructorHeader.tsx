@@ -39,8 +39,13 @@ const InstructorHeader = () => {
   const fetchNotificationCount = React.useCallback(async () => {
     try {
       const res = await getMyNotificationsApi(true);
-      const list = res?.data?.notifications || (Array.isArray(res?.data) ? res.data : []);
-      if (Array.isArray(list)) {
+      const list =
+        res?.data?.notifications ||
+        res?.data?.all ||
+        (Array.isArray(res?.data) ? res.data : []);
+      if (res?.unreadCount !== undefined) {
+        setUnreadNotificationCount(res.unreadCount);
+      } else if (Array.isArray(list)) {
         setUnreadNotificationCount(list.filter((n: any) => !n.is_read).length);
       }
     } catch {
@@ -51,7 +56,12 @@ const InstructorHeader = () => {
   React.useEffect(() => {
     fetchNotificationCount();
     const interval = setInterval(fetchNotificationCount, 30000);
-    return () => clearInterval(interval);
+    const handleRefresh = () => fetchNotificationCount();
+    window.addEventListener("refresh_notifications", handleRefresh);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("refresh_notifications", handleRefresh);
+    };
   }, [fetchNotificationCount]);
 
   const getSectionTitle = () => {

@@ -613,6 +613,9 @@ export const markAllNotificationsReadApi = () =>
 export const sendChatMessageApi = (groupId: string, message: string) =>
   postApi("/auth/communication/v1/send-message", { groupId, message });
 
+export const addChatMessageReactionApi = (messageId: string, emoji: string) =>
+  postApi("/auth/communication/v1/reaction", { messageId, emoji });
+
 // ─── Certificate Claim API ───────────────────────────────────────────────────
 export const claimCertificateApi = (courseId: string) =>
   postApi("/auth/certificate/v1/claim", { courseId });

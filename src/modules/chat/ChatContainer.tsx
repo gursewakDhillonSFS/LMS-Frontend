@@ -9,9 +9,14 @@ import { Skeleton } from "antd";
 
 import { RootState } from "@/redux/store";
 import { toast } from "@/utils/toast";
-import { chatRoom, getChatMessagesApi, sendChatMessageApi } from "@/services/collections";
+import {
+  chatRoom,
+  getChatMessagesApi,
+  sendChatMessageApi,
+  addChatMessageReactionApi,
+} from "@/services/collections";
 
-import { ChatRoom, ChatMessageItem } from "./types";
+import { ChatRoom, ChatMessageItem, ChatMessageReaction } from "./types";
 import ConversationSidebar from "./ConversationSidebar";
 import ChatHeader from "./ChatHeader";
 import MessageFeed from "./MessageFeed";
@@ -158,11 +163,37 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
     socket?.emit("joinRoom", { groupId: room._id });
   };
 
-  // Socket new message listener
+  // Sync active room ID to sessionStorage for popup suppressing
+  useEffect(() => {
+    if (selectedRoom?._id) {
+      sessionStorage.setItem("active_chat_room_id", selectedRoom._id);
+    } else {
+      sessionStorage.removeItem("active_chat_room_id");
+    }
+    return () => {
+      sessionStorage.removeItem("active_chat_room_id");
+    };
+  }, [selectedRoom?._id]);
+
+  // Support deep linking to a specific room via ?room= query param
+  useEffect(() => {
+    if (typeof window !== "undefined" && rooms.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetRoomId = urlParams.get("room");
+      if (targetRoomId) {
+        const found = rooms.find((r) => r._id === targetRoomId);
+        if (found && selectedRoom?._id !== targetRoomId) {
+          handleSelectRoom(found);
+        }
+      }
+    }
+  }, [rooms]);
+
+  // Socket new message and reaction listeners
   useEffect(() => {
     if (!socket || !selectedRoom) return;
 
-    const handler = (msg: {
+    const messageHandler = (msg: {
       _id: string;
       message: string;
       senderId: string;
@@ -170,22 +201,56 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       senderAvatar?: string;
       groupId: string;
       createdAt?: string;
+      reactions?: ChatMessageReaction[];
     }) => {
       if (msg.groupId === selectedRoom._id) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            _id: msg._id || `msg-${Date.now()}`,
-            message: msg.message,
-            senderId: msg.senderId,
-            senderName: msg.senderName || "User",
-            senderAvatar: msg.senderAvatar,
-            groupId: msg.groupId,
-            createdAt: msg.createdAt || new Date().toISOString(),
-            isDelivered: true,
-            isRead: true,
-          },
-        ]);
+        setMessages((prev) => {
+          // If message is from current user, replace the optimistic temporary message
+          if (String(msg.senderId) === String(currentUserId)) {
+            const optIndex = prev.findIndex(
+              (m) =>
+                m._id.startsWith("msg-") &&
+                m.message.trim() === msg.message.trim()
+            );
+            if (optIndex !== -1) {
+              const updated = [...prev];
+              updated[optIndex] = {
+                _id: msg._id,
+                message: msg.message,
+                senderId: msg.senderId,
+                senderName: msg.senderName || currentUserName,
+                senderAvatar: msg.senderAvatar,
+                groupId: msg.groupId,
+                createdAt: msg.createdAt || new Date().toISOString(),
+                isDelivered: true,
+                isRead: true,
+                reactions: msg.reactions || [],
+              };
+              return updated;
+            }
+          }
+
+          // Avoid duplicate by ID
+          if (prev.some((m) => m._id === msg._id)) {
+            return prev;
+          }
+
+          return [
+            ...prev,
+            {
+              _id: msg._id || `msg-${Date.now()}`,
+              message: msg.message,
+              senderId: msg.senderId,
+              senderName: msg.senderName || "User",
+              senderAvatar: msg.senderAvatar,
+              groupId: msg.groupId,
+              createdAt: msg.createdAt || new Date().toISOString(),
+              isDelivered: true,
+              isRead: true,
+              reactions: msg.reactions || [],
+            },
+          ];
+        });
       }
 
       // Update room's last message in the sidebar
@@ -210,11 +275,30 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       );
     };
 
-    socket.on("newMessage", handler);
-    return () => {
-      socket.off("newMessage", handler);
+    const reactionHandler = (payload: {
+      messageId: string;
+      groupId: string;
+      reactions: ChatMessageReaction[];
+    }) => {
+      if (payload?.messageId) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m._id === payload.messageId
+              ? { ...m, reactions: payload.reactions || [] }
+              : m
+          )
+        );
+      }
     };
-  }, [socket, selectedRoom]);
+
+    socket.on("newMessage", messageHandler);
+    socket.on("messageReaction", reactionHandler);
+
+    return () => {
+      socket.off("newMessage", messageHandler);
+      socket.off("messageReaction", reactionHandler);
+    };
+  }, [socket, selectedRoom, currentUserId, currentUserName]);
 
   // Send message handler (Optimistic UI update + Socket emit + REST fallback)
   const handleSendMessage = async (text: string) => {
@@ -231,6 +315,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       createdAt: new Date().toISOString(),
       isDelivered: true,
       isRead: false,
+      reactions: [],
     };
 
     // 1. Optimistic append
@@ -252,36 +337,66 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
       )
     );
 
-    // 3. Emit through WebSocket if connected
+    // 3. Emit through WebSocket if connected (avoids duplicate send)
     if (socket && socket.connected) {
       socket.emit("sendMessage", {
         groupId: selectedRoom._id,
         message: text.trim(),
       });
-    }
-
-    // 4. REST DB persistence fallback
-    try {
-      await sendChatMessageApi(selectedRoom._id, text.trim());
-    } catch (err) {
-      console.warn("Message REST sync error (socket might handle it):", err);
+    } else {
+      // 4. REST DB persistence fallback ONLY when socket is not connected
+      try {
+        await sendChatMessageApi(selectedRoom._id, text.trim());
+      } catch (err) {
+        console.warn("Message REST sync error:", err);
+      }
     }
   };
 
   // Add emoji reaction
-  const handleAddReaction = (messageId: string, emoji: string) => {
+  const handleAddReaction = async (messageId: string, emoji: string) => {
+    // 1. Optimistically toggle reaction locally
     setMessages((prev) =>
       prev.map((m) => {
         if (m._id !== messageId) return m;
         const existing = m.reactions || [];
         const found = existing.find((r) => r.emoji === emoji);
         if (found) {
-          return {
-            ...m,
-            reactions: existing.map((r) =>
-              r.emoji === emoji ? { ...r, count: r.count + 1 } : r
-            ),
-          };
+          const userHasReacted = found.users.includes(currentUserId);
+          if (userHasReacted) {
+            const updatedUsers = found.users.filter((u) => u !== currentUserId);
+            if (updatedUsers.length === 0) {
+              return {
+                ...m,
+                reactions: existing.filter((r) => r.emoji !== emoji),
+              };
+            }
+            return {
+              ...m,
+              reactions: existing.map((r) =>
+                r.emoji === emoji
+                  ? {
+                      ...r,
+                      count: Math.max(0, r.count - 1),
+                      users: updatedUsers,
+                    }
+                  : r
+              ),
+            };
+          } else {
+            return {
+              ...m,
+              reactions: existing.map((r) =>
+                r.emoji === emoji
+                  ? {
+                      ...r,
+                      count: r.count + 1,
+                      users: [...r.users, currentUserId],
+                    }
+                  : r
+              ),
+            };
+          }
         }
         return {
           ...m,
@@ -289,6 +404,17 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ role = "student" }
         };
       })
     );
+
+    // 2. Broadcast via socket if connected, or fallback to REST
+    if (socket && socket.connected) {
+      socket.emit("addReaction", { messageId, emoji });
+    } else {
+      try {
+        await addChatMessageReactionApi(messageId, emoji);
+      } catch (err) {
+        console.warn("Failed to submit message reaction via REST:", err);
+      }
+    }
   };
 
   return (

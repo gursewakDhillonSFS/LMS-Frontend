@@ -10,7 +10,6 @@ import {
   TimePicker,
   Button,
   Switch,
-  Tooltip,
   message,
 } from "antd";
 import {
@@ -19,9 +18,6 @@ import {
   LinkOutlined,
   CalendarOutlined,
   ClockCircleOutlined,
-  ThunderboltFilled,
-  CopyOutlined,
-  CheckOutlined,
   GlobalOutlined,
 } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
@@ -62,8 +58,6 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
   const [availableBatches, setAvailableBatches] = useState<BatchItem[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const [selectedBatchId, setSelectedBatchId] = useState<string>("");
-  const [meetingProvider, setMeetingProvider] = useState<"inapp" | "gmeet" | "zoom" | "custom">("inapp");
-  const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Fetch courses on open
@@ -142,57 +136,12 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
       const singleBatch = batches[0]._id;
       setSelectedBatchId(singleBatch);
       form.setFieldsValue({ batchId: singleBatch });
-      generateMeetingLink(courseId, singleBatch, meetingProvider);
-    } else {
-      generateMeetingLink(courseId, "", meetingProvider);
     }
   };
 
   // Handle Batch Change
   const handleBatchChange = (batchId: string) => {
     setSelectedBatchId(batchId);
-    generateMeetingLink(selectedCourseId, batchId, meetingProvider);
-  };
-
-  // Dynamic meeting link generator
-  const generateMeetingLink = (
-    cId: string,
-    bId: string,
-    provider: "inapp" | "gmeet" | "zoom" | "custom"
-  ) => {
-    if (provider === "custom") return;
-
-    let link = "";
-    const rand = Math.random().toString(36).substring(2, 7);
-    const cleanCourse = cId ? cId.slice(-6) : "class";
-    const cleanBatch = bId ? bId.slice(-4) : "session";
-
-    if (provider === "inapp") {
-      // Secure zero-install in-app WebRTC classroom link
-      link = `https://meet.jit.si/LMS-Live-${cleanCourse}-${cleanBatch}-${rand}`;
-    } else if (provider === "gmeet") {
-      link = `https://meet.google.com/new`;
-    } else if (provider === "zoom") {
-      link = `https://zoom.us/join`;
-    }
-
-    form.setFieldsValue({ meetingLink: link });
-  };
-
-  // Provider selector change
-  const handleProviderSelect = (prov: "inapp" | "gmeet" | "zoom" | "custom") => {
-    setMeetingProvider(prov);
-    generateMeetingLink(selectedCourseId, selectedBatchId, prov);
-  };
-
-  // Copy link helper
-  const handleCopyLink = () => {
-    const currentLink = form.getFieldValue("meetingLink");
-    if (!currentLink) return;
-    navigator.clipboard.writeText(currentLink);
-    setCopied(true);
-    message.success("Meeting link copied to clipboard!");
-    setTimeout(() => setCopied(false), 2000);
   };
 
   // Submit form
@@ -390,97 +339,30 @@ const ScheduleLiveClassModal: React.FC<ScheduleLiveClassModalProps> = ({
             </Form.Item>
           </div>
 
-          {/* Meeting Room Generator Section */}
-          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <ThunderboltFilled className="text-amber-500" />
-                Meeting Provider & Link Generator
-              </label>
-              <span className="text-[11px] text-slate-500">Instant launch & join</span>
-            </div>
-
-            {/* Provider presets */}
-            <div className="grid grid-cols-4 gap-2">
-              <button
-                type="button"
-                onClick={() => handleProviderSelect("inapp")}
-                className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-center cursor-pointer ${
-                  meetingProvider === "inapp"
-                    ? "bg-blue-600 text-white border-blue-600 shadow-xs"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                In-App Classroom
-              </button>
-              <button
-                type="button"
-                onClick={() => handleProviderSelect("gmeet")}
-                className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-center cursor-pointer ${
-                  meetingProvider === "gmeet"
-                    ? "bg-blue-600 text-white border-blue-600 shadow-xs"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                Google Meet
-              </button>
-              <button
-                type="button"
-                onClick={() => handleProviderSelect("zoom")}
-                className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-center cursor-pointer ${
-                  meetingProvider === "zoom"
-                    ? "bg-blue-600 text-white border-blue-600 shadow-xs"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                Zoom
-              </button>
-              <button
-                type="button"
-                onClick={() => handleProviderSelect("custom")}
-                className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-center cursor-pointer ${
-                  meetingProvider === "custom"
-                    ? "bg-blue-600 text-white border-blue-600 shadow-xs"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                Custom URL
-              </button>
-            </div>
-
-            {/* Meeting Link input with actions */}
-            <Form.Item
-              name="meetingLink"
-              rules={[{ required: true, message: "Please provide or generate a meeting link" }]}
-              className="!mb-0"
-            >
-              <Input
-                prefix={<LinkOutlined className="text-slate-400 mr-1" />}
-                suffix={
-                  <div className="flex items-center gap-1">
-                    <Tooltip title={copied ? "Copied!" : "Copy Link"}>
-                      <button
-                        type="button"
-                        onClick={handleCopyLink}
-                        className="text-slate-400 hover:text-blue-600 p-1 cursor-pointer transition-colors"
-                      >
-                        {copied ? <CheckOutlined className="text-emerald-600" /> : <CopyOutlined />}
-                      </button>
-                    </Tooltip>
-                    <button
-                      type="button"
-                      onClick={() => generateMeetingLink(selectedCourseId, selectedBatchId, meetingProvider)}
-                      className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 px-2 py-0.5 rounded cursor-pointer transition-colors ml-1"
-                    >
-                      Regenerate
-                    </button>
-                  </div>
-                }
-                placeholder="https://meet.jit.si/LMS-..."
-                className="!h-10 !rounded-lg text-xs font-mono"
-              />
-            </Form.Item>
-          </div>
+          {/* Meeting Link Field */}
+          <Form.Item
+            name="meetingLink"
+            label={
+              <span className="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                <LinkOutlined className="text-blue-500" /> Meeting Link
+              </span>
+            }
+            rules={[
+              { required: true, message: "Please provide a meeting link" },
+              {
+                type: "url",
+                message: "Please enter a valid URL (e.g. https://meet.google.com/... or https://zoom.us/...)",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <Input
+              prefix={<LinkOutlined className="text-slate-400 mr-1" />}
+              placeholder="Paste your meeting link here (Google Meet, Zoom, MS Teams, etc.)..."
+              className="!h-10 !rounded-lg text-xs"
+              allowClear
+            />
+          </Form.Item>
 
           {/* Row 4: Description / Agenda */}
           <Form.Item

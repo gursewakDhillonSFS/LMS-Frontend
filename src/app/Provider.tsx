@@ -6,6 +6,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { ConfigProvider, App, Spin } from "antd";
 import { store, persistor } from "@/redux/store";
 import GlobalAnnouncementListener from "@/components/GlobalAnnouncementListener";
+import GlobalChatNotificationListener from "@/components/GlobalChatNotificationListener";
 
 /* ============================================
    Ant Design Theme — Premium, Calm, Professional
@@ -209,6 +210,7 @@ export default function Providers({
           >
             <AntdLocalizedConfig>
               <GlobalAnnouncementListener />
+              <GlobalChatNotificationListener />
               {children}
             </AntdLocalizedConfig>
           </PersistGate>
