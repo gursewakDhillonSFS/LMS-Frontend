@@ -46,6 +46,7 @@ interface EvaluationStats {
   isPassed: boolean;
   resultRemark: string;
   certificateEligible: boolean;
+  certificateCode?: string;
 }
 
 const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
@@ -186,7 +187,7 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
               </div>
               <div>
                 <span className="text-xs text-gray-500 font-medium">Average Grade</span>
-                <p className="text-xl font-extrabold text-gray-900">{stats.averageScore}%</p>
+                <p className="text-xl font-extrabold text-gray-900">{stats.averageScore ?? 0}%</p>
               </div>
             </div>
 
@@ -472,7 +473,7 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <CertificateCard
                     title="Certificate of Course Completion"
-                    code={`CERT-${courseId ? courseId.slice(-6).toUpperCase() : "LMS992"}`}
+                    code={stats.certificateCode || `CERT-${courseId ? courseId.slice(-6).toUpperCase() : "LMS992"}`}
                   />
                 </div>
               </div>

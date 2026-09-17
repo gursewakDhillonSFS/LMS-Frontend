@@ -82,10 +82,13 @@ const CourseLiveClasses: React.FC<CourseLiveClassesProps> = ({ courseId, batchId
   const fetchLiveClasses = useCallback(async () => {
     setLoading(true);
     try {
-      const now = new Date();
       const params = new URLSearchParams();
-      params.append("month", String(now.getMonth() + 1));
-      params.append("year", String(now.getFullYear()));
+      // Only filter by calendar month if viewing generic schedule without a specific course
+      if (!courseId) {
+        const now = new Date();
+        params.append("month", String(now.getMonth() + 1));
+        params.append("year", String(now.getFullYear()));
+      }
       if (courseId) params.append("courseId", courseId);
       if (batchId) params.append("batchId", batchId);
 
@@ -98,10 +101,13 @@ const CourseLiveClasses: React.FC<CourseLiveClassesProps> = ({ courseId, batchId
 
       const mapped: ScheduleItem[] = list.map((e: any) => {
         const eventDate = e.date ? new Date(e.date) : null;
+        const checkDate = eventDate ? new Date(eventDate) : null;
+        if (checkDate) checkDate.setHours(0, 0, 0, 0);
+
         const id = e._id || e.schedule_id || String(Math.random());
         const startTime = e.startTime || "00:00";
         const endTime = e.endTime;
-        const isPast = eventDate ? eventDate < today : false;
+        const isPast = checkDate ? checkDate.getTime() < today.getTime() : false;
         const isLiveNow = !isPast && isSessionLiveNow(e.date, startTime, endTime);
 
         return {
@@ -140,7 +146,9 @@ const CourseLiveClasses: React.FC<CourseLiveClassesProps> = ({ courseId, batchId
 
     return schedules.map((item) => {
       const eventDate = item.date ? new Date(item.date) : null;
-      const isPast = eventDate ? eventDate < today : false;
+      const checkDate = eventDate ? new Date(eventDate) : null;
+      if (checkDate) checkDate.setHours(0, 0, 0, 0);
+      const isPast = checkDate ? checkDate.getTime() < today.getTime() : false;
       const isLiveNow = !isPast && isSessionLiveNow(item.date, item.startTime, item.endTime);
       return { ...item, isPast, isLiveNow };
     });

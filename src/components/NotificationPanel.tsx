@@ -127,6 +127,9 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
       );
       const remainingUnread = notifications.filter((n) => n._id !== item._id && !n.is_read).length;
       if (onUpdateCount) onUpdateCount(remainingUnread);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("refresh_notifications"));
+      }
     } catch (err) {
       console.error("Failed to mark read:", err);
     }
@@ -137,6 +140,9 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
       await markAllNotificationsReadApi();
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
       if (onUpdateCount) onUpdateCount(0);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("refresh_notifications"));
+      }
       antdMessage.success("All notifications marked as read");
     } catch (err) {
       console.error("Failed to mark all as read:", err);
@@ -150,6 +156,9 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
         setNotifications((prev) =>
           prev.map((n) => (n._id === item._id ? { ...n, is_read: true } : n))
         );
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("refresh_notifications"));
+        }
       } catch {
         // ignore
       }
@@ -311,9 +320,9 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
                       <button
                         type="button"
                         onClick={(e) => handleMarkAsRead(e, item)}
-                        className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-blue-600 transition-opacity p-1 cursor-pointer shrink-0"
+                        className="w-6 h-6 rounded-full bg-blue-50/80 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center transition-all cursor-pointer shrink-0 border border-blue-200/60 shadow-2xs"
                       >
-                        <CheckOutlined className="text-xs" />
+                        <CheckOutlined className="text-[10px]" />
                       </button>
                     </Tooltip>
                   )}
