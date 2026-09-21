@@ -1,7 +1,5 @@
 "use client";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
-import CommonButton from "@/components/CommonButton";
-import MarkCompletedModal from "@/components/modal/MarkCompletedModal";
 import TabSwitcher from "@/components/TabSwitcher";
 import StudentAssignment from "@/modules/instructorStudentTab/StudentAssignment";
 import StudentEvaluation from "@/modules/instructorStudentTab/StudentEvaluation";
@@ -91,8 +89,7 @@ const StudentDetails = () => {
   }
 
   return (
-    <div className="flex flex-col gap-[24px]">
-      <MarkCompletedModal open={open} onClose={() => setOpen(false)} />
+    <div className="flex flex-col gap-6 pb-12">
       <Breadcrumb
         separator={<span className="text-[#002333] font-[700]">{">"}</span>}
         items={items}
@@ -105,7 +102,6 @@ const StudentDetails = () => {
           onChange={setActiveTab}
           tabs={studentTabOption}
         />
-        <CommonButton text="Mark Completed" onClick={() => setOpen(true)} />
       </div>
 
       {activeTab === StudentTabEnum.STUDENT_INFO && (

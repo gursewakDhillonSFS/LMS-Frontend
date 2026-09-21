@@ -12,8 +12,15 @@ import { toast } from "@/utils/toast";
 const AssignmentDetailsContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const assignmentId = searchParams.get("assignmentId");
-  const courseId = searchParams.get("courseId");
+  const assignmentId =
+    searchParams.get("assignmentId") ||
+    searchParams.get("assignment_id") ||
+    searchParams.get("id") ||
+    "";
+  const courseId =
+    searchParams.get("courseId") ||
+    searchParams.get("course_id") ||
+    "";
 
   const [assignment, setAssignment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +29,10 @@ const AssignmentDetailsContent = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchAssignmentDetails = useCallback(async () => {
-    if (!assignmentId) return;
+    if (!assignmentId) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const res = await getAssignmentDetailsApi(assignmentId);
@@ -75,7 +85,7 @@ const AssignmentDetailsContent = () => {
     },
     {
       title: "Course Details",
-      href: courseId ? `${RoutePaths?.MyCourses}/course-details?id=${courseId}` : `${RoutePaths?.MyCourses}`,
+      href: courseId ? `${RoutePaths?.MyCourses}/course-details?course_id=${courseId}` : `${RoutePaths?.MyCourses}`,
     },
     {
       title: assignment?.assignmentName || "Assignment Details",
@@ -190,13 +200,20 @@ const AssignmentDetailsContent = () => {
                   Score: {assignment.studentSubmission.result}
                 </div>
               )}
+              {assignment.studentSubmission.feedback && (
+                <div className="mt-3 p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-xs text-blue-900 leading-relaxed">
+                  <span className="font-bold block mb-1">Instructor Feedback:</span>
+                  {assignment.studentSubmission.feedback}
+                </div>
+              )}
             </div>
             <div className="flex justify-end gap-3 mt-4">
               <CommonButton
                 text="Back to Course"
                 onClick={() => {
-                  if (courseId) {
-                    router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=assignments`);
+                  const targetCourse = courseId || assignment?.courseId;
+                  if (targetCourse) {
+                    router.push(`${RoutePaths.MyCourses}/course-details?course_id=${targetCourse}`);
                   } else {
                     router.push(`${RoutePaths.MyCourses}`);
                   }

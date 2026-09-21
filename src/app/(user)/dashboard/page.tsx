@@ -14,12 +14,14 @@ import {
   removeFromFavorite,
   userCourseList,
   getAnnouncementsByCoursesApi,
+  getSchedulesApi,
 } from "@/services/collections";
 import { RoutePaths } from "@/utils/enums";
 import { ClockWheelIcon, EarPhoneIcon } from "@/utils/icons";
 import { DataNotFound, Live } from "@/utils/images";
 import { courseData, EnrolledCourseProp } from "@/utils/interface";
 import { AnnouncementPayload } from "@/hooks/useAnnouncementSocket";
+import { Modal } from "antd";
 import {
   LeftOutlined,
   LoadingOutlined,
@@ -86,6 +88,8 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [courseLoading, setCourseLoading] = useState(false);
   const [announcements, setAnnouncements] = useState<AnnouncementPayload[]>([]);
+  const [upcomingLiveSession, setUpcomingLiveSession] = useState<any | null>(null);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<AnnouncementPayload | null>(null);
 
   const userName = useSelector((state: RootState) => state.userdata?.full_name);
   const organization_id = useSelector(
@@ -149,6 +153,37 @@ const UserDashboard = () => {
             console.log("Could not load announcements", e);
           }
         }
+      }
+
+      // Fetch live schedules to see if any session is within 1 hour
+      try {
+        const schedRes = await getSchedulesApi();
+        const schedules = schedRes?.data?.schedules || schedRes?.data || [];
+        const now = new Date();
+        const active = schedules.find((s: any) => {
+          if (!s.date || !s.startTime) return false;
+          const sDate = new Date(s.date);
+          const isSameDay =
+            sDate.getFullYear() === now.getFullYear() &&
+            sDate.getMonth() === now.getMonth() &&
+            sDate.getDate() === now.getDate();
+          if (!isSameDay) return false;
+
+          const [sH, sM] = s.startTime.split(":").map(Number);
+          const startMin = (sH || 0) * 60 + (sM || 0);
+          let endMin = startMin + 90;
+          if (s.endTime) {
+            const [eH, eM] = s.endTime.split(":").map(Number);
+            endMin = (eH || 0) * 60 + (eM || 0);
+          }
+          const curMin = now.getHours() * 60 + now.getMinutes();
+          const isLive = curMin >= startMin && curMin <= endMin;
+          const isWithin1Hr = curMin >= (startMin - 60) && curMin < startMin;
+          return isLive || isWithin1Hr;
+        });
+        setUpcomingLiveSession(active || null);
+      } catch {
+        setUpcomingLiveSession(null);
       }
     } catch (error) {
       console.log(error);
@@ -238,11 +273,57 @@ const UserDashboard = () => {
     }
   };
 
-  return courseLoading ? (
-    <div className="flex items-center justify-center w-full h-96">
-      <LoadingOutlined spin className="!text-2xl text-[var(--primary)]" />
-    </div>
-  ) : (
+  if (courseLoading) {
+    return (
+      <div className="flex flex-col gap-6 pb-16 animate-pulse">
+        {/* KPI Skeletons */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-2xs h-24 flex items-center justify-between">
+              <div className="space-y-2">
+                <div className="w-16 h-3 bg-slate-200 rounded" />
+                <div className="w-10 h-6 bg-slate-200 rounded" />
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-slate-100" />
+            </div>
+          ))}
+        </div>
+
+        {/* Main Grid Skeleton */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="xl:col-span-2 flex flex-col gap-6">
+            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-2xs space-y-4">
+              <div className="w-44 h-5 bg-slate-200 rounded" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2].map((i) => (
+                  <div key={i} className="h-40 bg-slate-100 rounded-2xl" />
+                ))}
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-2xs h-64" />
+          </div>
+          <div className="xl:col-span-1 bg-white rounded-2xl p-6 border border-slate-100 shadow-2xs space-y-3">
+            <div className="w-36 h-5 bg-slate-200 rounded" />
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-20 bg-slate-100 rounded-xl" />
+            ))}
+          </div>
+        </div>
+
+        {/* Explore Skeletons */}
+        <div className="flex flex-col gap-4 pt-4">
+          <div className="w-48 h-6 bg-slate-200 rounded" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <CourseCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="flex flex-col gap-6 pb-16">
       {/* 1. Dashboard Overview */}
       <div className="flex flex-col gap-6">
@@ -297,24 +378,33 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Live Class Notice Banner */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full p-4 rounded-2xl bg-red-50/70 border border-red-200 shadow-2xs">
-          <div className="flex items-center gap-3">
-            <Image alt="live" src={Live} className="w-8 h-8 shrink-0" />
-            <div>
-              <h3 className="text-sm font-semibold text-red-950">
-                Live Interactive Mentorship Session
-              </h3>
-              <span className="text-xs font-medium text-red-700">
-                Scheduled for today at 17:50 IST
-              </span>
+        {/* Live Class Notice Banner - ONLY displays before 1 hour of live session */}
+        {upcomingLiveSession && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full p-4 rounded-2xl bg-red-50/70 border border-red-200 shadow-2xs animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <Image alt="live" src={Live} className="w-8 h-8 shrink-0" />
+              <div>
+                <h3 className="text-sm font-semibold text-red-950">
+                  {upcomingLiveSession.topic || upcomingLiveSession.title || "Live Mentorship Session"}
+                </h3>
+                <span className="text-xs font-medium text-red-700">
+                  Scheduled for today at {upcomingLiveSession.startTime}
+                  {upcomingLiveSession.endTime ? ` - ${upcomingLiveSession.endTime}` : ""}
+                  {upcomingLiveSession.courseName ? ` • ${upcomingLiveSession.courseName}` : ""}
+                </span>
+              </div>
             </div>
+            {upcomingLiveSession.meetingLink && (
+              <CommonButton
+                text="Join Session"
+                onClick={() => {
+                  window.open(upcomingLiveSession.meetingLink, "_blank");
+                }}
+                className="!bg-[var(--error)] hover:!bg-red-700 !text-white !h-8 !text-xs !px-4 !rounded-lg shrink-0 shadow-xs cursor-pointer"
+              />
+            )}
           </div>
-          <CommonButton
-            text="Join Session"
-            className="!bg-[var(--error)] hover:!bg-red-700 !text-white !h-8 !text-xs !px-4 !rounded-lg shrink-0 shadow-xs"
-          />
-        </div>
+        )}
       </div>
 
       {/* 2. Main Dashboard Section: Continue Learning, Schedule & Announcements */}
@@ -497,37 +587,57 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 max-h-[440px] overflow-y-auto">
+          <div className="flex flex-col gap-3 max-h-[460px] overflow-y-auto pr-1">
             {announcements.length > 0 ? (
               announcements.map((note, index) => (
                 <div
                   key={note._id || index}
-                  className="bg-[var(--surface-subtle)] border border-[var(--border)] rounded-xl p-3 flex flex-col gap-2 shadow-2xs"
+                  onClick={() => setSelectedAnnouncement(note)}
+                  className="bg-[var(--surface-subtle)] hover:bg-slate-100/80 transition-all border border-[var(--border)] rounded-xl p-3.5 flex flex-col gap-2.5 shadow-2xs cursor-pointer group"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                      <EarPhoneIcon />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-xs text-[var(--text-primary)] truncate">
-                        {note.courseName}
-                      </p>
-                      <p className="text-xs text-[var(--primary)] font-medium truncate">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] font-bold text-[#315CFF] bg-blue-50 px-2 py-0.5 rounded-md truncate max-w-[160px]">
+                          {note.courseName}
+                        </span>
+                        {note.batchName && (
+                          <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                            {note.batchName}
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="font-bold text-xs text-[var(--text-primary)] mt-1 group-hover:text-[#315CFF] transition-colors">
                         {note.title}
-                      </p>
+                      </h4>
                     </div>
-                    <span className="text-[10px] text-[var(--text-muted)] shrink-0">
-                      {dayjs(note.publishedAt).format("DD MMM")}
+                    <span className="text-[10px] text-[var(--text-muted)] shrink-0 mt-0.5">
+                      {dayjs(note.publishedAt || note.createdAt).format("DD MMM")}
                     </span>
                   </div>
+
                   <div className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
                     <span
                       dangerouslySetInnerHTML={{
                         __html:
-                          note.message.slice(0, 70) +
-                          (note.message.length > 70 ? "..." : ""),
+                          note.message.slice(0, 100) +
+                          (note.message.length > 100 ? "..." : ""),
                       }}
-                    ></span>
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-[11px]">
+                    <div className="flex items-center gap-1.5 text-slate-600">
+                      <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold">
+                        {(note.instructorName || "I").charAt(0).toUpperCase()}
+                      </div>
+                      <span className="truncate max-w-[120px]">
+                        {note.instructorName || "Instructor"}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-[#315CFF] group-hover:underline">
+                      View Details →
+                    </span>
                   </div>
                 </div>
               ))
@@ -539,6 +649,54 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Announcement Detail Modal */}
+      {selectedAnnouncement && (
+        <Modal
+          open={!!selectedAnnouncement}
+          onCancel={() => setSelectedAnnouncement(null)}
+          footer={null}
+          title={
+            <div className="flex flex-col gap-1 pr-6">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold text-[#315CFF] bg-blue-50 px-2 py-0.5 rounded-md">
+                  {selectedAnnouncement.courseName}
+                </span>
+                {selectedAnnouncement.batchName && (
+                  <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                    {selectedAnnouncement.batchName}
+                  </span>
+                )}
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mt-1">
+                {selectedAnnouncement.title}
+              </h3>
+            </div>
+          }
+          centered
+          width={580}
+        >
+          <div className="flex flex-col gap-4 py-2">
+            <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
+                  {(selectedAnnouncement.instructorName || "I").charAt(0).toUpperCase()}
+                </div>
+                <span>By {selectedAnnouncement.instructorName || "Instructor"}</span>
+              </div>
+              <span>
+                {dayjs(selectedAnnouncement.publishedAt || selectedAnnouncement.createdAt).format(
+                  "DD MMM YYYY, hh:mm A"
+                )}
+              </span>
+            </div>
+            <div
+              className="text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto"
+              dangerouslySetInnerHTML={{ __html: selectedAnnouncement.message }}
+            />
+          </div>
+        </Modal>
+      )}
 
       {/* 3. Recommended & Explore Courses Section with PROPER PAGINATED DATA */}
       <div id="recommended-courses-section" className="flex flex-col gap-5 pt-4">

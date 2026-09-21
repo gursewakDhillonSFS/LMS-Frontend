@@ -16,6 +16,9 @@ import {
 } from "@ant-design/icons";
 import { Skeleton, Tooltip, message as antdMessage } from "antd";
 import { useTranslation } from "@/context/I18nContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import Cookies from "js-cookie";
 import {
   getMyNotificationsApi,
   markNotificationReadApi,
@@ -163,9 +166,21 @@ const NotificationPanel: React.FC<NotificationProps> = ({ onClose, onUpdateCount
         // ignore
       }
     }
+    const userRole = (
+      Cookies.get("role_name") || ""
+    ).toLowerCase();
+
     onClose();
     if (item.link) {
-      router.push(item.link);
+      let targetLink = item.link;
+      if (targetLink === "/chat" || targetLink.startsWith("/chat?")) {
+        if (userRole === "instructor") {
+          targetLink = targetLink.replace("/chat", "/instructor-chat");
+        } else if (userRole === "teacher") {
+          targetLink = "/teacher/dashboard";
+        }
+      }
+      router.push(targetLink);
     }
   };
 

@@ -1,7 +1,5 @@
 "use client";
 import { BreadcrumbItemRender } from "@/components/BreadcrumbItemRender";
-import CommonButton from "@/components/CommonButton";
-import MarkCompletedModal from "@/components/modal/MarkCompletedModal";
 import TabSwitcher from "@/components/TabSwitcher";
 import StudentAssignment from "@/modules/instructorStudentTab/StudentAssignment";
 import StudentEvaluation from "@/modules/instructorStudentTab/StudentEvaluation";
@@ -97,7 +95,7 @@ interface StudentSubmissionsData {
       href: RoutePaths?.TeacherStudents,
     },
     {
-      title: studentDetails?.name || "Theresa Webb",
+      title: studentDetails?.name || "Student Details",
     },
   ];
 
@@ -119,8 +117,7 @@ interface StudentSubmissionsData {
   }
 
   return (
-    <div className="flex flex-col gap-[24px]">
-      <MarkCompletedModal open={open} onClose={() => setOpen(false)} />
+    <div className="flex flex-col gap-6 pb-12">
       <Breadcrumb
         separator={<span className="text-[#002333] font-[700]">{">"}</span>}
         items={items}
@@ -133,7 +130,6 @@ interface StudentSubmissionsData {
           onChange={setActiveTab}
           tabs={studentTabOption}
         />
-        <CommonButton text="Mark Completed" onClick={() => setOpen(true)} />
       </div>
 
       {activeTab === StudentTabEnum.STUDENT_INFO && (

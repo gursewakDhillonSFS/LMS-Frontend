@@ -281,6 +281,7 @@ export interface RequestedDemoProp {
 interface User {
   image?: string | StaticImageData | null;
   name?: string;
+  email?: string;
 }
 
 export interface UserAvatarDisplayProps {

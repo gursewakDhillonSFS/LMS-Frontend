@@ -28,6 +28,7 @@ import { InstructorRecord } from "@/utils/interface";
 import { toast } from "@/utils/toast";
 import ConfirmationModal from "@/components/modal/ConfirmationModal";
 import { InviteTeacherModal } from "@/components/modal/InviteTeacherModal";
+import { TeacherDetailsModal } from "@/components/modal/TeacherDetailsModal";
 import UserAvatarDisplay from "@/components/UserAvatarDisplay";
 import CustomDropdown from "@/components/CustomDropdown";
 
@@ -51,6 +52,8 @@ export const TeachersManagerView: React.FC = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteInstructorId, setDeleteInstructorId] = useState<string | null>(null);
+  const [selectedTeacher, setSelectedTeacher] = useState<InstructorRecord | null>(null);
+  const [teacherDetailsModalOpen, setTeacherDetailsModalOpen] = useState(false);
 
   // Debounce search
   useEffect(() => {
@@ -121,10 +124,11 @@ export const TeachersManagerView: React.FC = () => {
     }
   };
 
-  // Navigate to teacher details
+  // Open teacher details modal
   const handleTeacherClick = (record: InstructorRecord) => {
     dispatch(setInstructorData(record));
-    router.push(`${RoutePaths.Teachers}/teacher-details`);
+    setSelectedTeacher(record);
+    setTeacherDetailsModalOpen(true);
   };
 
   // Dynamic KPI Stats
@@ -202,6 +206,19 @@ export const TeachersManagerView: React.FC = () => {
         fetchAllTeacher={fetchAllTeacher}
         onCancel={() => setOpenInviteModal(false)}
       />
+
+      {/* Teacher Details Modal */}
+      {teacherDetailsModalOpen && (
+        <TeacherDetailsModal
+          open={teacherDetailsModalOpen}
+          onClose={() => {
+            setTeacherDetailsModalOpen(false);
+            setSelectedTeacher(null);
+          }}
+          teacher={selectedTeacher}
+          onTeacherUpdated={fetchAllTeacher}
+        />
+      )}
 
       <div className="w-full flex flex-col gap-6 pb-12 animate-fadeIn">
         {/* 1. 4 KPI Statistics Cards */}

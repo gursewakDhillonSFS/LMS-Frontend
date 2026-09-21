@@ -450,6 +450,8 @@ export const getQuizSubmissionsApi = (
 export const gradeQuizSubmissionApi = (payload: {
   submissionId: string;
   feedback?: string;
+  essayMarks?: { questionIndex: number; obtainedMarks: number }[];
+  answers?: any[];
 }) => postApi(GRADE_QUIZ_SUBMISSION, payload);
 
 // ─── Announcement APIs ────────────────────────────────────────────────────────
@@ -557,7 +559,17 @@ export const markMaterialCompleteApi = (payload: {
 export const getDashboardStatsApi = () =>
   getApi("/auth/course/v1/dashboard/stats");
 
-export const getMyCertificatesApi = () => getApi("/certificate/v1/my");
+export const getMyCertificatesApi = async () => {
+  const res = await getApi("/certificate/v1/my");
+  if (res && res.status) return res;
+  return getApi("/auth/certificate/v1/my");
+};
+
+export const verifyCertificateApi = async (code: string) => {
+  const res = await getApi(`/certificate/v1/verify/${encodeURIComponent(code)}`);
+  if (res && res.status) return res;
+  return getApi(`/auth/certificate/v1/verify/${encodeURIComponent(code)}`);
+};
 
 // ─── Student Submission APIs ───────────────────────────────────────────────────
 export const submitAssignmentApi = (
@@ -603,11 +615,19 @@ export const regenerateCourseTranslationApi = (
 export const getMyNotificationsApi = (unreadOnly = false) =>
   getApi(`/auth/notification/v1/my-notifications${unreadOnly ? "?unreadOnly=true" : ""}`);
 
-export const markNotificationReadApi = (notificationId: string) =>
-  putApi(`/auth/notification/v1/mark-read/${notificationId}`, {});
+export const markNotificationReadApi = async (notificationId: string) => {
+  // Use PATCH first which is live on backend, fallback to PUT
+  const res = await patchApi(`/auth/notification/v1/mark-read/${notificationId}`, {});
+  if (res && res.status) return res;
+  return putApi(`/auth/notification/v1/mark-read/${notificationId}`, {});
+};
 
-export const markAllNotificationsReadApi = () =>
-  putApi("/auth/notification/v1/mark-all-read", {});
+export const markAllNotificationsReadApi = async () => {
+  // Use PATCH first which is live on backend, fallback to PUT
+  const res = await patchApi("/auth/notification/v1/mark-all-read", {});
+  if (res && res.status) return res;
+  return putApi("/auth/notification/v1/mark-all-read", {});
+};
 
 // ─── Chat Message Fallback API ───────────────────────────────────────────────
 export const sendChatMessageApi = (groupId: string, message: string) =>
@@ -617,6 +637,9 @@ export const addChatMessageReactionApi = (messageId: string, emoji: string) =>
   postApi("/auth/communication/v1/reaction", { messageId, emoji });
 
 // ─── Certificate Claim API ───────────────────────────────────────────────────
-export const claimCertificateApi = (courseId: string) =>
-  postApi("/auth/certificate/v1/claim", { courseId });
+export const claimCertificateApi = async (courseId: string) => {
+  const res = await postApi("/certificate/v1/claim", { courseId });
+  if (res && res.status) return res;
+  return postApi("/auth/certificate/v1/claim", { courseId });
+};
 

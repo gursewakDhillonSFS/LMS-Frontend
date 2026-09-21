@@ -31,20 +31,29 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
   const isFree = !courseData?.course_price || courseData.course_price === 0;
   const isEnrolled = courseData?.enrolled_status || courseData?.is_enrolled;
 
+  const isFavorite = Boolean(
+    courseData?.favorite || courseData?.favorite_status
+  );
+  const [optimisticFav, setOptimisticFav] = useState<boolean | null>(null);
+  const currentFav = optimisticFav !== null ? optimisticFav : isFavorite;
+
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (favLoading) return;
     const courseId = courseData?.course_id;
     if (!courseId) return;
 
+    const nextFav = !currentFav;
+    setOptimisticFav(nextFav);
     try {
       setFavLoading(true);
-      if (!courseData?.favorite) {
+      if (nextFav) {
         await handleAddFavorite?.(courseId);
       } else {
         await handleRemoveFavorite?.(courseId);
       }
     } catch (error) {
+      setOptimisticFav(!nextFav);
       console.error("Failed to toggle favorite course:", error);
     } finally {
       setFavLoading(false);
@@ -77,14 +86,14 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
             onClick={handleFavoriteClick}
             disabled={favLoading}
             className="absolute top-[12px] right-[12px] w-[32px] h-[32px] rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-[var(--shadow-xs)] hover:bg-white transition-all duration-[150ms] z-10 disabled:cursor-wait"
-            title={courseData?.favorite ? "Remove from saved" : "Save course"}
+            title={currentFav ? "Remove from saved" : "Save course"}
           >
             {favLoading ? (
               <LoadingOutlined className="!text-[15px] !text-[#315CFF] animate-spin" />
             ) : (
               <HeartFilled
                 className={`!text-[16px] transition-colors ${
-                  courseData?.favorite ? "!text-[var(--error)]" : "!text-[var(--text-muted)] hover:!text-[var(--text-secondary)]"
+                  currentFav ? "!text-[var(--error)]" : "!text-[var(--text-muted)] hover:!text-[var(--text-secondary)]"
                 }`}
               />
             )}

@@ -7,7 +7,7 @@ import { getAssignmentsByBatchApi } from "@/services/collections";
 import { AssignmentTab } from "@/utils/constant";
 import { AssignmentIcon, StopWatchIcon } from "@/utils/icons";
 import { Skeleton } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { submitAssignmentApi } from "@/services/collections";
@@ -50,12 +50,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
   const router = useRouter();
   const [assignmentTab, setAssignmentTab] = useState("all");
   const [loading, setLoading] = useState(false);
-  const [assignments, setAssignments] = useState<ApiAssignment[]>([]);
-
-  // Submission modal state
-  const [selectedAssignment, setSelectedAssignment] = useState<ApiAssignment | null>(null);
-  const [submissionText, setSubmissionText] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [allAssignments, setAllAssignments] = useState<ApiAssignment[]>([]);
 
   const fetchAssignments = useCallback(async () => {
     if (!batchId) return;
@@ -66,49 +61,30 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
       if (courseId) params.append("courseId", courseId);
       const res = await getAssignmentsByBatchApi(params);
       const list = res?.data?.assignments || res?.data || [];
-      if (assignmentTab === "submitted") {
-        setAssignments(list.filter((a: ApiAssignment) => a.studentSubmission?.status));
-      } else if (assignmentTab === "pending") {
-        setAssignments(list.filter((a: ApiAssignment) => !a.studentSubmission?.status));
-      } else {
-        setAssignments(list);
-      }
+      setAllAssignments(list);
     } catch {
-      setAssignments([]);
+      setAllAssignments([]);
     } finally {
       setLoading(false);
     }
-  }, [batchId, courseId, assignmentTab]);
+  }, [batchId, courseId]);
 
   useEffect(() => {
     fetchAssignments();
   }, [fetchAssignments]);
 
+  const assignments = useMemo(() => {
+    if (assignmentTab === "submitted") {
+      return allAssignments.filter((a) => a.studentSubmission?.status);
+    } else if (assignmentTab === "pending") {
+      return allAssignments.filter((a) => !a.studentSubmission?.status);
+    }
+    return allAssignments;
+  }, [allAssignments, assignmentTab]);
+
   const getSubmissionStatus = (a: ApiAssignment) => {
     return a.studentSubmission?.status || "Not Submitted";
   };
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-xl p-5 border border-slate-100 shadow-xs space-y-3">
-            <div className="flex gap-3 items-center">
-              <Skeleton.Avatar active size={40} shape="circle" />
-              <div className="flex-1">
-                <Skeleton.Input active size="small" style={{ width: "60%" }} />
-              </div>
-            </div>
-            <Skeleton active paragraph={{ rows: 2 }} />
-            <div className="flex justify-between pt-2">
-              <Skeleton.Button active size="small" style={{ width: 80 }} />
-              <Skeleton.Button active size="small" style={{ width: 100 }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   const renderAssignmentCard = (assignment: ApiAssignment) => {
     const subStatus = getSubmissionStatus(assignment);
@@ -178,7 +154,25 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
         className="rounded-[6px] px-1 pt-2 !shadow-sm"
       />
 
-      {assignments.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white rounded-xl p-5 border border-slate-100 shadow-xs space-y-3">
+              <div className="flex gap-3 items-center">
+                <Skeleton.Avatar active size={40} shape="circle" />
+                <div className="flex-1">
+                  <Skeleton.Input active size="small" style={{ width: "60%" }} />
+                </div>
+              </div>
+              <Skeleton active paragraph={{ rows: 2 }} />
+              <div className="flex justify-between pt-2">
+                <Skeleton.Button active size="small" style={{ width: 80 }} />
+                <Skeleton.Button active size="small" style={{ width: 100 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : assignments.length === 0 ? (
         <div className="text-center py-8 text-[#7B7B7B]">
           No {assignmentTab === "current" ? "current" : "past"} assignments.
         </div>

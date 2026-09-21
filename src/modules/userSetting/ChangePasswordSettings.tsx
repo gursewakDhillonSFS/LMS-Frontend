@@ -50,7 +50,7 @@ const ChangePasswordSettings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 w-full">
       {/* Header */}
       <div className="pb-4 border-b border-[#F2F4F7]">
         <div className="flex items-center gap-3">

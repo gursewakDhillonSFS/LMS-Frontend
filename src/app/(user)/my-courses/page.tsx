@@ -23,34 +23,8 @@ import { RootState } from "@/redux/store";
 import { setCourseTab } from "@/redux/tabslice/UserCourseTabSlice";
 import { userCourseList } from "@/services/collections";
 import { RoutePaths, UserCourseTab } from "@/utils/enums";
-import { ClockWheelIcon } from "@/utils/icons";
-import { Live } from "@/utils/images";
 import { EnrolledCourseProp } from "@/utils/interface";
 import { toast } from "@/utils/toast";
-
-const liveLessons = [
-  {
-    title: "UPSC Science Class Live Lesson",
-    date: "Today",
-    time: "6:00 PM - 6:45 PM",
-    startAt: "17:50",
-    isLiveNow: true,
-  },
-  {
-    title: "Advanced Data Structures Workshop",
-    date: "Tomorrow",
-    time: "5:00 PM - 6:00 PM",
-    startAt: "17:00",
-    isLiveNow: false,
-  },
-  {
-    title: "UI/UX Design Systems Q&A",
-    date: "Friday",
-    time: "4:00 PM - 5:00 PM",
-    startAt: "16:00",
-    isLiveNow: false,
-  },
-];
 
 type TabType = "all" | "active" | "completed";
 type SortOption = "recent" | "progress_desc" | "progress_asc" | "name_asc";
@@ -247,10 +221,8 @@ const MyCourses = () => {
         </div>
       </div>
 
-      {/* 2. Main Content & Sidebar Grid */}
-      <div className="w-full flex flex-col lg:flex-row gap-6">
-        {/* Left Column (2/3): Controls, Course Cards & Pagination */}
-        <div className="lg:w-2/3 flex flex-col gap-5">
+      {/* 2. Main Course Content */}
+      <div className="w-full flex flex-col gap-5">
           {/* Controls: Tabs, Search & Sort */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-[var(--border)] shadow-2xs">
             {/* Functional Tabs */}
@@ -430,77 +402,7 @@ const MyCourses = () => {
             </div>
           )}
         </div>
-
-        {/* Right Sidebar Column (1/3): Live Classes & Certificate Banner */}
-        <div className="lg:w-1/3 flex flex-col gap-5">
-          {/* Live Classes Card */}
-          <div className="p-5 rounded-2xl bg-white border border-[var(--border)] shadow-2xs flex flex-col gap-4">
-            <h2 className="text-base font-bold text-[var(--text-primary)] border-b border-[var(--border)] pb-3 flex items-center gap-2 tracking-tight">
-              <Image alt="live" src={Live} width={20} height={20} className="shrink-0" />
-              Live Interactive Classes
-            </h2>
-
-            <div className="flex flex-col divide-y divide-[var(--border)]">
-              {liveLessons.map((lesson, index) => (
-                <div
-                  key={index}
-                  className="py-3 flex justify-between items-start gap-3"
-                >
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xs font-semibold text-[var(--text-primary)] truncate">
-                      {lesson.title}
-                    </h3>
-                    {lesson.isLiveNow ? (
-                      <p className="text-[11px] text-red-600 font-semibold flex items-center gap-1.5 mt-1">
-                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block"></span>
-                        Live Now • Starts at {lesson.startAt}
-                      </p>
-                    ) : (
-                      <div className="flex items-center gap-2 mt-1 text-[11px] text-[var(--text-secondary)]">
-                        <div className="flex items-center gap-1">
-                          <ClockWheelIcon />
-                          <span>{lesson.date}</span>
-                        </div>
-                        <span>•</span>
-                        <span>{lesson.time}</span>
-                      </div>
-                    )}
-                  </div>
-                  {lesson.isLiveNow && (
-                    <CommonButton
-                      text="Join"
-                      className="!bg-[var(--error)] hover:!bg-red-700 !text-white !h-7 !text-xs !px-3 !rounded-lg shrink-0 shadow-2xs"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Certificate Quick Card */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-100 shadow-2xs flex flex-col gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-base">
-              <TrophyOutlined />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-[var(--text-primary)]">
-                Earn Course Certificates
-              </h3>
-              <p className="text-xs text-[var(--text-secondary)] mt-1 leading-relaxed">
-                Complete 100% of course lessons, tests, and quizzes to earn verified certificates you can share and download.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => router.push(RoutePaths.MyCertificate)}
-              className="mt-1 w-full py-2 rounded-xl bg-white hover:bg-blue-50 text-[var(--primary)] border border-blue-200 text-xs font-semibold transition-all cursor-pointer shadow-2xs text-center"
-            >
-              View My Certificates →
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
   );
 };
 

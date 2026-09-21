@@ -51,11 +51,20 @@ export const CertificateDisplay: React.FC<CertificateDisplayProps> = ({
     message.success("Certificate verification code copied!");
   };
 
+  const handleCopyLink = () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const url = `${origin}/certificate/verify/${encodeURIComponent(data.certificateCode || "LMS-CERT-VERIFIED")}`;
+    navigator.clipboard.writeText(url);
+    message.success("Certificate verification link copied to clipboard!");
+  };
+
   const handlePrintOrDownload = () => {
     if (typeof window !== "undefined") {
       window.print();
     }
   };
+
+  const verificationUrl = `/certificate/verify/${encodeURIComponent(data.certificateCode || "LMS-CERT-VERIFIED")}`;
 
   return (
     <div className="flex flex-col items-center gap-4 w-full">
@@ -160,16 +169,33 @@ export const CertificateDisplay: React.FC<CertificateDisplayProps> = ({
             <span className="text-[11px] font-bold text-slate-700 mt-1 uppercase tracking-wider">
               Date of Issue
             </span>
-            <span className="text-[10px] font-mono text-slate-400 truncate max-w-[130px]">
+            <a
+              href={verificationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] font-mono text-blue-600 hover:underline truncate max-w-[130px] inline-block"
+              title="Click to verify this certificate online"
+            >
               ID: {data.certificateCode || "LMS-VERIFIED"}
-            </span>
+            </a>
           </div>
         </div>
       </div>
 
       {/* Action Buttons Toolbar */}
       {showActions && (
-        <div className="flex items-center justify-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <Tooltip title="Copy public verification link">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="py-2 px-4 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            >
+              <ShareAltOutlined />
+              <span>Copy Verification Link</span>
+            </button>
+          </Tooltip>
+
           <Tooltip title="Copy certificate code">
             <button
               type="button"

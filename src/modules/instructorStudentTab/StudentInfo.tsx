@@ -93,14 +93,22 @@ const StudentInfo: React.FC<StudentInfoProps> = ({ details, assignments = [], qu
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-stretch gap-4 w-full">
-        <div className="bg-white w-[30%] min-h-[264px] py-6 rounded-[12px] flex items-center justify-center border border-gray-100 shadow-sm">
-          <Image
-            src={details?.avatar || "https://randomuser.me/api/portraits/men/22.jpg"}
-            alt="student"
-            width={180}
-            height={180}
-            className="rounded-full object-cover"
-          />
+        <div className="bg-white w-[30%] min-h-[264px] py-6 rounded-2xl flex flex-col items-center justify-center border border-slate-100 shadow-2xs">
+          {details?.avatar && details.avatar.startsWith("http") ? (
+            <Image
+              src={details.avatar}
+              alt={details?.name || "Student"}
+              width={160}
+              height={160}
+              className="rounded-full object-cover border-4 border-blue-50 shadow-md"
+            />
+          ) : (
+            <div className="w-36 h-36 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center text-4xl font-bold border-4 border-blue-50 shadow-md">
+              {(details?.name || "S").charAt(0).toUpperCase()}
+            </div>
+          )}
+          <span className="mt-3 text-sm font-bold text-slate-800">{details?.name || "Student"}</span>
+          <span className="text-xs text-slate-400">{details?.email || ""}</span>
         </div>
         <div className="bg-white w-[70%] p-6 rounded-[12px] min-h-[264px] border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between mb-6">

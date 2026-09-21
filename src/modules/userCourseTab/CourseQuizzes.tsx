@@ -74,28 +74,6 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({
     fetchQuizzes();
   }, [fetchQuizzes]);
 
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-xl p-5 border border-slate-100 shadow-xs space-y-3">
-            <div className="flex gap-3 items-center">
-              <Skeleton.Avatar active size={40} shape="circle" />
-              <div className="flex-1">
-                <Skeleton.Input active size="small" style={{ width: "60%" }} />
-              </div>
-            </div>
-            <Skeleton active paragraph={{ rows: 2 }} />
-            <div className="flex justify-between pt-2">
-              <Skeleton.Button active size="small" style={{ width: 80 }} />
-              <Skeleton.Button active size="small" style={{ width: 100 }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col gap-6">
       <CustomTabSwitcher
@@ -104,7 +82,25 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({
         onChange={setQuizTab}
       />
 
-      {quizzes.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white rounded-xl p-5 border border-slate-100 shadow-xs space-y-3">
+              <div className="flex gap-3 items-center">
+                <Skeleton.Avatar active size={40} shape="circle" />
+                <div className="flex-1">
+                  <Skeleton.Input active size="small" style={{ width: "60%" }} />
+                </div>
+              </div>
+              <Skeleton active paragraph={{ rows: 2 }} />
+              <div className="flex justify-between pt-2">
+                <Skeleton.Button active size="small" style={{ width: 80 }} />
+                <Skeleton.Button active size="small" style={{ width: 100 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : quizzes.length === 0 ? (
         <div className="text-center py-8 text-[#7B7B7B]">
           No quizzes available for this course.
         </div>
