@@ -267,8 +267,15 @@ export const createSubLesson = (payload: FormData) => {
   return postApi(CREATE_SUBLESSON, payload);
 };
 
-export const purchaseCourseApi = (payload: { course_id: string; batch_id?: string }) =>
-  postApi("/auth/course/v1/purchase", payload);
+export const purchaseCourseApi = (payload: {
+  course_id: string;
+  batch_id?: string;
+  use_saved_payment_method?: boolean;
+  payment_method_id?: string;
+}) => postApi("/auth/course/v1/purchase", payload);
+
+export const getSavedPaymentMethodApi = () =>
+  getApi("/auth/course/v1/payment/saved-method");
 
 export const checkPurchaseAccessApi = (courseId: string) =>
   getApi(`/auth/course/v1/purchase/${courseId}/access`);

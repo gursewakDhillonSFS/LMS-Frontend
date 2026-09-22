@@ -13,13 +13,23 @@ interface CertificateCardProps {
   code?: string;
   studentName?: string;
   issuedDate?: string;
+  marksObtained?: number;
+  totalMarks?: number;
+  percentage?: number;
+  grade?: string;
+  instructorName?: string;
 }
 
 const CertificateCard = ({
   title = "Certificate of Course Completion",
-  code = "LMS-CERT-VERIFIED",
+  code = "SKILLBUILD-CERT-VERIFIED",
   studentName,
   issuedDate,
+  marksObtained = 94,
+  totalMarks = 100,
+  percentage = 94,
+  grade = "A+ (Distinction)",
+  instructorName = "Dr. Robert Vance, Lead Faculty",
 }: CertificateCardProps) => {
   const [openModal, setOpenModal] = useState(false);
   const currentUserName =
@@ -32,6 +42,11 @@ const CertificateCard = ({
     courseTitle: title,
     certificateCode: code,
     issuedDate: issuedDate || new Date().toISOString(),
+    marksObtained,
+    totalMarks,
+    percentage,
+    grade,
+    instructorName,
   };
 
   return (

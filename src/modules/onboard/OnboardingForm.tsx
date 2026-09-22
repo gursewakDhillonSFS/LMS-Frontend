@@ -267,17 +267,6 @@ const OnboardingForm: React.FC = () => {
                             : "border-slate-200 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5"
                         }`}
                       >
-                        {/* Checkmark Badge */}
-                        <div
-                          className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center transition-all ${
-                            isSelected
-                              ? "bg-[#3B66FF] text-white text-xs shadow-xs"
-                              : "border border-slate-300 bg-white opacity-0 group-hover:opacity-100"
-                          }`}
-                        >
-                          {isSelected ? <CheckOutlined /> : <span className="w-2 h-2 rounded-full bg-slate-300" />}
-                        </div>
-
                         <div className="w-full h-[130px] relative rounded-xl overflow-hidden bg-slate-100 mb-3">
                           <Image
                             src={option.image}
@@ -285,6 +274,16 @@ const OnboardingForm: React.FC = () => {
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
+                          {/* Checkmark Badge positioned cleanly on top of image */}
+                          <div
+                            className={`absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                              isSelected
+                                ? "bg-[#3B66FF] text-white text-xs shadow-md ring-2 ring-white"
+                                : "border border-slate-300 bg-white/90 backdrop-blur-xs opacity-0 group-hover:opacity-100 shadow-xs"
+                            }`}
+                          >
+                            {isSelected ? <CheckOutlined /> : <span className="w-2 h-2 rounded-full bg-slate-400" />}
+                          </div>
                         </div>
 
                         <h3 className="font-bold text-slate-900 text-[15px] leading-snug">

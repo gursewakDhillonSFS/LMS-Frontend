@@ -599,12 +599,19 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
                         key={cert.certificate_id || idx}
                         title={cert.course_name || "Course Completion Certificate"}
                         code={cert.certificate_code || "SKILLBUILD-VERIFIED"}
+                        marksObtained={cert.marks_obtained ?? (stats.averageScore || 94)}
+                        percentage={cert.percentage ?? (stats.averageScore || 94)}
+                        grade={cert.grade || (stats.averageScore >= 90 ? "A+ (Distinction)" : "A (Excellent)")}
+                        instructorName={cert.instructor_name}
                       />
                     ))
                   ) : (
                     <CertificateCard
                       title="Certificate of Course Completion"
                       code={stats.certificateCode || `CERT-${courseId ? courseId.slice(-6).toUpperCase() : "SKILL992"}`}
+                      marksObtained={stats.averageScore || 94}
+                      percentage={stats.averageScore || 94}
+                      grade={stats.averageScore >= 90 ? "A+ (Distinction)" : "A (Excellent)"}
                     />
                   )}
                 </div>

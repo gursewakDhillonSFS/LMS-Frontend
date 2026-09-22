@@ -31,6 +31,10 @@ interface CertItem {
   issued_at: string;
   instructor_name?: string;
   grade?: string;
+  marks_obtained?: number;
+  total_marks?: number;
+  percentage?: number;
+  evaluation_summary?: string;
 }
 
 const MyCertificate = () => {
@@ -69,15 +73,9 @@ const MyCertificate = () => {
     }
   };
 
-  const handleDownload = (courseName: string, code: string) => {
-    toast.success(`Downloading certificate for ${courseName}...`);
-    // Simulated direct download trigger
-    const link = document.createElement("a");
-    link.href = typeof Certificate === "string" ? Certificate : (Certificate as any).src || "/Certificate.png";
-    link.download = `Certificate_${code || "LMS"}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = (certItem: CertItem) => {
+    setPreviewCert(certItem);
+    toast.success(`Opening certificate for ${certItem.course_name}. Use Print / Save PDF to download.`);
   };
 
   const handleShare = (courseName: string, code: string) => {
@@ -253,7 +251,7 @@ const MyCertificate = () => {
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#F2F4F7]">
                     <button
                       type="button"
-                      onClick={() => handleDownload(cert.course_name, cert.certificate_code)}
+                      onClick={() => handleDownload(cert)}
                       className="w-full py-2.5 px-3 rounded-xl bg-[#315CFF] hover:bg-[#2547D0] text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
                     >
                       <DownloadOutlined />
@@ -335,6 +333,10 @@ const MyCertificate = () => {
                 issuedDate: previewCert.issued_at,
                 instructorName: previewCert.instructor_name,
                 grade: previewCert.grade,
+                marksObtained: previewCert.marks_obtained,
+                totalMarks: previewCert.total_marks,
+                percentage: previewCert.percentage,
+                evaluationSummary: previewCert.evaluation_summary,
               }}
               onClose={() => setPreviewCert(null)}
             />
