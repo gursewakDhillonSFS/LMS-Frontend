@@ -202,8 +202,22 @@ const LessonViewContent = () => {
         course_id: courseId,
         batch_id: batchId,
       });
-      setCompletedMaterials((prev) => new Set([...prev, currentTask.fileUrl]));
-      toast.success(`"${currentTask.title}" marked as completed! 🎉`);
+      const updated = new Set([...completedMaterials, currentTask.fileUrl]);
+      setCompletedMaterials(updated);
+
+      // Check if all tasks in the course are now completed
+      const allCompleted = allTasks.length > 0 && allTasks.every((t) => updated.has(t.fileUrl));
+
+      if (allCompleted) {
+        toast.success("🎉 All lessons completed! Redirecting back to course details...");
+        setTimeout(() => {
+          router.push(
+            `/my-courses/course-details?course_id=${encodeURIComponent(courseId)}&batch_id=${encodeURIComponent(batchId)}`
+          );
+        }, 1500);
+      } else {
+        toast.success(`"${currentTask.title}" marked as completed! 🎉`);
+      }
     } catch {
       toast.error("Failed to mark task complete. Please try again.");
     } finally {
@@ -240,32 +254,48 @@ const LessonViewContent = () => {
       {/* ── Top Header & Breadcrumbs ─────────────────────────────────────────── */}
       <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-2xs px-4 sm:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          {/* Breadcrumb Navigation */}
-          <div className="flex flex-col gap-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-              <Link
-                href={RoutePaths.MyCourses}
-                className="hover:text-[#315CFF] flex items-center gap-1 transition-colors"
-              >
-                <HomeOutlined />
-                <span>My Courses</span>
-              </Link>
-              <span>/</span>
-              <Link
-                href={`/my-courses/course-details?course_id=${encodeURIComponent(courseId)}&batch_id=${encodeURIComponent(batchId)}`}
-                className="hover:text-[#315CFF] truncate max-w-[200px] sm:max-w-[300px] transition-colors"
-              >
-                {courseName}
-              </Link>
-              <span>/</span>
-              <span className="text-slate-900 font-bold truncate max-w-[180px]">
-                {currentTask?.lessonName || "Lesson View"}
-              </span>
-            </div>
+          {/* Breadcrumb Navigation with Back Button */}
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  `/my-courses/course-details?course_id=${encodeURIComponent(courseId)}&batch_id=${encodeURIComponent(batchId)}`
+                )
+              }
+              className="p-2 sm:px-3 sm:py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-2xs"
+              title="Back to Course Details"
+            >
+              <LeftOutlined />
+              <span className="hidden sm:inline">Back to Course</span>
+            </button>
 
-            <h1 className="text-base sm:text-lg font-extrabold text-slate-900 truncate">
-              {currentTask?.title || "Lesson Task"}
-            </h1>
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <Link
+                  href={RoutePaths.MyCourses}
+                  className="hover:text-[#315CFF] flex items-center gap-1 transition-colors"
+                >
+                  <HomeOutlined />
+                  <span>My Courses</span>
+                </Link>
+                <span>/</span>
+                <Link
+                  href={`/my-courses/course-details?course_id=${encodeURIComponent(courseId)}&batch_id=${encodeURIComponent(batchId)}`}
+                  className="hover:text-[#315CFF] truncate max-w-[140px] sm:max-w-[220px] transition-colors"
+                >
+                  {courseName}
+                </Link>
+                <span>/</span>
+                <span className="text-slate-900 font-bold truncate max-w-[140px]">
+                  {currentTask?.lessonName || "Lesson View"}
+                </span>
+              </div>
+
+              <h1 className="text-base sm:text-lg font-extrabold text-slate-900 truncate">
+                {currentTask?.title || "Lesson Task"}
+              </h1>
+            </div>
           </div>
 
           {/* Header Badges & Progress Count */}
@@ -534,23 +564,33 @@ const LessonViewContent = () => {
             )}
           </button>
 
-          {/* Right Button: Next Task */}
-          <button
-            type="button"
-            onClick={() => hasNext && navigateToTask(currentTaskIndex + 1)}
-            disabled={!hasNext}
-            className={`py-2.5 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer ${
-              hasNext
-                ? "bg-[#315CFF] hover:bg-blue-700 text-white shadow-2xs"
-                : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-60"
-            }`}
-          >
-            <span className="hidden sm:inline">
-              {nextTask ? `Next: ${nextTask.title}` : "Next Task"}
-            </span>
-            <span className="sm:hidden">Next</span>
-            <RightOutlined />
-          </button>
+          {/* Right Button: Next Task or Finish Course */}
+          {hasNext ? (
+            <button
+              type="button"
+              onClick={() => navigateToTask(currentTaskIndex + 1)}
+              className="py-2.5 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer bg-[#315CFF] hover:bg-blue-700 text-white shadow-2xs"
+            >
+              <span className="hidden sm:inline">
+                {nextTask ? `Next: ${nextTask.title}` : "Next Task"}
+              </span>
+              <span className="sm:hidden">Next</span>
+              <RightOutlined />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  `/my-courses/course-details?course_id=${encodeURIComponent(courseId)}&batch_id=${encodeURIComponent(batchId)}`
+                )
+              }
+              className="py-2.5 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs"
+            >
+              <span>Back to Course Details</span>
+              <RightOutlined />
+            </button>
+          )}
         </div>
       </footer>
     </div>

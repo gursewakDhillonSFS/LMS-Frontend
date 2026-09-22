@@ -19,6 +19,7 @@ import { Collapse, Input, Modal, Rate, Skeleton } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
 import { postApi } from "@/services/methods";
+import { useRouter } from "next/navigation";
 
 // ─── Type definitions ────────────────────────────────────────────────────────
 interface StudyMaterial {
@@ -86,7 +87,7 @@ const MaterialRow = ({
         </span>
       ) : (
         <span className="text-xs text-white bg-secondary hover:bg-secondary/90 font-medium rounded-full px-3.5 py-1.5 transition-colors shadow-2xs flex items-center gap-1">
-          Open Task ↗
+          Open Task
         </span>
       )}
     </div>
@@ -95,6 +96,7 @@ const MaterialRow = ({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
+  const router = useRouter();
   const [activeKey, setActiveKey] = useState<string[] | string>(["0"]);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
@@ -174,17 +176,17 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
     fetchReviews();
   }, [fetchLessons, fetchProgress, fetchReviews]);
 
-  // ─── Open lesson in separate new tab ─────────────────────────────────────
-  const openLessonInNewTab = useCallback(
+  // ─── Open lesson in same tab ─────────────────────────────────────────────
+  const openLesson = useCallback(
     (lessonId: string, materialUrl?: string) => {
       const url = `/my-courses/course-details/lesson-view?courseId=${encodeURIComponent(
         courseId
       )}&batchId=${encodeURIComponent(batchId)}&lessonId=${encodeURIComponent(
         lessonId
       )}${materialUrl ? `&materialUrl=${encodeURIComponent(materialUrl)}` : ""}`;
-      window.open(url, "_blank");
+      router.push(url);
     },
-    [courseId, batchId]
+    [router, courseId, batchId]
   );
 
   // Auto-refresh progress whenever user returns/focuses back to this tab
@@ -490,7 +492,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                                 fileType={material.file_type}
                                                 isCompleted={isMaterialCompleted}
                                                 onOpen={() =>
-                                                  openLessonInNewTab(
+                                                  openLesson(
                                                     lesson.lesson_id,
                                                     material.file_url
                                                   )
@@ -545,7 +547,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                                             fileType={material.file_type}
                                                             isCompleted={isMaterialCompleted}
                                                             onOpen={() =>
-                                                              openLessonInNewTab(
+                                                              openLesson(
                                                                 sub.sublesson_id,
                                                                 material.file_url
                                                               )
