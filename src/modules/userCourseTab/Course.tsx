@@ -1,6 +1,5 @@
 "use client";
 import CommonButton from "@/components/CommonButton";
-import CourseContentViewer from "@/components/CourseContentViewer";
 import QuillEditor from "@/components/QuillEditor";
 import {
   getCourseProgressApi,
@@ -46,16 +45,6 @@ interface Lesson {
   order?: number;
 }
 
-interface ViewerItem {
-  id: string;
-  name: string;
-  file_url: string | null;
-  file_type: string | null;
-  isSublesson?: boolean;
-  courseId: string;
-  batchId: string;
-}
-
 interface CourseProps {
   courseId: string;
   batchId: string;
@@ -74,29 +63,30 @@ const MaterialRow = ({
   isCompleted: boolean;
   onOpen: () => void;
 }) => (
-  <div className="flex items-center justify-between border-b border-[#C8C8C8] last:border-0 p-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+  <div
+    className="flex items-center justify-between border-b border-[#C8C8C8] last:border-0 p-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group"
     onClick={onOpen}
   >
     <div className="flex gap-3 items-center">
-      <div className="bg-primary rounded-full h-11 w-11 flex items-center justify-center text-white font-bold flex-shrink-0">
+      <div className="bg-primary rounded-full h-11 w-11 flex items-center justify-center text-white font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
         {fileType === "video" ? <VideoIcon /> : <FileIcon />}
       </div>
       <div className="flex flex-col gap-0.5">
-        <p className="text-[16px] font-[600] leading-[120%]">{name}</p>
+        <p className="text-[16px] font-[600] leading-[120%] group-hover:text-secondary transition-colors">{name}</p>
         <p className="text-sm text-[#7B7B7B] flex gap-1 items-center">
           <ClockWheelIcon />
-          {fileType === "video" ? "Video" : "PDF Document"}
+          {fileType === "video" ? "Video Lesson" : "PDF Document"}
         </p>
       </div>
     </div>
     <div className="flex items-center gap-3">
       {isCompleted ? (
-        <span className="flex items-center gap-1 text-green-600 text-sm font-semibold">
+        <span className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-full">
           <CheckCircleFilled /> Completed
         </span>
       ) : (
-        <span className="text-xs text-[#7B7B7B] border border-[#D8D8D8] rounded-full px-3 py-1">
-          Click to Open
+        <span className="text-xs text-white bg-secondary hover:bg-secondary/90 font-medium rounded-full px-3.5 py-1.5 transition-colors shadow-2xs flex items-center gap-1">
+          Open Task ↗
         </span>
       )}
     </div>
@@ -125,10 +115,6 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
   const [completedSublessons, setCompletedSublessons] = useState<Set<string>>(new Set());
   const [completedMaterials, setCompletedMaterials] = useState<Set<string>>(new Set());
   const [progressPercent, setProgressPercent] = useState(0);
-
-  // Content viewer state
-  const [viewerOpen, setViewerOpen] = useState(false);
-  const [viewerItem, setViewerItem] = useState<ViewerItem | null>(null);
 
   // ─── Fetch lessons ──────────────────────────────────────────────────────
   const fetchLessons = useCallback(async () => {
@@ -188,23 +174,27 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
     fetchReviews();
   }, [fetchLessons, fetchProgress, fetchReviews]);
 
-  // ─── Content viewer handlers ─────────────────────────────────────────────
-  const openContent = useCallback(
-    (item: ViewerItem) => {
-      setViewerItem(item);
-      setViewerOpen(true);
+  // ─── Open lesson in separate new tab ─────────────────────────────────────
+  const openLessonInNewTab = useCallback(
+    (lessonId: string, materialUrl?: string) => {
+      const url = `/my-courses/course-details/lesson-view?courseId=${encodeURIComponent(
+        courseId
+      )}&batchId=${encodeURIComponent(batchId)}&lessonId=${encodeURIComponent(
+        lessonId
+      )}${materialUrl ? `&materialUrl=${encodeURIComponent(materialUrl)}` : ""}`;
+      window.open(url, "_blank");
     },
-    []
+    [courseId, batchId]
   );
 
-  const handleCompleted = useCallback(
-    (file_url: string) => {
-      setCompletedMaterials((prev) => new Set([...prev, file_url]));
-      // Re-fetch progress to get updated %
+  // Auto-refresh progress whenever user returns/focuses back to this tab
+  useEffect(() => {
+    const handleFocus = () => {
       fetchProgress();
-    },
-    [fetchProgress]
-  );
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [fetchProgress]);
 
   // ─── Review submit ───────────────────────────────────────────────────────
   const submitReview = async () => {
@@ -500,15 +490,10 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                                 fileType={material.file_type}
                                                 isCompleted={isMaterialCompleted}
                                                 onOpen={() =>
-                                                  openContent({
-                                                    id: lesson.lesson_id,
-                                                    name: lesson.lesson_name,
-                                                    file_url: material.file_url,
-                                                    file_type: material.file_type,
-                                                    isSublesson: false,
-                                                    courseId,
-                                                    batchId,
-                                                  })
+                                                  openLessonInNewTab(
+                                                    lesson.lesson_id,
+                                                    material.file_url
+                                                  )
                                                 }
                                               />
                                             );
@@ -560,15 +545,10 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                                             fileType={material.file_type}
                                                             isCompleted={isMaterialCompleted}
                                                             onOpen={() =>
-                                                              openContent({
-                                                                id: sub.sublesson_id,
-                                                                name: sub.sublesson_name,
-                                                                file_url: material.file_url,
-                                                                file_type: material.file_type,
-                                                                isSublesson: true,
-                                                                courseId,
-                                                                batchId,
-                                                              })
+                                                              openLessonInNewTab(
+                                                                sub.sublesson_id,
+                                                                material.file_url
+                                                              )
                                                             }
                                                           />
                                                         );
@@ -597,13 +577,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         )}
       </div>
 
-      {/* Content Viewer Modal */}
-      <CourseContentViewer
-        open={viewerOpen}
-        onClose={() => setViewerOpen(false)}
-        item={viewerItem}
-        onCompleted={handleCompleted}
-      />
+
 
       {/* Review Modal */}
       <Modal

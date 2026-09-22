@@ -48,7 +48,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
   courseId,
 }) => {
   const router = useRouter();
-  const [assignmentTab, setAssignmentTab] = useState("all");
+  const [assignmentTab, setAssignmentTab] = useState("current");
   const [loading, setLoading] = useState(false);
   const [allAssignments, setAllAssignments] = useState<ApiAssignment[]>([]);
 
@@ -74,12 +74,10 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
   }, [fetchAssignments]);
 
   const assignments = useMemo(() => {
-    if (assignmentTab === "submitted") {
-      return allAssignments.filter((a) => a.studentSubmission?.status);
-    } else if (assignmentTab === "pending") {
-      return allAssignments.filter((a) => !a.studentSubmission?.status);
+    if (assignmentTab === "past") {
+      return allAssignments.filter((a) => a.studentSubmission?.status === "Graded");
     }
-    return allAssignments;
+    return allAssignments.filter((a) => a.studentSubmission?.status !== "Graded");
   }, [allAssignments, assignmentTab]);
 
   const getSubmissionStatus = (a: ApiAssignment) => {
