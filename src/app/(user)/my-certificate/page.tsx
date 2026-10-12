@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   SafetyCertificateFilled,
@@ -19,7 +18,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 import { getMyCertificatesApi } from "@/services/collections";
-import { Certificate } from "@/utils/images";
 import { toast } from "@/utils/toast";
 import { RoutePaths } from "@/utils/enums";
 import CertificateDisplay from "@/components/certificate/CertificateDisplay";
@@ -31,9 +29,9 @@ interface CertItem {
   issued_at: string;
   instructor_name?: string;
   grade?: string;
-  marks_obtained?: number;
-  total_marks?: number;
-  percentage?: number;
+  marks_obtained?: number | null;
+  total_marks?: number | null;
+  percentage?: number | null;
   evaluation_summary?: string;
 }
 
@@ -186,15 +184,22 @@ const MyCertificate = () => {
                 {/* Certificate Preview Frame */}
                 <div
                   onClick={() => setPreviewCert(cert)}
-                  className="relative w-full h-52 bg-slate-900 cursor-pointer overflow-hidden flex items-center justify-center"
+                  className="relative w-full h-52 bg-white cursor-pointer overflow-hidden flex items-center justify-center border-b border-slate-100"
                 >
-                  <Image
-                    src={Certificate}
-                    alt={cert.course_name}
-                    unoptimized
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <div className="w-[88%] h-[78%] rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 flex flex-col items-center justify-center text-center gap-1">
+                    <span className="text-[10px] uppercase tracking-[0.18em] text-[#315CFF] font-bold">
+                      Certificate of Completion
+                    </span>
+                    <span className="text-sm font-serif text-slate-900 line-clamp-2">
+                      {currentUserName}
+                    </span>
+                    <span className="text-[11px] text-slate-500 line-clamp-2">
+                      {cert.course_name}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {cert.certificate_code}
+                    </span>
+                  </div>
                   {/* Verified Badge Ribbon */}
                   <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-semibold flex items-center gap-1.5 border border-white/20 shadow-xs z-10">
                     <SafetyCertificateFilled className="text-emerald-400" />

@@ -212,6 +212,34 @@ export const formatLabel = (val?: string | number | null) => {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 };
 
+export const formatMediaDuration = (seconds?: number | null) => {
+  if (seconds == null || !Number.isFinite(seconds) || seconds <= 0) return "";
+  const total = Math.round(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  if (minutes > 0) return secs > 0 ? `${minutes}m ${secs}s` : `${minutes} min`;
+  return `${secs}s`;
+};
+
+export const materialKindLabel = (fileType?: string | null) => {
+  switch ((fileType || "").toLowerCase()) {
+    case "video":
+      return "Video";
+    case "audio":
+      return "Audio";
+    case "pdf":
+      return "PDF";
+    case "image":
+      return "Image";
+    case "document":
+      return "Document";
+    default:
+      return fileType ? fileType.toUpperCase() : "File";
+  }
+};
+
 export const formatDuration = (val?: string | number | null) => {
   if (!val) return "";
   const str = String(val).trim().toLowerCase();

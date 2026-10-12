@@ -91,7 +91,7 @@ const SavedCourses = () => {
             {courses?.map((course, index) => (
               <DashboardCourseCard
                 key={index}
-                courseData={course}
+                courseData={{ ...course, favorite: true, favorite_status: true }}
                 handleRemoveFavorite={handleRemoveFavorite}
                 handleRedirect={handleRedirect}
                 veiwDetail={veiwDetail}

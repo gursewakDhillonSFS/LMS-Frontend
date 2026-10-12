@@ -32,6 +32,7 @@ interface PurchaseModalProps {
       _id: string;
       batchName: string;
       teacher?: string | null;
+    teacher_name?: string | null;
       startDate?: string;
       endDate?: string;
     }>;
@@ -39,6 +40,7 @@ interface PurchaseModalProps {
       _id?: string;
       batchName: string;
       teacher?: string | null;
+    teacher_name?: string | null;
       startDate?: string;
       endDate?: string;
     }>;
@@ -70,6 +72,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
     _id: string;
     batchName: string;
     teacher?: string | null;
+    teacher_name?: string | null;
     startDate?: string;
     endDate?: string;
   }>;
@@ -277,14 +280,19 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({
               onChange={(value) => setSelectedBatch(value)}
               placeholder="-- Select which batch you want to join --"
               status={isBatchMissing ? "warning" : ""}
-              options={rawBatches.map((b) => ({
-                label: `${b.batchName}${
-                  b.startDate
-                    ? ` (Starts ${new Date(b.startDate).toLocaleDateString()})`
-                    : ""
-                }${b.teacher ? ` • Teacher: ${b.teacher}` : ""}`,
-                value: b._id,
-              }))}
+              options={rawBatches.map((b) => {
+                const teacherName =
+                  b.teacher_name ||
+                  (b.teacher && !/^[a-f\d]{24}$/i.test(b.teacher) ? b.teacher : "");
+                return {
+                  label: `${b.batchName}${
+                    b.startDate
+                      ? ` (Starts ${new Date(b.startDate).toLocaleDateString()})`
+                      : ""
+                  }${teacherName ? ` • ${teacherName}` : ""}`,
+                  value: b._id,
+                };
+              })}
             />
 
             <p className="text-[10px] text-slate-600 mt-0.5">

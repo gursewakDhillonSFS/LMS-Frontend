@@ -152,6 +152,7 @@ export interface Batch {
   _id: string;
   batchName: string;
   teacher?: string | null;
+  teacher_name?: string | null;
   startDate?: string;
   endDate?: string;
 }

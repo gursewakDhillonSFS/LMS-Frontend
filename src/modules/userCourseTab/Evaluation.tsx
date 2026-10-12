@@ -576,7 +576,7 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
           <div className="flex flex-col gap-3">
             <h3 className="font-bold text-lg text-gray-900">Earned Certificates</h3>
 
-            {stats.certificateEligible || earnedCerts.length > 0 ? (
+            {earnedCerts.length > 0 ? (
               <div className="flex flex-col gap-3">
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
@@ -593,27 +593,20 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {earnedCerts.length > 0 ? (
-                    earnedCerts.map((cert: any, idx: number) => (
-                      <CertificateCard
-                        key={cert.certificate_id || idx}
-                        title={cert.course_name || "Course Completion Certificate"}
-                        code={cert.certificate_code || "SKILLBUILD-VERIFIED"}
-                        marksObtained={cert.marks_obtained ?? (stats.averageScore || 94)}
-                        percentage={cert.percentage ?? (stats.averageScore || 94)}
-                        grade={cert.grade || (stats.averageScore >= 90 ? "A+ (Distinction)" : "A (Excellent)")}
-                        instructorName={cert.instructor_name}
-                      />
-                    ))
-                  ) : (
+                  {earnedCerts.map((cert: any, idx: number) => (
                     <CertificateCard
-                      title="Certificate of Course Completion"
-                      code={stats.certificateCode || `CERT-${courseId ? courseId.slice(-6).toUpperCase() : "SKILL992"}`}
-                      marksObtained={stats.averageScore || 94}
-                      percentage={stats.averageScore || 94}
-                      grade={stats.averageScore >= 90 ? "A+ (Distinction)" : "A (Excellent)"}
+                      key={cert.certificate_id || idx}
+                      title={cert.course_name || "Course Completion Certificate"}
+                      code={cert.certificate_code}
+                      marksObtained={cert.marks_obtained}
+                      totalMarks={cert.total_marks}
+                      percentage={cert.percentage}
+                      grade={cert.grade || "Completed"}
+                      instructorName={cert.instructor_name}
+                      studentName={cert.student_name}
+                      issuedDate={cert.issued_at}
                     />
-                  )}
+                  ))}
                 </div>
               </div>
             ) : (

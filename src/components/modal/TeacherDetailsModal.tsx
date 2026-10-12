@@ -27,6 +27,7 @@ interface TeacherDetailsModalProps {
   onClose: () => void;
   teacher: InstructorRecord | null;
   onTeacherUpdated?: () => void;
+  audience?: "staff" | "student";
 }
 
 export const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
@@ -34,7 +35,9 @@ export const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
   onClose,
   teacher,
   onTeacherUpdated,
+  audience = "staff",
 }) => {
+  const isStudentView = audience === "student";
   const [loading, setLoading] = useState(false);
   const [teacherData, setTeacherData] = useState<InstructorRecord | null>(teacher);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -157,7 +160,7 @@ export const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
                       <span>{activeTeacher.email}</span>
                     </a>
                   )}
-                  {activeTeacher?.phone_number && (
+                  {!isStudentView && activeTeacher?.phone_number && activeTeacher.phone_number !== "N/A" && (
                     <span className="inline-flex items-center gap-1.5">
                       <PhoneOutlined className="text-slate-400" />
                       <span>{activeTeacher.phone_number}</span>
@@ -166,16 +169,17 @@ export const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
                 </div>
               </div>
 
-              {/* Edit button */}
-              <Tooltip title="Edit Profile Details">
-                <button
-                  type="button"
-                  onClick={() => setEditModalOpen(true)}
-                  className="sm:self-start p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors cursor-pointer"
-                >
-                  <EditOutlined className="text-base" />
-                </button>
-              </Tooltip>
+              {!isStudentView && (
+                <Tooltip title="Edit Profile Details">
+                  <button
+                    type="button"
+                    onClick={() => setEditModalOpen(true)}
+                    className="sm:self-start p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors cursor-pointer"
+                  >
+                    <EditOutlined className="text-base" />
+                  </button>
+                </Tooltip>
+              )}
             </div>
           </div>
 
@@ -190,29 +194,35 @@ export const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
                 <h3 className="text-xs uppercase tracking-wider font-bold text-slate-500">
                   Personal Information
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                  <div>
-                    <span className="text-slate-400 block mb-0.5">Gender</span>
-                    <span className="font-semibold text-slate-800">
-                      {activeTeacher?.gender || "Not Specified"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block mb-0.5">Date of Birth</span>
-                    <span className="font-semibold text-slate-800">
-                      {activeTeacher?.dob || "Not Provided"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block mb-0.5">Marital Status</span>
-                    <span className="font-semibold text-slate-800">
-                      {activeTeacher?.marital_status || "Not Specified"}
-                    </span>
-                  </div>
+                <div className={`grid grid-cols-2 ${isStudentView ? "" : "sm:grid-cols-4"} gap-4 text-xs`}>
+                  {!isStudentView && (
+                    <>
+                      <div>
+                        <span className="text-slate-400 block mb-0.5">Gender</span>
+                        <span className="font-semibold text-slate-800">
+                          {activeTeacher?.gender || "Not Specified"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block mb-0.5">Date of Birth</span>
+                        <span className="font-semibold text-slate-800">
+                          {activeTeacher?.dob || "Not Provided"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block mb-0.5">Marital Status</span>
+                        <span className="font-semibold text-slate-800">
+                          {activeTeacher?.marital_status || "Not Specified"}
+                        </span>
+                      </div>
+                    </>
+                  )}
                   <div>
                     <span className="text-slate-400 block mb-0.5">Qualification</span>
                     <span className="font-semibold text-slate-800">
-                      {activeTeacher?.qualification || "Not Specified"}
+                      {activeTeacher?.qualification && activeTeacher.qualification !== "N/A"
+                        ? activeTeacher.qualification
+                        : "Not Specified"}
                     </span>
                   </div>
                 </div>
@@ -282,14 +292,16 @@ export const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
             >
               Close
             </button>
-            <button
-              type="button"
-              onClick={() => setEditModalOpen(true)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#315CFF] hover:bg-blue-700 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
-            >
-              <EditOutlined />
-              <span>Edit Details</span>
-            </button>
+            {!isStudentView && (
+              <button
+                type="button"
+                onClick={() => setEditModalOpen(true)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#315CFF] hover:bg-blue-700 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <EditOutlined />
+                <span>Edit Details</span>
+              </button>
+            )}
           </div>
         </div>
       </Modal>

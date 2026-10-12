@@ -18,6 +18,8 @@ import { CheckCircleFilled, RightOutlined, StarOutlined } from "@ant-design/icon
 import { Collapse, Input, Modal, Rate, Skeleton } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
+import { formatMediaDuration, materialKindLabel } from "@/utils/comman";
+import { CustomerServiceOutlined, FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
 import { postApi } from "@/services/methods";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +28,7 @@ interface StudyMaterial {
   file_url: string;
   file_name: string;
   file_type: string;
+  duration_seconds?: number | null;
 }
 
 interface Sublesson {
@@ -56,27 +59,41 @@ interface CourseProps {
 const MaterialRow = ({
   name,
   fileType,
+  durationSeconds,
   isCompleted,
   onOpen,
 }: {
   name: string;
   fileType: string | null;
+  durationSeconds?: number | null;
   isCompleted: boolean;
   onOpen: () => void;
-}) => (
+}) => {
+  const kind = (fileType || "").toLowerCase();
+  const durationLabel = kind === "video" || kind === "audio" ? formatMediaDuration(durationSeconds) : "";
+  return (
   <div
     className="flex items-center justify-between border-b border-[#C8C8C8] last:border-0 p-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group"
     onClick={onOpen}
   >
     <div className="flex gap-3 items-center">
       <div className="bg-primary rounded-full h-11 w-11 flex items-center justify-center text-white font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
-        {fileType === "video" ? <VideoIcon /> : <FileIcon />}
+        {kind === "video" ? (
+          <VideoIcon />
+        ) : kind === "audio" ? (
+          <CustomerServiceOutlined className="text-lg" />
+        ) : kind === "pdf" ? (
+          <FilePdfOutlined className="text-lg" />
+        ) : (
+          <FileIcon />
+        )}
       </div>
       <div className="flex flex-col gap-0.5">
         <p className="text-[16px] font-[600] leading-[120%] group-hover:text-secondary transition-colors">{name}</p>
         <p className="text-sm text-[#7B7B7B] flex gap-1 items-center">
-          <ClockWheelIcon />
-          {fileType === "video" ? "Video Lesson" : "PDF Document"}
+          {durationLabel ? <ClockWheelIcon /> : <FileTextOutlined />}
+          <span>{materialKindLabel(kind)}</span>
+          {durationLabel ? <span>• {durationLabel}</span> : null}
         </p>
       </div>
     </div>
@@ -92,7 +109,8 @@ const MaterialRow = ({
       )}
     </div>
   </div>
-);
+  );
+};
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
@@ -490,6 +508,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                                 key={idx}
                                                 name={material.file_name || lesson.lesson_name}
                                                 fileType={material.file_type}
+                                                durationSeconds={material.duration_seconds}
                                                 isCompleted={isMaterialCompleted}
                                                 onOpen={() =>
                                                   openLesson(
@@ -545,6 +564,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
                                                               material.file_name || sub.sublesson_name
                                                             }
                                                             fileType={material.file_type}
+                                                            durationSeconds={material.duration_seconds}
                                                             isCompleted={isMaterialCompleted}
                                                             onOpen={() =>
                                                               openLesson(

@@ -14,7 +14,7 @@ import {
   getLessonsWithSublessonsApi,
 } from "@/services/collections";
 import PurchaseModal from "@/components/PurchaseModal";
-import { formatLabel, getImageUrl, isValidUrl, getCategoryName } from "@/utils/comman";
+import { formatLabel, getImageUrl, isValidUrl, getCategoryName, formatMediaDuration, materialKindLabel } from "@/utils/comman";
 import { RoutePaths } from "@/utils/enums";
 import { Fallback } from "@/utils/images";
 import { courseData, CourseInfoDataProp } from "@/utils/interface";
@@ -26,20 +26,20 @@ import {
   ClockCircleOutlined,
   BookOutlined,
   TrophyOutlined,
-  SafetyCertificateOutlined,
-  DownloadOutlined,
   RightOutlined,
   TeamOutlined,
-  CrownOutlined,
-  CodeOutlined,
   LoadingOutlined,
   LockOutlined,
   FileTextOutlined,
+  CustomerServiceOutlined,
+  FilePdfOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Skeleton } from "antd";
 import Image from "next/image";
 import QuillEditor from "@/components/QuillEditor";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import TeacherDetailsModal from "@/components/modal/TeacherDetailsModal";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "@/utils/toast";
@@ -62,11 +62,13 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
   const [courseLessons, setCourseLessons] = useState<any[]>([]);
   const [totalWeeks, setTotalWeeks] = useState<number>(4);
   const Subscribed = coursesInfo?.enrolled_status || false;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [teacherModalOpen, setTeacherModalOpen] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
   const [batch, setBatch] = useState(false);
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useDispatch();
 
   const overviewRef = useRef<HTMLDivElement>(null);
@@ -81,10 +83,25 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
     (state: RootState) => state?.categories?.categories
   );
 
+  const isLoggedIn = Boolean(
+    useSelector((state: RootState) => state.userdata?.access_token)
+  );
+  const privateDetailPath = pathname?.includes("/dashboard")
+    ? `${RoutePaths.Dashboard}/course-detail`
+    : pathname?.includes("/my-explore") || isLoggedIn
+      ? `${RoutePaths.MyExplore}/course-detail`
+      : "";
+
   const courseRedirect = (value: courseData | undefined) => {
     dispatch(setCourseData(value));
-    router.push(`${RoutePaths?.Browse}/course-details`);
+    router.push(privateDetailPath || `${RoutePaths.Browse}/course-details`);
   };
+
+  const listingPath = pathname?.includes("/dashboard")
+    ? RoutePaths.Dashboard
+    : pathname?.includes("/my-explore") || isLoggedIn
+      ? RoutePaths.MyExplore
+      : RoutePaths.Browse;
 
   const courseImageUrl = getImageUrl(selectedCourseData?.course_image_url || coursesInfo?.course_image_url);
 
@@ -206,6 +223,35 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
     }
   };
 
+  const curriculumMaterials = courseLessons.flatMap((lesson: any) => [
+    ...(lesson.studyMaterials || []),
+    ...((lesson.sublessons || []).flatMap((sub: any) => sub.studyMaterials || [])),
+  ]);
+  const countByType = (type: string) =>
+    curriculumMaterials.filter((item: any) => (item.file_type || "").toLowerCase() === type).length;
+  const videoCount = countByType("video");
+  const audioCount = countByType("audio");
+  const pdfCount = countByType("pdf");
+  const documentCount = countByType("document") + countByType("file") + countByType("image");
+  const mediaSeconds = curriculumMaterials.reduce((sum: number, item: any) => {
+    const kind = (item.file_type || "").toLowerCase();
+    if (kind !== "video" && kind !== "audio") return sum;
+    return sum + (Number(item.duration_seconds) || 0);
+  }, 0);
+  const includeItems = [
+    courseLessons.length > 0
+      ? `${courseLessons.length} ${courseLessons.length === 1 ? "lesson" : "lessons"}`
+      : "",
+    videoCount > 0 ? `${videoCount} video ${videoCount === 1 ? "lesson" : "lessons"}` : "",
+    audioCount > 0 ? `${audioCount} audio ${audioCount === 1 ? "file" : "files"}` : "",
+    pdfCount > 0 ? `${pdfCount} PDF ${pdfCount === 1 ? "resource" : "resources"}` : "",
+    documentCount > 0 ? `${documentCount} downloadable ${documentCount === 1 ? "file" : "files"}` : "",
+    mediaSeconds > 0 ? `${formatMediaDuration(mediaSeconds)} of video and audio` : "",
+    coursesInfo?.live_classes ? "Live classes included" : "",
+  ].filter(Boolean);
+
+  const teacherId = coursesInfo?.head_teacher_id || (coursesInfo as any)?.instructor_id;
+
   return (
     <div className="bg-[#FAFBFD] min-h-screen text-[#0F172A]">
       <CourseBatchModal
@@ -228,10 +274,14 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
             <div className="lg:col-span-7 flex flex-col gap-4">
               {/* Category Pill & Favorite */}
               <div className="flex items-center justify-between gap-3">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF2FF] border border-[#4F46E5]/20 text-[#4F46E5] text-xs font-semibold">
-                  <BookOutlined className="text-xs" />
-                  <span>{coursesInfo?.category_name || "Web Development"}</span>
-                </div>
+                {coursesInfo?.category_name ? (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF2FF] border border-[#4F46E5]/20 text-[#4F46E5] text-xs font-semibold">
+                    <BookOutlined className="text-xs" />
+                    <span>{coursesInfo.category_name}</span>
+                  </div>
+                ) : (
+                  <span />
+                )}
 
                 {isExplore && (
                   <button
@@ -270,11 +320,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 <div className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
                   {coursesInfo?.description ? (
                     <QuillEditor readOnly value={coursesInfo.description} />
-                  ) : (
-                    <p>
-                      Learn {coursesInfo?.course_name || selectedCourseData?.course_name} from industry experts with project-based learning and mentorship.
-                    </p>
-                  )}
+                  ) : null}
                 </div>
               )}
 
@@ -316,15 +362,10 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                   <TeamOutlined className="text-slate-400 text-sm" />
                   <span>
                     <strong className="text-slate-800 font-bold">
-                      {coursesInfo?.enrolled_user_count ?? 5}
+                      {coursesInfo?.enrolled_user_count ?? 0}
                     </strong>{" "}
                     already enrolled
                   </span>
-                </div>
-                <span className="text-slate-300">|</span>
-                <div className="flex items-center gap-1.5 text-indigo-700 font-semibold">
-                  <CrownOutlined className="text-indigo-600" />
-                  <span>Included with SkillBuild Pro</span>
                 </div>
               </div>
             </div>
@@ -348,11 +389,6 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                   />
                 </div>
 
-                {/* Floating Badge */}
-                <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 shadow-md flex items-center gap-1.5 text-xs font-bold text-[#0F172A]">
-                  <CodeOutlined className="text-[#4F46E5]" />
-                  <span>Build Real Projects</span>
-                </div>
               </div>
             </div>
           </div>
@@ -369,10 +405,12 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
             </div>
             <div>
               <div className="text-base font-extrabold text-slate-900 leading-tight">
-                {coursesInfo?.average_rating?.toFixed(1) || "4.8"}
+                {coursesInfo?.review_count ? coursesInfo.average_rating?.toFixed(1) : "—"}
               </div>
               <div className="text-xs text-slate-500 font-medium">
-                ({coursesInfo?.review_count ?? 12} reviews)
+                {coursesInfo?.review_count
+                  ? `(${coursesInfo.review_count} reviews)`
+                  : "No reviews yet"}
               </div>
             </div>
           </div>
@@ -384,10 +422,10 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
             </div>
             <div>
               <div className="text-sm font-bold text-slate-900 leading-tight capitalize">
-                {formatLabel(coursesInfo?.course_level) || "All Levels"}
+                {formatLabel(coursesInfo?.course_level) || "Not set"}
               </div>
               <div className="text-xs text-slate-500 font-medium">
-                No prior experience required
+                Course level
               </div>
             </div>
           </div>
@@ -399,7 +437,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
             </div>
             <div>
               <div className="text-sm font-bold text-slate-900 leading-tight capitalize">
-                {formatLabel(coursesInfo?.course_duration) || "Self-Paced"}
+                {formatLabel(coursesInfo?.course_duration) || "Not set"}
               </div>
               <div className="text-xs text-slate-500 font-medium">
                 Duration of the course
@@ -414,7 +452,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
             </div>
             <div>
               <div className="text-sm font-bold text-slate-900 leading-tight capitalize">
-                {formatLabel(coursesInfo?.course_schedule) || "Flexible"}
+                {formatLabel(coursesInfo?.course_schedule) || "Not set"}
               </div>
               <div className="text-xs text-slate-500 font-medium">
                 Learn on your schedule
@@ -467,17 +505,9 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
 
               {loading ? (
                 <Skeleton paragraph={{ rows: 3 }} active />
-              ) : (
+              ) : coursesInfo?.course_learning_points?.length ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
-                  {(coursesInfo?.course_learning_points?.length
-                    ? coursesInfo.course_learning_points
-                    : [
-                        "Build robust REST & GraphQL APIs",
-                        "Master React 19 & Next.js App Router",
-                        "Deploy scalable cloud apps",
-                        "Work with modern tools and best practices",
-                      ]
-                  ).map((point, idx) => (
+                  {coursesInfo.course_learning_points.map((point, idx) => (
                     <div key={idx} className="flex items-start gap-2.5">
                       <CheckCircleFilled className="text-[#4F46E5] text-base shrink-0 mt-0.5" />
                       <span className="text-xs sm:text-sm text-slate-700 leading-relaxed">
@@ -486,6 +516,8 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="text-sm text-slate-500">Learning outcomes have not been added for this course yet.</p>
               )}
             </section>
 
@@ -561,14 +593,46 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                                         {l.lesson_description.replace(/<[^>]+>/g, "")}
                                       </p>
                                     )}
-                                    <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
-                                      {l.studyMaterials && l.studyMaterials.length > 0 && (
-                                        <span className="flex items-center gap-1">
-                                          <FileTextOutlined /> {l.studyMaterials.length} materials
+                                    <div className="flex flex-col gap-1.5 mt-2">
+                                      {[
+                                        ...(l.studyMaterials || []),
+                                        ...((l.sublessons || []).flatMap((s: any) => s.studyMaterials || [])),
+                                      ].map((material: any, materialIndex: number) => {
+                                        const kind = (material.file_type || "").toLowerCase();
+                                        const durationLabel =
+                                          kind === "video" || kind === "audio"
+                                            ? formatMediaDuration(material.duration_seconds)
+                                            : "";
+                                        return (
+                                          <span
+                                            key={`${material.file_url || material.file_name}-${materialIndex}`}
+                                            className="inline-flex items-center gap-1.5 text-[11px] text-slate-500"
+                                          >
+                                            {kind === "video" ? (
+                                              <PlayCircleFilled className="text-[#4F46E5]" />
+                                            ) : kind === "audio" ? (
+                                              <CustomerServiceOutlined className="text-[#4F46E5]" />
+                                            ) : kind === "pdf" ? (
+                                              <FilePdfOutlined className="text-[#4F46E5]" />
+                                            ) : (
+                                              <FileTextOutlined className="text-[#4F46E5]" />
+                                            )}
+                                            <span>{material.file_name || materialKindLabel(kind)}</span>
+                                            <span className="text-slate-300">•</span>
+                                            <span>{materialKindLabel(kind)}</span>
+                                            {durationLabel ? (
+                                              <>
+                                                <span className="text-slate-300">•</span>
+                                                <span>{durationLabel}</span>
+                                              </>
+                                            ) : null}
+                                          </span>
+                                        );
+                                      })}
+                                      {l.sublessons?.length > 0 && (
+                                        <span className="text-[11px] text-slate-400">
+                                          {l.sublessons.length} sub-topics
                                         </span>
-                                      )}
-                                      {l.sublessons && l.sublessons.length > 0 && (
-                                        <span>• {l.sublessons.length} sub-topics</span>
                                       )}
                                     </div>
                                   </div>
@@ -613,9 +677,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     {coursesInfo?.about_course ? (
                       <QuillEditor readOnly value={coursesInfo.about_course} />
                     ) : (
-                      <p>
-                        This comprehensive curriculum is designed to master essential concepts through hands-on projects and real-world applications. Learn with experienced mentors and collaborate with global learners.
-                      </p>
+                      <p>No course overview has been added yet.</p>
                     )}
                   </div>
 
@@ -628,38 +690,6 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     </button>
                   )}
 
-                  {/* Highlight Feature Badges */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-100 text-[#4F46E5] flex items-center justify-center shrink-0">
-                        <CodeOutlined className="text-sm" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-800">Project Based</div>
-                        <div className="text-[11px] text-slate-500">Hands-on learning</div>
-                      </div>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                        <ClockCircleOutlined className="text-sm" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-800">Lifetime Access</div>
-                        <div className="text-[11px] text-slate-500">Learn at your pace</div>
-                      </div>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                        <SafetyCertificateOutlined className="text-sm" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-800">Certificate</div>
-                        <div className="text-[11px] text-slate-500">Get verified credential</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
             </section>
@@ -682,31 +712,40 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3.5">
-                      <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 ring-2 ring-[#EEF2FF]">
-                        <Image
-                          src={
-                            coursesInfo?.head_teacher_image_url ||
-                            coursesInfo?.course_instructor_image_url ||
-                            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-                          }
-                          alt={coursesInfo?.head_teacher_name || "Instructor"}
-                          fill
-                          unoptimized
-                          className="object-cover"
-                        />
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 ring-2 ring-[#EEF2FF] bg-slate-100 flex items-center justify-center">
+                        {isValidUrl(coursesInfo?.head_teacher_image_url || coursesInfo?.course_instructor_image_url || "") ? (
+                          <Image
+                            src={coursesInfo?.head_teacher_image_url || coursesInfo?.course_instructor_image_url || ""}
+                            alt={coursesInfo?.head_teacher_name || "Instructor"}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        ) : (
+                          <UserOutlined className="text-xl text-slate-400" />
+                        )}
                       </div>
                       <div>
                         <h4 className="text-base font-bold text-slate-900">
-                          {coursesInfo?.head_teacher_name || coursesInfo?.course_instructor || "Gursewak Singh"}
+                          {coursesInfo?.head_teacher_name || coursesInfo?.course_instructor || "Instructor not assigned"}
                         </h4>
-                        <p className="text-xs text-slate-500 font-medium">
-                          Senior Instructor & Engineering Lead
-                        </p>
+                        {(coursesInfo as any)?.head_teacher_qualification && (
+                          <p className="text-xs text-slate-500 font-medium">
+                            {(coursesInfo as any).head_teacher_qualification}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <button
-                      onClick={() => toast.info("Instructor profile view")}
+                      onClick={() => {
+                        const teacherId = coursesInfo?.head_teacher_id || (coursesInfo as any)?.instructor_id;
+                        if (!teacherId) {
+                          toast.info("Instructor profile is not available yet.");
+                          return;
+                        }
+                        setTeacherModalOpen(true);
+                      }}
                       className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:text-[#4F46E5] hover:border-[#4F46E5] transition-colors cursor-pointer"
                     >
                       <span>View Profile</span>
@@ -714,19 +753,17 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     </button>
                   </div>
 
+                  {coursesInfo?.meet_your_teacher &&
+                    coursesInfo.meet_your_teacher !== coursesInfo.head_teacher_name &&
+                    coursesInfo.meet_your_teacher !== (coursesInfo as any)?.head_teacher_qualification && (
                   <div
                     className={`text-sm text-slate-600 leading-relaxed overflow-hidden transition-all duration-300 ${
                       isExpandedTeacher ? "" : "max-h-24"
                     }`}
                   >
-                    {coursesInfo?.meet_your_teacher ? (
-                      <QuillEditor readOnly value={coursesInfo.meet_your_teacher} />
-                    ) : (
-                      <p>
-                        Full Stack Developer with 7+ years of experience in web architecture, modern frontend frameworks, and cloud engineering. Passionate about empowering learners through practical hands-on projects.
-                      </p>
-                    )}
+                    <QuillEditor readOnly value={coursesInfo.meet_your_teacher} />
                   </div>
+                  )}
 
                   {(coursesInfo?.meet_your_teacher?.length ?? 0) > 160 && (
                     <button
@@ -750,26 +787,18 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {(coursesInfo?.skills_you_gain?.length
-                  ? coursesInfo.skills_you_gain
-                  : [
-                      "TypeScript",
-                      "Next.js",
-                      "React",
-                      "MongoDB",
-                      "Docker",
-                      "GraphQL",
-                      "Tailwind CSS",
-                      "Node.js",
-                    ]
-                ).map((skill, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:border-[#4F46E5] hover:text-[#4F46E5] transition-colors"
-                  >
-                    {skill}
-                  </span>
-                ))}
+                {coursesInfo?.skills_you_gain?.length ? (
+                  coursesInfo.skills_you_gain.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700"
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-500">No skills have been listed for this course yet.</p>
+                )}
               </div>
             </section>
 
@@ -791,28 +820,18 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 <span>Course Includes</span>
               </h3>
 
-              <ul className="flex flex-col gap-3 text-xs sm:text-sm text-slate-600">
-                <li className="flex items-center gap-3">
-                  <PlayCircleFilled className="text-slate-400" />
-                  <span>12+ Comprehensive Video Lessons</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CodeOutlined className="text-slate-400" />
-                  <span>3 Real-World Hands-on Projects</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <DownloadOutlined className="text-slate-400" />
-                  <span>Downloadable Code & Resources</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <SafetyCertificateOutlined className="text-slate-400" />
-                  <span>Verified Certificate of Completion</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <ClockCircleOutlined className="text-slate-400" />
-                  <span>Lifetime Access on Any Device</span>
-                </li>
-              </ul>
+              {includeItems.length > 0 ? (
+                <ul className="flex flex-col gap-3 text-xs sm:text-sm text-slate-600">
+                  {includeItems.map((item) => (
+                    <li key={item} className="flex items-center gap-3">
+                      <CheckCircleFilled className="text-[#4F46E5]" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs text-slate-500">Course materials will appear here once the instructor uploads them.</p>
+              )}
             </div>
 
             {/* Card 2: Featured Related Course */}
@@ -823,7 +842,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     Related Course
                   </h4>
                   <Link
-                    href="/browse"
+                    href={listingPath}
                     className="text-xs font-semibold text-[#4F46E5] hover:underline"
                   >
                     View All →
@@ -848,27 +867,28 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     />
                   </div>
                   <span className="text-[11px] font-semibold text-[#4F46E5] uppercase">
-                    {getCategoryName(categories, coursesInfo.related_courses[0].category_id) || "Development"}
+                    {getCategoryName(categories, coursesInfo.related_courses[0].category_id) || coursesInfo.related_courses[0].category_name || "Course"}
                   </span>
                   <h5 className="text-sm font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors line-clamp-1">
                     {coursesInfo.related_courses[0].course_name}
                   </h5>
                   <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span className="flex items-center gap-1 text-amber-500 font-semibold">
-                      <StarFilled /> {coursesInfo.related_courses[0].average_rating?.toFixed(1) || "4.8"}
+                      <span className="flex items-center gap-1 text-amber-500 font-semibold">
+                      <StarFilled /> {Number(coursesInfo.related_courses[0].average_rating) > 0 ? coursesInfo.related_courses[0].average_rating?.toFixed(1) : "New"}
                     </span>
                     <span className="font-bold text-slate-900 text-sm">
-                      ${coursesInfo.related_courses[0].course_price || 129}
+                      {coursesInfo.related_courses[0].course_price ? `$${coursesInfo.related_courses[0].course_price}` : "Free"}
                     </span>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Card 3: Promo / CTA Banner */}
+            {/* Card 3: Promo / CTA Banner — public pages only */}
+            {!isExplore && (
             <div className="rounded-2xl p-6 bg-gradient-to-br from-[#1E1B4B] via-[#0F172A] to-[#1E293B] text-white shadow-lg flex flex-col items-center text-center gap-3">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white text-xl">
-                <CrownOutlined />
+                <BookOutlined />
               </div>
               <h4 className="text-base font-bold text-white">
                 Learn at Your Own Pace
@@ -888,6 +908,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                 </button>
               )}
             </div>
+            )}
 
             {/* Card 4: You May Also Like */}
             {coursesInfo?.related_courses && coursesInfo.related_courses.length > 1 && (
@@ -897,7 +918,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     You May Also Like
                   </h4>
                   <Link
-                    href="/browse"
+                    href={listingPath}
                     className="text-xs font-semibold text-[#4F46E5] hover:underline"
                   >
                     View All →
@@ -930,10 +951,10 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                         </h5>
                         <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
                           <span className="flex items-center gap-0.5 text-amber-500 font-semibold">
-                            <StarFilled className="text-[10px]" /> {course.average_rating?.toFixed(1) || "4.7"}
+                            <StarFilled className="text-[10px]" /> {Number(course.average_rating) > 0 ? course.average_rating?.toFixed(1) : "New"}
                           </span>
                           <span>•</span>
-                          <span>${course.course_price || 99}</span>
+                          <span>{course.course_price ? `$${course.course_price}` : "Free"}</span>
                         </div>
                       </div>
                       <RightOutlined className="text-xs text-slate-300 group-hover:text-[#4F46E5] transition-colors" />
@@ -946,7 +967,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
         </div>
       </main>
 
-      {/* Bottom CTA Banner Matching Screenshot */}
+      {!isExplore && (
       <section className="px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-7xl mx-auto rounded-3xl bg-gradient-to-r from-[#0B132B] via-[#1E1B4B] to-[#172554] text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="flex flex-col gap-2 text-center md:text-left">
@@ -979,6 +1000,26 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
           </div>
         </div>
       </section>
+      )}
+
+      <TeacherDetailsModal
+        open={teacherModalOpen}
+        onClose={() => setTeacherModalOpen(false)}
+        audience="student"
+        teacher={
+          teacherId
+            ? {
+                instructor_id: String(teacherId),
+                key: String(teacherId),
+                name: coursesInfo?.head_teacher_name || coursesInfo?.course_instructor || "Instructor",
+                image_url: coursesInfo?.head_teacher_image_url || coursesInfo?.course_instructor_image_url || "",
+                email: "",
+                status: "active",
+                qualification: (coursesInfo as any)?.head_teacher_qualification || "",
+              }
+            : null
+        }
+      />
 
       <PurchaseModal
         open={purchaseModalOpen}

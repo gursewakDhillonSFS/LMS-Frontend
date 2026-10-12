@@ -16,7 +16,6 @@ import {
   PlusOutlined,
   TableOutlined,
   AppstoreOutlined,
-  ArrowUpOutlined,
   CheckCircleFilled,
   DeleteFilled,
   LinkOutlined,
@@ -253,36 +252,28 @@ export const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     {
       title: "Monthly Events",
       value: schedules.length,
-      delta: "+12%",
-      deltaType: "positive" as const,
-      period: "vs. last month",
+      hint: "This month",
       icon: <CalendarOutlined className="text-lg" />,
       colorClass: "text-[#315CFF] bg-blue-50 border-blue-100",
     },
     {
       title: "Today's Events",
       value: todayCount,
-      delta: "+5%",
-      deltaType: "positive" as const,
-      period: "vs. yesterday",
+      hint: "Scheduled today",
       icon: <ClockCircleOutlined className="text-lg" />,
       colorClass: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
       title: "Live Classes",
       value: liveCount,
-      delta: "+18%",
-      deltaType: "positive" as const,
-      period: "vs. last month",
+      hint: "With a meeting link",
       icon: <VideoCameraOutlined className="text-lg" />,
       colorClass: "text-purple-600 bg-purple-50 border-purple-100",
     },
     {
       title: "Active Courses",
-      value: uniqueCoursesCount || courses.length,
-      delta: "0%",
-      deltaType: "neutral" as const,
-      period: "current cohort",
+      value: uniqueCoursesCount,
+      hint: "In this month's schedule",
       icon: <TeamOutlined className="text-lg" />,
       colorClass: "text-amber-600 bg-amber-50 border-amber-100",
     },
@@ -362,23 +353,7 @@ export const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                   {typeof card.value === "number" ? card.value.toLocaleString() : card.value}
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-md ${
-                      card.deltaType === "positive"
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        : "bg-slate-100 text-slate-700 border border-slate-200"
-                    }`}
-                  >
-                    {card.deltaType === "positive" && (
-                      <ArrowUpOutlined className="text-[9px]" />
-                    )}
-                    {card.delta}
-                  </span>
-                  <span className="text-[11px] text-[#667085] hidden xl:inline-block">
-                    {card.period}
-                  </span>
-                </div>
+                <span className="text-[11px] text-[#667085]">{card.hint}</span>
               </div>
             </div>
           ))}

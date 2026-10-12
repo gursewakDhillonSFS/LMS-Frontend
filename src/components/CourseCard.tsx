@@ -1,5 +1,5 @@
 "use client";
-import { getImageUrl, isValidUrl } from "@/utils/comman";
+import { formatLabel, getImageUrl, isValidUrl } from "@/utils/comman";
 import { StarIcon } from "@/utils/icons";
 import { Fallback } from "@/utils/images";
 import { CourseCardProps } from "@/utils/interface";
@@ -62,20 +62,18 @@ const CourseCard: FC<CourseCardProps> = ({
   const categoryName =
     data?.category_name ||
     (data as any)?.category_id?.category_name ||
-    "Web Development";
+    "";
 
-  const ratingValue = data?.average_rating
-    ? Number(data.average_rating).toFixed(1)
-    : "4.8";
+  const ratingValue =
+    data?.average_rating && Number(data.average_rating) > 0
+      ? Number(data.average_rating).toFixed(1)
+      : "";
 
-  const reviewCount = data?.enrolled_user_count
-    ? `${Math.max(12, Math.round(Number(data.enrolled_user_count) * 1.8))}k reviews`
-    : "8.4k reviews";
-
-  const durationText = (data as any)?.duration || "5h 20m";
-  const studentCount = data?.enrolled_user_count
-    ? `${data.enrolled_user_count} students`
-    : "1.2k students";
+  const durationText = formatLabel(data?.course_duration || (data as any)?.duration);
+  const studentCount =
+    typeof data?.enrolled_user_count === "number"
+      ? `${data.enrolled_user_count} enrolled`
+      : "";
 
   return (
     <div
@@ -104,12 +102,13 @@ const CourseCard: FC<CourseCardProps> = ({
 
         {/* Content Body */}
         <div className="flex flex-col gap-2 p-3.5 pb-2">
-          {/* Category Tag */}
-          <div className="inline-block">
-            <span className="text-[11px] font-semibold text-[var(--primary)] bg-[#EEF4FF] px-2 py-0.5 rounded-full">
-              {categoryName}
-            </span>
-          </div>
+          {categoryName ? (
+            <div className="inline-block">
+              <span className="text-[11px] font-semibold text-[var(--primary)] bg-[#EEF4FF] px-2 py-0.5 rounded-full">
+                {categoryName}
+              </span>
+            </div>
+          ) : null}
 
           {/* Course Name */}
           <div
@@ -145,29 +144,33 @@ const CourseCard: FC<CourseCardProps> = ({
             </span>
           </div>
 
-          {/* Rating Row */}
-          <div className="flex items-center gap-1.5 pt-0.5 text-[12px]">
-            <span className="flex items-center gap-1 font-semibold text-[var(--text-primary)]">
-              <StarIcon color="#F59E0B" />
-              {ratingValue}
-            </span>
-            <span className="text-[var(--text-muted)] text-[11px]">
-              ({reviewCount})
-            </span>
-          </div>
+          {ratingValue ? (
+            <div className="flex items-center gap-1.5 pt-0.5 text-[12px]">
+              <span className="flex items-center gap-1 font-semibold text-[var(--text-primary)]">
+                <StarIcon color="#F59E0B" />
+                {ratingValue}
+              </span>
+            </div>
+          ) : null}
         </div>
       </div>
 
       {/* Card Footer with Duration & Students */}
       <div className="px-3.5 pb-3 pt-2 border-t border-[var(--border-subtle)] flex items-center justify-between text-[11px] text-[var(--text-secondary)] font-medium">
-        <span className="flex items-center gap-1.5">
-          <ClockIcon />
-          {durationText}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <UsersIcon />
-          {studentCount}
-        </span>
+        {durationText ? (
+          <span className="flex items-center gap-1.5">
+            <ClockIcon />
+            {durationText}
+          </span>
+        ) : (
+          <span />
+        )}
+        {studentCount ? (
+          <span className="flex items-center gap-1.5">
+            <UsersIcon />
+            {studentCount}
+          </span>
+        ) : null}
       </div>
     </div>
   );

@@ -100,13 +100,12 @@ export default function CertificateVerificationPage() {
     courseTitle: cert?.course_name || "Course Completion",
     certificateCode: cert?.certificate_code || code,
     issuedDate: cert?.issued_at,
-    instructorName: cert?.instructor_name || "Dr. Robert Vance, Lead Faculty",
-    grade: cert?.grade || "A+ (Distinction)",
-    marksObtained: cert?.marks_obtained ?? 94,
-    totalMarks: cert?.total_marks ?? 100,
-    percentage: cert?.percentage ?? 94,
-    evaluationSummary:
-      cert?.evaluation_summary || "Comprehensive Coursework, Practical Labs & Final Assessment",
+    instructorName: cert?.instructor_name || undefined,
+    grade: cert?.grade || "Completed",
+    marksObtained: cert?.marks_obtained ?? null,
+    totalMarks: cert?.total_marks ?? null,
+    percentage: cert?.percentage ?? null,
+    evaluationSummary: cert?.evaluation_summary || undefined,
     organisationName: cert?.organisation_name || "SkillBuild LMS",
   };
 

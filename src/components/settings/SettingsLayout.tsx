@@ -79,9 +79,10 @@ export default function SettingsLayout({
     `${userData?.first_name || ""} ${userData?.last_name || ""}`.trim() ||
     "User Profile";
 
+  const avatarName = encodeURIComponent(displayName || "User");
   const currentProfileImg =
     userData?.profile_img ||
-    "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740";
+    `https://ui-avatars.com/api/?name=${avatarName}&background=315CFF&color=fff`;
 
   const roleLabel =
     role === "instructor"
@@ -105,7 +106,7 @@ export default function SettingsLayout({
           {/* USER CARD */}
           <div className="bg-white rounded-2xl border border-[#E4E7EC] shadow-xs p-6 flex flex-col items-center text-center">
             {/* AVATAR WITH PHOTO UPLOAD OVERLAY */}
-            <div className="relative mb-3.5 group">
+            <div className="relative mb-3.5 w-24 h-24 group">
               <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#E4E7EC] shadow-sm bg-slate-100">
                 {uploading && (
                   <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center">
@@ -129,6 +130,7 @@ export default function SettingsLayout({
                 showUploadList={false}
                 maxCount={1}
                 accept="image/*"
+                className="!absolute !bottom-0 !right-0 !z-30 !block !w-8 !h-8 [&_.ant-upload]:!block [&_.ant-upload]:!w-8 [&_.ant-upload]:!h-8"
                 beforeUpload={(file) => {
                   handleUpload(file);
                   return false;
@@ -136,7 +138,7 @@ export default function SettingsLayout({
               >
                 <button
                   type="button"
-                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary hover:opacity-90 text-white flex items-center justify-center shadow-md border-2 border-white transition-transform group-hover:scale-105 cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-primary hover:opacity-90 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer"
                   title="Upload profile picture"
                 >
                   <CameraOutlined className="text-xs" />
