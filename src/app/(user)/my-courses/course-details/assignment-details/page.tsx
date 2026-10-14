@@ -67,7 +67,7 @@ const AssignmentDetailsContent = () => {
       toast.success("Assignment submitted successfully!");
       // Optionally, route back to course details assignments tab
       if (courseId) {
-        router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=assignments`);
+        router.push(`${RoutePaths.Learn}?course_id=${courseId}&section=assignments`);
       } else {
         router.push(`${RoutePaths.MyCourses}`);
       }
@@ -85,7 +85,7 @@ const AssignmentDetailsContent = () => {
     },
     {
       title: "Course Details",
-      href: courseId ? `${RoutePaths?.MyCourses}/course-details?course_id=${courseId}` : `${RoutePaths?.MyCourses}`,
+      href: courseId ? `${RoutePaths.Learn}?course_id=${courseId}&section=assignments` : RoutePaths.MyCourses,
     },
     {
       title: assignment?.assignmentName || "Assignment Details",
@@ -213,7 +213,7 @@ const AssignmentDetailsContent = () => {
                 onClick={() => {
                   const targetCourse = courseId || assignment?.courseId;
                   if (targetCourse) {
-                    router.push(`${RoutePaths.MyCourses}/course-details?course_id=${targetCourse}`);
+                    router.push(`${RoutePaths.Learn}?course_id=${targetCourse}&section=assignments`);
                   } else {
                     router.push(`${RoutePaths.MyCourses}`);
                   }
@@ -244,7 +244,7 @@ const AssignmentDetailsContent = () => {
                 text="Cancel"
                 onClick={() => {
                   if (courseId) {
-                    router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=assignments`);
+                    router.push(`${RoutePaths.Learn}?course_id=${courseId}&section=assignments`);
                   } else {
                     router.push(`${RoutePaths.MyCourses}`);
                   }

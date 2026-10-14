@@ -120,7 +120,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
                   icon={!isSubmitted ? <StopWatchIcon /> : undefined}
                   onClick={() => {
                     if (!isSubmitted) {
-                      router.push(`/my-courses/course-details/assignment-details?assignmentId=${assignment.assignment_id}&courseId=${courseId}`);
+                      router.push(`/learn/assignment?assignmentId=${assignment.assignment_id}&courseId=${courseId}${batchId ? `&batchId=${batchId}` : ""}`);
                     }
                   }}
                   className={`!bg-secondary text-white ${!isSubmitted ? "flex-row-reverse" : "opacity-70"}`}

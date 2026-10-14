@@ -33,6 +33,7 @@ export function middleware(request: NextRequest) {
     "/chat",
     "/checkout",
     "/saved-courses",
+    "/learn",
   ];
 
   const instructorRoutes = [
@@ -160,6 +161,8 @@ export const config = {
     "/my-schedule/:path*",
     "/my-settings/:path*",
     "/saved-courses/:path*",
+    "/learn",
+    "/learn/:path*",
     "/chat",
     "/checkout/:path*",
     "/announcements/:path*",

@@ -85,6 +85,7 @@ export enum RoutePaths {
   Dashboard = "/dashboard",
   MyCertificate = "/my-certificate",
   MyCourses = "/my-courses",
+  Learn = "/learn",
   MyExplore = "/my-explore",
   MySchedule = "/my-schedule",
   MySettings = "/my-settings",

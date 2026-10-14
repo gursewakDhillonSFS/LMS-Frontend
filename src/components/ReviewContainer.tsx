@@ -1,6 +1,12 @@
 "use client";
 import { RootState } from "@/redux/store";
-import { getCourseReviewApi } from "@/services/collections";
+import {
+  deleteCourseReviewApi,
+  getCourseReviewApi,
+  updateCourseReviewApi,
+} from "@/services/collections";
+import { postApi } from "@/services/methods";
+import { toast } from "@/utils/toast";
 import {
   formatLargeNumber,
   getRandomBgColor,
@@ -9,7 +15,7 @@ import {
 } from "@/utils/comman";
 import { SelectIcon } from "@/utils/icons";
 import { CourseReviewsResponse, StarCount } from "@/utils/interface";
-import { Rate, Select, Skeleton } from "antd";
+import { Input, Modal, Rate, Select, Skeleton } from "antd";
 import Avatar from "antd/es/avatar/Avatar";
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -24,6 +30,14 @@ const ReviewContainer = () => {
   const [ratingDistribution, setRatingDistribution] = useState<StarCount[]>();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedStarFilter, setSelectedStarFilter] = useState<string>("All Stars");
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [savingReview, setSavingReview] = useState(false);
+  const userId = useSelector((state: RootState) => state?.userdata?.user_id);
+  const isLoggedIn = Boolean(
+    useSelector((state: RootState) => state.userdata?.access_token)
+  );
 
   const fetchCourseReview = useCallback(async () => {
     setLoading(true);
@@ -62,17 +76,89 @@ const ReviewContainer = () => {
 
   const totalReviewsCount = courseReview?.review_count ?? allReviews.length;
   const avgRating = courseReview?.average_rating ?? 0;
+  const ownReview = allReviews.find(
+    (review) => userId && String(review.user_id) === String(userId)
+  );
+
+  const openReviewForm = () => {
+    setRating(ownReview?.rating || 0);
+    setReviewText(ownReview?.review || "");
+    setReviewOpen(true);
+  };
+
+  const saveReview = async () => {
+    const courseId = selectedCourseData?.course_id;
+    if (!courseId || !rating || !reviewText.trim()) return;
+    setSavingReview(true);
+    try {
+      const payload = { course_id: courseId, rating, review: reviewText.trim() };
+      const res = ownReview
+        ? await updateCourseReviewApi(payload)
+        : await postApi("/review/v1/create/review_course", payload);
+      if (res?.status) {
+        toast.success(res.message || "Review saved");
+        setReviewOpen(false);
+        fetchCourseReview();
+      } else {
+        toast.error(res?.message || "Could not save your review");
+      }
+    } finally {
+      setSavingReview(false);
+    }
+  };
+
+  const removeReview = () => {
+    const courseId = selectedCourseData?.course_id;
+    if (!courseId) return;
+    Modal.confirm({
+      title: "Delete your review?",
+      content: "You can write a new review for this course later.",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        const res = await deleteCourseReviewApi(courseId);
+        if (res?.status) {
+          toast.success(res.message || "Review deleted");
+          fetchCourseReview();
+        } else {
+          toast.error(res?.message || "Could not delete your review");
+        }
+      },
+    });
+  };
 
   return (
     <Skeleton loading={loading} paragraph={{ rows: 8 }}>
       <div className="flex flex-col xl:gap-[24px] gap-[16px]">
         <div className="flex items-center justify-between">
           <h2 className="text-[24px] font-[700] text-slate-900">Learner Reviews</h2>
-          {totalReviewsCount > 0 && (
-            <span className="text-sm font-semibold text-slate-500">
-              {totalReviewsCount} {totalReviewsCount === 1 ? "review" : "reviews"}
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            {isLoggedIn && (
+              <>
+                {ownReview && (
+                  <button
+                    type="button"
+                    onClick={removeReview}
+                    className="text-xs font-semibold text-red-600 cursor-pointer"
+                  >
+                    Delete my review
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={openReviewForm}
+                  className="text-xs font-semibold text-[#315CFF] cursor-pointer"
+                >
+                  {ownReview ? "Edit my review" : "Write a review"}
+                </button>
+              </>
+            )}
+            {totalReviewsCount > 0 && (
+              <span className="text-sm font-semibold text-slate-500">
+                {totalReviewsCount} {totalReviewsCount === 1 ? "review" : "reviews"}
+              </span>
+            )}
+          </div>
         </div>
 
         {totalReviewsCount === 0 ? (
@@ -238,6 +324,25 @@ const ReviewContainer = () => {
           </div>
         )}
       </div>
+      <Modal
+        title={ownReview ? "Edit your review" : "Write a review"}
+        open={reviewOpen}
+        onCancel={() => setReviewOpen(false)}
+        onOk={saveReview}
+        okText={ownReview ? "Save" : "Submit"}
+        confirmLoading={savingReview}
+        okButtonProps={{ disabled: !rating || !reviewText.trim() }}
+      >
+        <div className="flex flex-col gap-3 py-2">
+          <Rate value={rating} onChange={setRating} />
+          <Input.TextArea
+            rows={4}
+            value={reviewText}
+            onChange={(event) => setReviewText(event.target.value)}
+            placeholder="Share what you learned in this course"
+          />
+        </div>
+      </Modal>
     </Skeleton>
   );
 };

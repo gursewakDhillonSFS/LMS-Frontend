@@ -5,6 +5,8 @@ import {
   getCourseProgressApi,
   getLessonsWithSublessonsApi,
   getCourseReviewApi,
+  updateCourseReviewApi,
+  deleteCourseReviewApi,
 } from "@/services/collections";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -20,8 +22,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
 import { formatMediaDuration, materialKindLabel } from "@/utils/comman";
 import { CustomerServiceOutlined, FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
-import { postApi } from "@/services/methods";
 import { useRouter } from "next/navigation";
+import { RoutePaths } from "@/utils/enums";
+import { postApi } from "@/services/methods";
 
 // ─── Type definitions ────────────────────────────────────────────────────────
 interface StudyMaterial {
@@ -120,7 +123,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
-  const [hasReviewed, setHasReviewed] = useState(false);
+  const [ownReviewId, setOwnReviewId] = useState("");
 
   // Get current user id
   const userId = useSelector((state: RootState) => state?.userdata?.user_id);
@@ -179,9 +182,15 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
     try {
       const res = await getCourseReviewApi({ courseId });
       if (res?.status && res?.data) {
-        // Check if the current user has already submitted a review
-        const userReviewed = res.data.some((review: any) => review.user_id === userId);
-        setHasReviewed(userReviewed);
+        const mine = res.data.find(
+          (review: { user_id?: string; _id?: string; review_id?: string; rating?: number; review?: string }) =>
+            String(review.user_id) === String(userId)
+        );
+        setOwnReviewId(mine?._id || mine?.review_id || "");
+        if (mine) {
+          setRating(mine.rating || 0);
+          setReviewText(mine.review || "");
+        }
       }
     } catch {
       // silently fail
@@ -197,7 +206,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
   // ─── Open lesson in same tab ─────────────────────────────────────────────
   const openLesson = useCallback(
     (lessonId: string, materialUrl?: string) => {
-      const url = `/my-courses/course-details/lesson-view?courseId=${encodeURIComponent(
+      const url = `${RoutePaths.Learn}/lesson?courseId=${encodeURIComponent(
         courseId
       )}&batchId=${encodeURIComponent(batchId)}&lessonId=${encodeURIComponent(
         lessonId
@@ -221,21 +230,47 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
     if (!rating || !reviewText.trim()) return;
     setReviewLoading(true);
     try {
-      await postApi("/review/v1/create/review_course", {
+      const payload = {
         course_id: courseId,
         rating,
         review: reviewText,
-      });
-      toast.success("Review submitted!");
-      setHasReviewed(true);
+      };
+      const res = ownReviewId
+        ? await updateCourseReviewApi(payload)
+        : await postApi("/review/v1/create/review_course", payload);
+      if (res?.status) {
+        toast.success(res.message || (ownReviewId ? "Review updated" : "Review submitted"));
+        setIsReviewModalVisible(false);
+        fetchReviews();
+      } else {
+        toast.error(res?.message || "Failed to save review");
+      }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to submit review");
+      toast.error(err?.response?.data?.message || "Failed to save review");
     } finally {
       setReviewLoading(false);
-      setIsReviewModalVisible(false);
-      setRating(0);
-      setReviewText("");
     }
+  };
+
+  const deleteReview = () => {
+    Modal.confirm({
+      title: "Delete your review?",
+      content: "You can write a new review for this course later.",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        const res = await deleteCourseReviewApi(courseId);
+        if (res?.status) {
+          toast.success(res.message || "Review deleted");
+          setOwnReviewId("");
+          setRating(0);
+          setReviewText("");
+          fetchReviews();
+        } else {
+          toast.error(res?.message || "Failed to delete review");
+        }
+      },
+    });
   };
 
   const displayOverview = overview || lessonOverview;
@@ -246,14 +281,21 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
       <div className="flex flex-col gap-[12px]">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-[700] text-[20px] text-[#0E0E0E]">Overview</h1>
-          {!hasReviewed && (
+          <div className="flex items-center gap-2">
+            {ownReviewId && (
+              <CommonButton
+                text="Delete"
+                onClick={deleteReview}
+                className="!bg-white !text-red-600 border border-red-200 w-[100px]"
+              />
+            )}
             <CommonButton
-              text="Write a Review"
+              text={ownReviewId ? "Edit Review" : "Write a Review"}
               icon={<StarOutlined />}
               onClick={() => setIsReviewModalVisible(true)}
               className="!bg-secondary text-white w-[160px]"
             />
-          )}
+          </div>
         </div>
         {displayOverview && (
           <div className="text-[16px] text-[#002333]">
@@ -606,7 +648,9 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
         title={
           <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
             <StarOutlined className="text-secondary text-xl" />
-            <span className="font-bold text-xl text-[#0E0E0E]">Write a Review</span>
+            <span className="font-bold text-xl text-[#0E0E0E]">
+              {ownReviewId ? "Edit Your Review" : "Write a Review"}
+            </span>
           </div>
         }
         open={isReviewModalVisible}
@@ -645,7 +689,7 @@ const Course: React.FC<CourseProps> = ({ courseId, batchId, overview }) => {
             />
             <CommonButton
               key="submit"
-              text="Submit Review"
+              text={ownReviewId ? "Save Review" : "Submit Review"}
               loading={reviewLoading}
               onClick={submitReview}
               className="!bg-secondary text-white !w-[160px]"

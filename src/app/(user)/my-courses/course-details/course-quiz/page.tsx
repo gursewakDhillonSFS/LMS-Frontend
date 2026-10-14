@@ -71,7 +71,7 @@ const CourseQuizContent = () => {
       }
 
       if (courseId) {
-        router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=quizzes`);
+        router.push(`${RoutePaths.Learn}?course_id=${courseId}&section=quizzes`);
       } else {
         router.push(`${RoutePaths.MyCourses}`);
       }
@@ -180,7 +180,7 @@ const CourseQuizContent = () => {
     },
     {
       title: "Course Details",
-      href: courseId ? `${RoutePaths?.MyCourses}/course-details?id=${courseId}` : `${RoutePaths?.MyCourses}`,
+      href: courseId ? `${RoutePaths.Learn}?course_id=${courseId}&section=quizzes` : RoutePaths.MyCourses,
     },
     {
       title: quiz?.quizName || "Quiz Attempt",
@@ -291,7 +291,7 @@ const CourseQuizContent = () => {
             text="Cancel"
             onClick={() => {
               if (courseId) {
-                router.push(`${RoutePaths.MyCourses}/course-details?id=${courseId}&tab=quizzes`);
+                router.push(`${RoutePaths.Learn}?course_id=${courseId}&section=quizzes`);
               } else {
                 router.push(`${RoutePaths.MyCourses}`);
               }

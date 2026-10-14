@@ -37,6 +37,12 @@ export const getCourseInfoApi = (course_id: string) => {
 export const getCourseReviewApi = (payload: object) => {
   return postApi(`${GET_COURSE_REVIEW}`, payload);
 };
+export const updateCourseReviewApi = (payload: object) => {
+  return putApi("/review/v1/update/review_course", payload);
+};
+export const deleteCourseReviewApi = (courseId: string) => {
+  return deleteApi(`/review/v1/delete/review_course?course_id=${encodeURIComponent(courseId)}`);
+};
 export const getSearchApi = (param: URLSearchParams) => {
   return getApi(`${GET_Search}?${param}`);
 };
@@ -207,6 +213,12 @@ export const getOrganisation = (id: string) => {
 
 export const getAllLesson = (param: URLSearchParams) => {
   return getApi(`${ALL_LESSON}?${param}`);
+};
+
+export const getPublicCurriculumApi = (courseId: string) => {
+  const params = new URLSearchParams();
+  params.append("course_id", courseId);
+  return getApi(`/auth/course/v1/public-curriculum?${params}`);
 };
 
 export const getLessonsWithSublessonsApi = (courseId: string) => {

@@ -12,6 +12,7 @@ import {
   removeFromFavorite,
   purchaseCourseApi,
   getLessonsWithSublessonsApi,
+  getPublicCurriculumApi,
 } from "@/services/collections";
 import PurchaseModal from "@/components/PurchaseModal";
 import { formatLabel, getImageUrl, isValidUrl, getCategoryName, formatMediaDuration, materialKindLabel } from "@/utils/comman";
@@ -109,9 +110,12 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
     setLoading(true);
     try {
       if (selectedCourseData?.course_id) {
+        const lessonRequest = isLoggedIn
+          ? getLessonsWithSublessonsApi(selectedCourseData.course_id)
+          : getPublicCurriculumApi(selectedCourseData.course_id);
         const [response, lessonsRes] = await Promise.all([
           getCourseInfoApi(selectedCourseData?.course_id),
-          getLessonsWithSublessonsApi(selectedCourseData?.course_id).catch(() => null),
+          lessonRequest.catch(() => null),
         ]);
         if (response) {
           setCoursesInfo(response?.data);
@@ -131,7 +135,7 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
     } finally {
       setLoading(false);
     }
-  }, [selectedCourseData?.course_id]);
+  }, [selectedCourseData?.course_id, isLoggedIn]);
 
   const handleAddFavorite = async () => {
     if (selectedCourseData?.course_id) {
@@ -332,7 +336,12 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     className="!h-11 sm:!h-12 !px-6 !text-sm !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
                     onClick={
                       Subscribed
-                        ? () => router.push(RoutePaths.MyCourses)
+                        ? () =>
+                            router.push(
+                              `${RoutePaths.Learn}?course_id=${encodeURIComponent(
+                                coursesInfo?.course_id || selectedCourseData?.course_id || ""
+                              )}`
+                            )
                         : () => handleStartFree()
                     }
                   />
@@ -346,7 +355,12 @@ const CourseInfo: React.FC<CourseInfoProp> = ({
                     className="!h-11 sm:!h-12 !px-6 !text-sm !font-bold !rounded-xl !bg-[#4F46E5] hover:!bg-[#4338CA] !text-white shadow-md hover:shadow-lg transition-all"
                     onClick={
                       Subscribed
-                        ? () => router.push(RoutePaths.MyCourses)
+                        ? () =>
+                            router.push(
+                              `${RoutePaths.Learn}?course_id=${encodeURIComponent(
+                                coursesInfo?.course_id || selectedCourseData?.course_id || ""
+                              )}`
+                            )
                         : () => {
                             if (isExplore) setPurchaseModalOpen(true);
                             else dispatch(setSignin(true));

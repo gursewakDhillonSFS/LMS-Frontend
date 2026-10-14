@@ -118,7 +118,12 @@ export const MyCoursesCard: FC<MyCourseCardProp> = ({
             onClick={
               demoClass
                 ? () => {}
-                : () => route.push(`${RoutePaths?.MyCourses}/course-details?course_id=${course_id}${batch_id ? `&batch_id=${batch_id}` : ''}`)
+                : () =>
+                    route.push(
+                      `${RoutePaths.Learn}?course_id=${encodeURIComponent(course_id)}${
+                        batch_id ? `&batch_id=${encodeURIComponent(batch_id)}` : ""
+                      }`
+                    )
             }
             className="!w-auto !px-4 !h-8 !text-xs !rounded-lg"
           />

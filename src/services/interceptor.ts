@@ -46,9 +46,20 @@ Api.interceptors.request.use(
 Api.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      clearAuthCookies();
-      if (typeof window !== "undefined") {
+    if (error.response?.status === 401 && typeof window !== "undefined") {
+      const headers = error.config?.headers;
+      const authHeader = headers?.Authorization || headers?.authorization;
+      const sentToken =
+        typeof authHeader === "string" && authHeader.startsWith("Bearer ");
+      const path = window.location.pathname;
+      const onPublicPage =
+        path === "/" ||
+        path.startsWith("/browse") ||
+        path.startsWith("/homepage") ||
+        path.startsWith("/certificate");
+
+      if (sentToken && !onPublicPage) {
+        clearAuthCookies();
         window.location.href = "/";
       }
     }

@@ -121,6 +121,7 @@ export interface courseData {
   course_url?: string;
   enrolled_status?: boolean;
   is_enrolled?: boolean;
+  batch_id?: string;
   base_price?: number;
   favorite?: boolean;
   favorite_status?: boolean;

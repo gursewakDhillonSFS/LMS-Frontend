@@ -172,7 +172,7 @@ const CourseQuizzes: React.FC<CourseQuizzesProps> = ({
                   text={isSubmitted ? "Submitted" : "Start Quiz"}
                   onClick={() => {
                     if (!isSubmitted) {
-                      router.push(`/my-courses/course-details/course-quiz?quizId=${quiz.quiz_id}&courseId=${courseId}`);
+                      router.push(`/learn/quiz?quizId=${quiz.quiz_id}&courseId=${courseId}${batchId ? `&batchId=${batchId}` : ""}`);
                     }
                   }}
                   icon={!isSubmitted ? <QuizeStopWatch /> : undefined}

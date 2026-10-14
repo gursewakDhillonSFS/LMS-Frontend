@@ -8,6 +8,8 @@ import { FC, useState } from "react";
 import CommonButton from "./CommonButton";
 import { getImageUrl, isValidUrl } from "@/utils/comman";
 import { HeartFilled, LoadingOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
+import { RoutePaths } from "@/utils/enums";
 
 const DashboardCourseCard: FC<CourseCardProps> = ({
   bgColor = "#FFFFFF",
@@ -21,6 +23,7 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
   handleAddFavorite,
   handleRemoveFavorite,
 }) => {
+  const router = useRouter();
   const [imgError, setImgError] = useState(false);
   const [teacherImgError, setTeacherImgError] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
@@ -160,7 +163,12 @@ const DashboardCourseCard: FC<CourseCardProps> = ({
             <CommonButton
               text="Start Course"
               className="!h-[36px] !px-[16px] !text-[13px]"
-              onClick={() => courseData && veiwDetail?.(courseData)}
+              onClick={() => {
+                if (!courseData?.course_id) return;
+                const params = new URLSearchParams({ course_id: courseData.course_id });
+                if (courseData.batch_id) params.set("batch_id", courseData.batch_id);
+                router.push(`${RoutePaths.Learn}?${params.toString()}`);
+              }}
             />
           ) : (
             <CommonButton
