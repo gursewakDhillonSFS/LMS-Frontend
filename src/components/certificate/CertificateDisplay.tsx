@@ -60,6 +60,10 @@ export const CertificateDisplay: React.FC<CertificateDisplayProps> = ({
     data.marksObtained != null &&
     data.totalMarks != null &&
     Number(data.totalMarks) > 0;
+  const instructor =
+    data.instructorName && !/^[a-f0-9]{24}$/i.test(data.instructorName)
+      ? data.instructorName
+      : "Course Instructor";
 
   const handleCopyCode = () => {
     if (!certCode) return;
@@ -79,89 +83,89 @@ export const CertificateDisplay: React.FC<CertificateDisplayProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-5 w-full">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .certificate-print-area, .certificate-print-area * { visibility: visible; }
+          .certificate-print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
       <div
         ref={certificateRef}
-        className="certificate-print-area relative w-full max-w-[880px] bg-white rounded-2xl border border-slate-200 shadow-lg p-6 sm:p-10 flex flex-col gap-6 text-center"
+        className="certificate-print-area w-full max-w-[920px] bg-[#f6f1e7] text-[#1b2838] shadow-lg"
       >
-        <div className="flex flex-col items-center gap-2">
-          <div className="inline-flex items-center gap-2 text-[#315CFF]">
-            <SafetyCertificateFilled />
-            <span className="text-sm font-bold tracking-wide">SkillBuild</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
-            Certificate of Completion
-          </h1>
-          <p className="text-xs text-slate-500">
-            {data.organisationName || "SkillBuild LMS"}
-          </p>
-        </div>
+        <div className="border-[12px] border-[#16324f] p-1.5 sm:p-2">
+          <div className="border border-[#b8956a] px-4 py-6 sm:px-10 sm:py-8 flex flex-col items-center text-center gap-4 min-h-[460px]">
+            <div className="flex items-center gap-2 text-[#16324f]">
+              <SafetyCertificateFilled />
+              <span className="text-xs sm:text-sm font-semibold tracking-[0.28em] uppercase">
+                {data.organisationName || "SkillBuild"}
+              </span>
+            </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-slate-500">This certifies that</p>
-          <h2 className="text-3xl sm:text-4xl font-serif text-slate-900">
-            {data.studentName || "Student"}
-          </h2>
-          <p className="text-sm text-slate-600 max-w-xl">
-            has completed the course
-          </p>
-          <h3 className="text-xl sm:text-2xl font-semibold text-slate-900">
-            {data.courseTitle || "Course"}
-          </h3>
-          {formattedDate && (
-            <p className="text-sm text-slate-500">Issued on {formattedDate}</p>
-          )}
-        </div>
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-[11px] sm:text-xs tracking-[0.35em] uppercase text-[#8a6a3b]">
+                Certificate of completion
+              </p>
+              <div className="h-px w-16 bg-[#b8956a]" />
+            </div>
 
-        {(hasScore || data.grade) && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-            {hasScore && (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-wide text-slate-500">Marks</p>
-                <p className="text-lg font-bold text-slate-900">
-                  {data.marksObtained}
-                  <span className="text-sm font-medium text-slate-400"> / {data.totalMarks}</span>
-                </p>
-              </div>
-            )}
-            {data.percentage != null && (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-wide text-slate-500">Score</p>
-                <p className="text-lg font-bold text-[#315CFF]">{data.percentage}%</p>
-              </div>
-            )}
-            {data.grade && (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-wide text-slate-500">Result</p>
-                <p className="text-lg font-bold text-emerald-700">{data.grade}</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {data.evaluationSummary && (
-          <p className="text-xs text-slate-500">{data.evaluationSummary}</p>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end pt-2 border-t border-slate-100">
-          <div className="text-left">
-            <p className="text-sm font-semibold text-slate-900">
-              {data.instructorName || "Course instructor"}
+            <p className="text-sm text-[#5c6b7a]">This is to certify that</p>
+            <h2 className="font-serif text-3xl sm:text-5xl text-[#16324f] leading-tight">
+              {data.studentName || "Student"}
+            </h2>
+            <p className="text-sm text-[#5c6b7a] max-w-xl">
+              has successfully completed the course
             </p>
-            <p className="text-[11px] uppercase tracking-wide text-slate-400">Instructor</p>
-          </div>
+            <h3 className="text-xl sm:text-2xl font-semibold text-[#16324f] max-w-2xl">
+              {data.courseTitle || "Course"}
+            </h3>
 
-          <div className="flex flex-col items-center gap-1">
-            {verificationUrl ? (
-              <QRCode value={verificationUrl} size={88} bordered={false} />
-            ) : null}
-            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700">
-              <CheckCircleFilled /> Verified credential
-            </span>
-          </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-[#5c6b7a]">
+              {formattedDate && <span>Issued {formattedDate}</span>}
+              {hasScore && (
+                <span>
+                  Score {data.marksObtained}/{data.totalMarks}
+                  {data.percentage != null ? ` · ${data.percentage}%` : ""}
+                </span>
+              )}
+              {data.grade && data.grade !== "Completed" && <span>{data.grade}</span>}
+            </div>
+            {data.evaluationSummary && (
+              <p className="text-xs text-[#7b8794] max-w-lg">{data.evaluationSummary}</p>
+            )}
 
-          <div className="text-right">
-            <p className="text-xs font-mono text-slate-700 break-all">{certCode}</p>
-            <p className="text-[11px] uppercase tracking-wide text-slate-400">Credential ID</p>
+            <div className="mt-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-6 items-end pt-6">
+              <div className="flex flex-col items-center sm:items-start gap-1">
+                <p className="font-serif text-lg text-[#16324f] border-b border-[#16324f]/30 pb-1 min-w-[140px]">
+                  {instructor}
+                </p>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a6a3b]">Instructor</p>
+              </div>
+
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-16 h-16 rounded-full border-2 border-[#b8956a] flex items-center justify-center text-[#16324f]">
+                  <SafetyCertificateFilled className="text-2xl" />
+                </div>
+                <span className="inline-flex items-center gap-1 text-[11px] text-[#1f7a4d]">
+                  <CheckCircleFilled /> Verified credential
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center sm:items-end gap-1">
+                {verificationUrl ? (
+                  <QRCode value={verificationUrl} size={72} bordered={false} />
+                ) : null}
+                <p className="text-[11px] font-mono text-[#16324f] break-all">{certCode}</p>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a6a3b]">Credential ID</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import { getAssignmentsByBatchApi } from "@/services/collections";
 import { AssignmentTab } from "@/utils/constant";
 import { AssignmentIcon, StopWatchIcon } from "@/utils/icons";
 import { Skeleton } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { submitAssignmentApi } from "@/services/collections";
@@ -50,7 +50,7 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
   const router = useRouter();
   const [assignmentTab, setAssignmentTab] = useState("current");
   const [loading, setLoading] = useState(false);
-  const [allAssignments, setAllAssignments] = useState<ApiAssignment[]>([]);
+  const [assignments, setAssignments] = useState<ApiAssignment[]>([]);
 
   const fetchAssignments = useCallback(async () => {
     if (!batchId) return;
@@ -59,26 +59,22 @@ const CourseAssignments: React.FC<CourseAssignmentsProps> = ({
       const params = new URLSearchParams();
       params.append("batchId", batchId);
       if (courseId) params.append("courseId", courseId);
+      params.append("tab", assignmentTab === "past" ? "past" : "ongoing");
+      params.append("page", "1");
+      params.append("limit", "50");
       const res = await getAssignmentsByBatchApi(params);
-      const list = res?.data?.assignments || res?.data || [];
-      setAllAssignments(list);
+      const list = res?.data?.assignments || [];
+      setAssignments(Array.isArray(list) ? list : []);
     } catch {
-      setAllAssignments([]);
+      setAssignments([]);
     } finally {
       setLoading(false);
     }
-  }, [batchId, courseId]);
+  }, [batchId, courseId, assignmentTab]);
 
   useEffect(() => {
     fetchAssignments();
   }, [fetchAssignments]);
-
-  const assignments = useMemo(() => {
-    if (assignmentTab === "past") {
-      return allAssignments.filter((a) => a.studentSubmission?.status === "Graded");
-    }
-    return allAssignments.filter((a) => a.studentSubmission?.status !== "Graded");
-  }, [allAssignments, assignmentTab]);
 
   const getSubmissionStatus = (a: ApiAssignment) => {
     return a.studentSubmission?.status || "Not Submitted";

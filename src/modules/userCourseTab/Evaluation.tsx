@@ -19,7 +19,6 @@ import {
   TrophyOutlined,
   LoadingOutlined,
   LockOutlined,
-  CloseCircleFilled,
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Modal } from "antd";
@@ -51,6 +50,7 @@ interface EvaluationStats {
   resultRemark: string;
   certificateEligible: boolean;
   certificateCode?: string;
+  courseProgress?: number;
 }
 
 const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
@@ -119,22 +119,31 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
         const currentCourse = coursesList.find((c: any) => String(c.course_id) === String(courseId));
         const isCurrentFinished = currentCourse ? (currentCourse.progress || 0) >= 100 : false;
 
-        if (initialStats.totalItems === 0 && isCurrentFinished) {
+        const lessonProgress = currentCourse?.progress || 0;
+        const courseProgress =
+          typeof initialStats.courseProgress === "number"
+            ? initialStats.courseProgress
+            : lessonProgress;
+
+        if (isCurrentFinished || courseProgress >= 100) {
           initialStats = {
             ...initialStats,
-            totalCompleted: 1,
-            gradedCount: 1,
-            averageScore: 100,
-            isPassed: true,
-            resultRemark: "Passed",
-            certificateEligible: true,
-          };
-        } else if (isCurrentFinished) {
-          initialStats = {
-            ...initialStats,
+            courseProgress: 100,
             isPassed: true,
             certificateEligible: true,
+            resultRemark: "Pass",
             averageScore: initialStats.averageScore > 0 ? initialStats.averageScore : 100,
+          };
+        } else {
+          initialStats = {
+            ...initialStats,
+            courseProgress,
+            isPassed: false,
+            certificateEligible: false,
+            resultRemark:
+              courseProgress > 0 || initialStats.totalCompleted > 0
+                ? "In Progress"
+                : "Not Started",
           };
         }
 
@@ -159,6 +168,32 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
     if (filterType === "ALL") return allItems;
     return allItems.filter((item) => item.type === filterType);
   }, [allItems, filterType]);
+
+  const currentEnrollment = enrolledCourses.find(
+    (course) => String(course.course_id) === String(courseId)
+  );
+  const courseProgress = Math.max(
+    stats.courseProgress ?? 0,
+    currentEnrollment?.progress || 0
+  );
+  const standing =
+    courseProgress >= 100 || stats.isPassed
+      ? "passed"
+      : courseProgress > 0 || stats.totalCompleted > 0
+      ? "progress"
+      : "not-started";
+  const completedCourseIds = useMemo(
+    () =>
+      new Set(
+        enrolledCourses
+          .filter((course) => (course.progress || 0) >= 100)
+          .map((course) => String(course.course_id))
+      ),
+    [enrolledCourses]
+  );
+  const visibleCerts = earnedCerts.filter((cert) =>
+    completedCourseIds.has(String(cert.course_id))
+  );
 
   return (
     <div className="flex flex-col gap-6 pb-12 animate-fadeIn">
@@ -429,28 +464,26 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
             {/* Overall Pass/Fail Hero Card */}
             <div
               className={`rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-3 border shadow-sm ${
-                stats.isPassed
+                standing === "passed"
                   ? "bg-gradient-to-br from-emerald-50 via-white to-emerald-100/40 border-emerald-200"
-                  : stats.totalCompleted === 0
+                  : standing === "not-started"
                   ? "bg-gradient-to-br from-gray-50 via-white to-gray-100/60 border-gray-200"
-                  : "bg-gradient-to-br from-amber-50 via-white to-amber-100/40 border-amber-200"
+                  : "bg-gradient-to-br from-blue-50 via-white to-blue-100/40 border-blue-200"
               }`}
             >
               <div
                 className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-md ${
-                  stats.isPassed
+                  standing === "passed"
                     ? "bg-emerald-500 text-white shadow-emerald-200"
-                    : stats.totalCompleted === 0
+                    : standing === "not-started"
                     ? "bg-gray-400 text-white shadow-gray-200"
-                    : "bg-amber-500 text-white shadow-amber-200"
+                    : "bg-[#315CFF] text-white shadow-blue-200"
                 }`}
               >
-                {stats.isPassed ? (
+                {standing === "passed" ? (
                   <CheckCircleFilled />
-                ) : stats.totalCompleted === 0 ? (
-                  <ClockCircleOutlined />
                 ) : (
-                  <CloseCircleFilled />
+                  <ClockCircleOutlined />
                 )}
               </div>
 
@@ -459,17 +492,17 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
                   Academic Standing
                 </span>
                 <h2 className="text-3xl font-black text-gray-900 mt-0.5">
-                  {stats.isPassed
+                  {standing === "passed"
                     ? "PASSED"
-                    : stats.totalCompleted === 0
-                    ? "NOT STARTED"
-                    : "IN PROGRESS"}
+                    : standing === "progress"
+                    ? "IN PROGRESS"
+                    : "NOT STARTED"}
                 </h2>
               </div>
 
               <div className="flex items-center gap-2 mt-2">
                 <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-white/80 border border-gray-200 text-gray-700 shadow-xs">
-                  Overall Grade: {stats.averageScore}%
+                  Course progress: {courseProgress}%
                 </span>
               </div>
             </div>
@@ -479,25 +512,25 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
               <div className="flex flex-col gap-2">
                 <h3 className="font-bold text-lg text-gray-900">Academic Remark & Progress</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  {stats.isPassed
-                    ? `Great job! You have achieved an average score of ${stats.averageScore}% across your coursework and quizzes, demonstrating a solid mastery of the material.`
-                    : stats.totalCompleted === 0
-                    ? "You haven't completed any assignments or quizzes for this course yet. Complete your first assignment to begin tracking your academic performance."
-                    : `You have submitted ${stats.totalCompleted} of ${stats.totalItems} requirements with an average score of ${stats.averageScore}%. Continue working through remaining tasks to qualify for your certificate.`}
+                  {standing === "passed"
+                    ? "This course is complete. Your certificate is available below once it has been issued."
+                    : standing === "progress"
+                    ? `You have finished ${courseProgress}% of this course. Keep going through the remaining lessons. A certificate is issued only when the course reaches 100%.`
+                    : "You have not started this course yet. Open a lesson to begin. A certificate is issued only after the course is fully complete."}
                 </p>
               </div>
 
             {/* Requirement Checklist */}
               <div className="flex flex-col gap-2 pt-3 border-t border-gray-100">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-500">Passing Grade (50%+)</span>
+                  <span className="text-gray-500">Course completion</span>
                   <span
                     className={`font-semibold flex items-center gap-1 ${
-                      stats.averageScore >= 50 ? "text-emerald-600" : "text-amber-600"
+                      courseProgress >= 100 ? "text-emerald-600" : "text-[#315CFF]"
                     }`}
                   >
-                    {stats.averageScore >= 50 ? <CheckCircleFilled /> : <ClockCircleOutlined />}
-                    {stats.averageScore}%
+                    {courseProgress >= 100 ? <CheckCircleFilled /> : <ClockCircleOutlined />}
+                    {courseProgress}%
                   </span>
                 </div>
 
@@ -576,7 +609,7 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
           <div className="flex flex-col gap-3">
             <h3 className="font-bold text-lg text-gray-900">Earned Certificates</h3>
 
-            {earnedCerts.length > 0 ? (
+            {visibleCerts.length > 0 ? (
               <div className="flex flex-col gap-3">
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
@@ -593,7 +626,7 @@ const Evaluation: React.FC<EvaluationProps> = ({ courseId, batchId }) => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {earnedCerts.map((cert: any, idx: number) => (
+                  {visibleCerts.map((cert: any, idx: number) => (
                     <CertificateCard
                       key={cert.certificate_id || idx}
                       title={cert.course_name || "Course Completion Certificate"}

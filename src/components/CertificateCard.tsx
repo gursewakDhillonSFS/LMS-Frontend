@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DownloadIcon } from "@/utils/icons";
 import { Modal } from "antd";
 import { CertificateDisplay } from "./certificate/CertificateDisplay";
-import { SafetyCertificateFilled, EyeOutlined } from "@ant-design/icons";
+import { SafetyCertificateFilled } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
@@ -56,27 +56,17 @@ const CertificateCard = ({
         className="group bg-white rounded-2xl p-4 border border-slate-200/90 hover:border-blue-500 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col gap-3"
       >
         {/* Decorative Certificate Miniature */}
-        <div className="w-full h-44 rounded-xl bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-950 p-3 flex flex-col justify-between relative overflow-hidden text-center text-white border border-slate-700/50">
-          <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-slate-800/80 border border-slate-700 text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-            <SafetyCertificateFilled /> Verified
-          </div>
-
-          <div className="my-auto py-2">
-            <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold block">
-              Official Certificate
+        <div className="w-full h-44 rounded-xl bg-[#f6f1e7] p-2 border border-[#16324f]">
+          <div className="h-full border border-[#b8956a] px-3 py-2 flex flex-col items-center justify-center text-center text-[#16324f]">
+            <span className="text-[9px] uppercase tracking-[0.22em] text-[#8a6a3b] font-semibold">
+              Certificate of completion
             </span>
-            <h4 className="text-sm font-bold text-white line-clamp-2 mt-0.5">
-              {title}
-            </h4>
-            <span className="text-[11px] text-slate-300 font-serif italic mt-1 block">
-              Awarded to {certData.studentName}
+            <h4 className="text-sm font-semibold line-clamp-2 mt-1">{title}</h4>
+            <span className="text-[11px] font-serif italic mt-1 text-[#5c6b7a]">
+              {certData.studentName}
             </span>
-          </div>
-
-          <div className="flex items-center justify-between text-[9px] text-slate-400 border-t border-slate-700/60 pt-1.5 font-mono">
-            <span>ID: {code.slice(0, 16)}</span>
-            <span className="group-hover:text-blue-400 font-sans flex items-center gap-1 transition-colors">
-              <EyeOutlined /> View
+            <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-[#1f7a4d]">
+              <SafetyCertificateFilled /> Verified
             </span>
           </div>
         </div>
@@ -105,7 +95,7 @@ const CertificateCard = ({
         open={openModal}
         onCancel={() => setOpenModal(false)}
         footer={null}
-        width={880}
+        width={980}
         centered
         destroyOnClose
         className="certificate-modal"
